@@ -380,16 +380,6 @@
     }
   });
 
-  var menusThatAcceptReporters = ['broadcast', 'costume', 'backdrop', 'scene', 'sound', 'spriteOnly', 'spriteOrMouse', 'spriteOrStage', 'touching'];
-  vis.Arg.prototype.acceptsDropOf = function(b) {
-    return this.type !== 't' && (this.type !== 'b' || b.isBoolean) && (this.type !== 'm' || menusThatAcceptReporters.indexOf(this.menu) !== -1);
-  };
-
-  var app = new vis.App();
-
-  var p = new vis.Palette(document.querySelector('.palette'));
-  app.add(p);
-
   var palettes = {
     1: [
       // motion
@@ -654,35 +644,93 @@
     ]
   };
 
-  var categoryButton;
-  var buttons = {};
-  function switchPalette(category) {
-    if (categoryButton) {
-      categoryButton.className = '';
+  var menusThatAcceptReporters = ['broadcast', 'costume', 'backdrop', 'scene', 'sound', 'spriteOnly', 'spriteOrMouse', 'spriteOrStage', 'touching'];
+  vis.Arg.prototype.acceptsDropOf = function(b) {
+    return this.type !== 't' && (this.type !== 'b' || b.isBoolean) && (this.type !== 'm' || menusThatAcceptReporters.indexOf(this.menu) !== -1);
+  };
+  
+  function el(tagName, className) {
+    var e = document.createElement(className == null ? 'div' : tagName);
+    e.className = className || tagName || '';
+    return e;
+  }
+  
+  var def = Object.defineProperty;
+
+  var ScriptEditor = function() {
+    this.el = el('script-editor');
+    this.el.appendChild(this.elButtons = el('palette-buttons'));
+    this.el.appendChild(this.elPalette = el('palette-contents'));
+    this.el.appendChild(this.elWorkspace = el('editor-workspace'));
+    this.createButtons();
+    
+    this.palette = new vis.Palette(this.elPalette);
+    this.workspace = new vis.Workspace(this.elWorkspace);
+    
+    this.category = 1;
+  };
+  
+  ScriptEditor.prototype.createButtons = function() {
+    var self = this;
+    function buttonClick() {
+      self.category = this.value;
     }
-    categoryButton = buttons[category];
-    categoryButton.className = 'selected';
-    p.clear();
-    (palettes[category] || []).forEach(function(name) {
-      p.add(name === '--' ? vis.Palette.space() : new vis.Script().add(new vis.Block(name)));
-    });
-  }
-
-  function buttonClick() {
-    switchPalette(this.value);
-  }
-
-  [].forEach.call(document.querySelectorAll('button'), function(b) {
-    var cat = vis.getCategory(b.value);
-    b.style.color = cat[2];
-    b.innerHTML = '<div><strong>' + cat[1] + '</strong></div>';
-    buttons[cat[0]] = b;
-    b.addEventListener('click', buttonClick);
+    
+    this.buttons = {};
+    [1, 5, 2, 6, 3, 7, 4, 8, 9, 10].forEach(function(id) {
+      var cat = vis.getCategory(id);
+      
+      var b = el('button', 'palette-button');
+      b.value = id;
+      b.style.color = cat[2];
+      b.innerHTML = '<div><strong>' + cat[1] + '</strong></div>';
+      b.addEventListener('click', buttonClick);
+      
+      this.buttons[cat[0]] = b;
+      this.elButtons.appendChild(b);
+    }, this);
+  };
+  
+  ScriptEditor.prototype.install = function(scriptEditor) {
+    app.add(this.palette);
+    app.add(this.workspace);
+    this.resize();
+  };
+  
+  ScriptEditor.prototype.resize = function() {
+    this.palette.resize();
+    this.workspace.resize();
+  };
+  
+  ScriptEditor.prototype.uninstall = function() {
+    app.remove(this.palette);
+    app.remove(this.workspace);
+  };
+  
+  def(ScriptEditor.prototype, 'category', {
+    get: function() {return this._category},
+    set: function(value) {
+      value = Number(value);
+      this._category = value;
+      
+      if (this.categoryButton) {
+        this.categoryButton.className = 'palette-button';
+      }
+      this.categoryButton = this.buttons[value];
+      this.categoryButton.className = 'palette-button selected';
+      this.palette.clear();
+      (palettes[value] || []).forEach(function(name) {
+        this.palette.add(name === '--' ? vis.Palette.space() : new vis.Script().add(new vis.Block(name)));
+      }, this);
+    }
   });
 
-  switchPalette(1);
+  var app = new vis.App();
 
-  var w = new vis.Workspace(document.querySelector('.workspace'));
-  app.add(w);
+  var editor = new ScriptEditor();
+  document.body.appendChild(editor.el);
+  editor.install(app);
+  
+  console.log(app);
 
 }());
