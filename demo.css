@@ -1,0 +1,77 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+.buttons,
+.palette {
+  position: absolute;
+  left: 0;
+  border-right: 1px solid #bcbdbe;
+  background: #e6e8e8;
+}
+.buttons {
+  width: 202px;
+  padding: 8px 7px 8px 0;
+  top: 0;
+  height: 98px;
+}
+.buttons::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 8px;
+  right: 11px;
+  height: 1px;
+  background: #bcbdbe;
+  border-bottom: 1px solid #f2f2f2;
+}
+button {
+  float: left;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  width: 99px;
+  height: 18px;
+  padding: 0 0 0 8px;
+  border: 0;
+  background: 0;
+  margin: 0 2px 2px 0;
+  outline: none;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+}
+button::-moz-focus-inner {
+  border: 0;
+}
+button div {
+  border-left: 7px solid;
+  padding-left: 4px;
+}
+button strong {
+  font: 12px/18px Helvetica, Arial, sans-serif;
+  color: #8f9193;
+}
+button:hover strong {
+  color: #fba939;
+}
+button.selected div {
+  background: currentColor;
+}
+button.selected strong {
+  color: #fff;
+  font-weight: bold;
+}
+.palette {
+  width: 209px;
+  top: 114px;
+  bottom: 0;
+}
+.workspace {
+  position: absolute;
+  top: 0;
+  left: 210px;
+  right: 0;
+  bottom: 0;
+  background: #e0e0e0;
+}
