@@ -6,7 +6,6 @@ body {
   cursor: default;
   font: 12px Arial, Verdana, DejaVu Sans, sans-serif;
   -webkit-perspective: 1500px;
-  -webkit-transform: translateZ(0);
 }
 .editor {
   position: absolute;
