@@ -652,7 +652,7 @@
 
   vis.Workspace.prototype.padding = 10;
   vis.Workspace.prototype.spacing = 10;
-  
+
   vis.Palette.prototype.padding = 6;
   vis.Palette.prototype.extraSpace = 6;
 
@@ -790,7 +790,7 @@
   TabPanel.prototype.uninstall = function(parent) {
     if (this._panel) parent.remove(this._panel);
   };
-  
+
   function TopBar() {
     this.el = el('top-bar');
     this.languageButton = this.addButton('Language', this.languageMenu);
@@ -799,7 +799,7 @@
     this.tipsButton = this.addButton('Tips', this.showTips);
     this.aboutButton = this.addButton('About', this.showAbout);
   }
-  
+
   TopBar.prototype.addButton = function(text, action, arrow) {
     var button = el('button', 'top-button' + (text === 'Language' ? ' language' : ''));
     button.textContent = text === 'Language' ? '' : text;
@@ -821,12 +821,12 @@
     }
     return button;
   };
-  
+
   TopBar.prototype.languageMenu = function() {
     this.showMenu(this.languageButton, new vis.Menu(
       'English').withContext('this'));
   };
-  
+
   TopBar.prototype.fileMenu = function() {
     this.showMenu(this.fileButton, new vis.Menu(
       'New',
@@ -840,7 +840,7 @@
       vis.Menu.line,
       'Revert').withContext('this'));
   };
-  
+
   TopBar.prototype.editMenu = function() {
     this.showMenu(this.editButton, new vis.Menu(
       'Undelete',
@@ -851,53 +851,109 @@
   };
   TopBar.prototype.showTips = function() {};
   TopBar.prototype.showAbout = function() {};
-  
+
   TopBar.prototype.showMenu = function(button, menu) {
     if (!this.parent) return;
     var bb = button.getBoundingClientRect();
     var bb2 = this.el.getBoundingClientRect();
     menu.showAt(bb.left, bb2.bottom, this.parent);
   };
-  
-  function StagePane() {
-    this.el = el('stage-pane stopped');
-    
+
+  function StagePanel() {
+    this.el = el('stage-panel stopped');
+
     this.el.appendChild(this.elTitleBar = el('title-bar'));
     this.fullScreenButton = this.addButton('full-screen');
     this.stopButton = this.addButton('stop');
     this.runButton = this.addButton('run');
-    
+
     this.elTitleBar.appendChild(this.elVersion = el('version'));
     this.elVersion.textContent = 'js001';
-    
+
     this.elTitleBar.appendChild(this.elName = el('input', 'project-name'));
     this.elName.value = 'Untitled';
-    
+
     this.elTitleBar.appendChild(this.elAuthor = el('project-author'));
     this.elAuthor.textContent = 'by nXIII (unshared)';
-    
+
     this.el.appendChild(this.elStage = el('stage'));
   }
-  
-  StagePane.prototype.addButton = function(className) {
+
+  StagePanel.prototype.addButton = function(className) {
     var button = el('button', 'title-button ' + className);
     this.elTitleBar.appendChild(button);
     return button;
   };
 
+  function SpritePanel() {
+    this.el = el('sprite-panel');
+  }
+
   var app = new vis.App();
-  
+  var editor = document.querySelector('.editor');
+  var player = document.querySelector('.player');
+
   var topBar = new TopBar();
-  document.body.appendChild(topBar.el);
+  editor.appendChild(topBar.el);
   app.add(topBar);
 
   var tabPanel = new TabPanel();
-  document.body.appendChild(tabPanel.el);
+  editor.appendChild(tabPanel.el);
   app.add(tabPanel);
 
-  var stagePane = new StagePane();
-  document.body.appendChild(stagePane.el);
-  app.add(stagePane);
+  var stagePanel = new StagePanel();
+  editor.appendChild(stagePanel.el);
+  app.add(stagePanel);
+
+  var spritePanel = new SpritePanel();
+  editor.appendChild(spritePanel.el);
+  app.add(spritePanel);
+
+  var stagePanel = new StagePanel();
+  player.appendChild(stagePanel.el);
+
+  var flip = document.querySelector('.flip');
+  var flipBack = document.querySelector('.flip-back');
+
+  var flipped = false;
+  function doFlip() {
+    var time = 1;
+    editor.style.WebkitTransition =
+    player.style.WebkitTransition = 'none';
+    editor.style.WebkitTransform =
+    player.style.WebkitTransform = 'none';
+    var ebb = editor.getBoundingClientRect();
+    var pbb = player.getBoundingClientRect();
+    var dx = ((pbb.right + pbb.left) - (ebb.right + ebb.left)) / 2;
+    var dy = ((pbb.bottom + pbb.top) - (ebb.bottom + ebb.top)) / 2;
+    var sx = pbb.width / ebb.width;
+    var sy = pbb.height / ebb.height;
+    if (flipped) {
+      editor.style.WebkitTransform = 'translate('+dx+'px,'+dy+'px) rotateY(180deg) scale('+sx+','+sy+')';
+      editor.offsetHeight;
+      player.offsetHeight;
+      editor.style.WebkitTransition =
+      player.style.WebkitTransition = '-webkit-transform '+time+'s, z-index '+time+'s';
+      editor.style.WebkitTransform = 'none';
+      player.style.WebkitTransform = 'translate('+(-dx)+'px,'+(-dy)+'px) rotateY(-180deg) scale('+(1/sx)+','+(1/sy)+')';
+      editor.style.zIndex = 100;
+      player.style.zIndex = -100;
+    } else {
+      player.style.WebkitTransform = 'translate('+(-dx)+'px,'+(-dy)+'px) rotateY(-180deg) scale('+(1/sx)+','+(1/sy)+')';
+      editor.offsetHeight;
+      player.offsetHeight;
+      editor.style.WebkitTransition =
+      player.style.WebkitTransition = '-webkit-transform '+time+'s, z-index '+time+'s';
+      editor.style.WebkitTransform = 'translate('+dx+'px,'+dy+'px) rotateY(180deg) scale('+sx+','+sy+')';
+      player.style.WebkitTransform = 'none';
+      editor.style.zIndex = -100;
+      player.style.zIndex = 100;
+    }
+    flipped = !flipped;
+  }
+
+  flip.addEventListener('click', doFlip);
+  flipBack.addEventListener('click', doFlip);
 
   window.app = app;
 

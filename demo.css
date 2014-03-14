@@ -6,6 +6,64 @@ html, body {
 body {
   cursor: default;
   font: 12px Arial, Verdana, DejaVu Sans, sans-serif;
+  -webkit-perspective: 1000px;
+  -webkit-transform: translateZ(0);
+}
+.editor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  z-index: 100;
+}
+.player {
+  position: absolute;
+  top: 200px;
+  left: 100px;
+  width: 482px;
+  height: 400px;
+  z-index: -100;
+  background: #fff;
+}
+.player .project-name,
+.player .project-author {
+  display: none;
+}
+.flip,
+.flip-back {
+  position: absolute;
+  top: 33px;
+  right: 5px;
+  height: 22px;
+  font: inherit;
+  font-weight: bold;
+  line-height: 22px;
+  color: #fff;
+  margin: 0;
+  padding: 0 7px 0 5px;
+  border: 0;
+  border-radius: 4px;
+  background: #179fd7;
+  z-index: 102;
+}
+.flip i,
+.flip-back i {
+  display: inline-block;
+  vertical-align: middle;
+  width: 29px;
+  height: 23px;
+  position: relative;
+  top: -1px;
+  margin: 0 3px 0 0;
+  background: url(assets.png) -86px 0;
+}
+.flip-back {
+  top: 238px;
+  left: 600px;
+  right: auto;
+  z-index: 0;
 }
 button {
   outline: 0;
@@ -56,11 +114,15 @@ button::-moz-focus-inner {
 .top-button:hover .arrow.hovered {
   display: inline-block;
 }
-.stage-pane {
+.stage-panel {
   position: absolute;
   top: 33px;
   left: 5px;
   width: 482px;
+}
+.player .stage-panel {
+  top: 0;
+  left: 0;
 }
 .title-bar {
   position: absolute;
@@ -126,6 +188,7 @@ button::-moz-focus-inner {
   outline: 0;
   font: inherit;
   font-size: 13px;
+  height: 19px;
   line-height: 19px;
   padding: 0 3px;
   border: 0;
@@ -153,6 +216,15 @@ button::-moz-focus-inner {
   border: 1px solid #d0d1d2;
   border-top: 0;
   background: #fff;
+}
+.sprite-panel {
+  position: absolute;
+  top: 451px;
+  left: 5px;
+  bottom: 0;
+  width: 481px;
+  border: 1px solid #d0d1d2;
+  border-radius: 7px 7px 0 0;
 }
 .tab-panel {
   position: absolute;
@@ -236,6 +308,7 @@ button::-moz-focus-inner {
 .palette-button div {
   border-left: 7px solid;
   padding-left: 4px;
+  width: 80px;
 }
 .palette-button strong {
   line-height: 18px;
