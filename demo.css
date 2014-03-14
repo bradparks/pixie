@@ -1,12 +1,11 @@
 html, body {
   height: 100%;
   margin: 0;
-  overflow: hidden;
 }
 body {
   cursor: default;
   font: 12px Arial, Verdana, DejaVu Sans, sans-serif;
-  -webkit-perspective: 1000px;
+  -webkit-perspective: 1500px;
   -webkit-transform: translateZ(0);
 }
 .editor {
@@ -16,16 +15,21 @@ body {
   width: 100%;
   height: 100%;
   background: #fff;
-  z-index: 100;
+  -webkit-backface-visibility: hidden;
+  z-index: 1;
+  box-shadow: 0 0 0 1px #888;
+  min-width: 960px;
+  min-height: 600px;
 }
 .player {
-  position: absolute;
+  position: relative;
+  margin: 0 auto;
   top: 200px;
-  left: 100px;
   width: 482px;
   height: 400px;
-  z-index: -100;
   background: #fff;
+  -webkit-backface-visibility: hidden;
+  z-index: 1;
 }
 .player .project-name,
 .player .project-author {
@@ -46,7 +50,7 @@ body {
   border: 0;
   border-radius: 4px;
   background: #179fd7;
-  z-index: 102;
+  z-index: 1;
 }
 .flip i,
 .flip-back i {
@@ -60,9 +64,9 @@ body {
   background: url(assets.png) -86px 0;
 }
 .flip-back {
-  top: 238px;
-  left: 600px;
-  right: auto;
+  top: auto;
+  right: 5px;
+  bottom: 5px;
   z-index: 0;
 }
 button {

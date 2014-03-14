@@ -936,8 +936,6 @@
       player.style.WebkitTransition = '-webkit-transform '+time+'s, z-index '+time+'s';
       editor.style.WebkitTransform = 'none';
       player.style.WebkitTransform = 'translate('+(-dx)+'px,'+(-dy)+'px) rotateY(-180deg) scale('+(1/sx)+','+(1/sy)+')';
-      editor.style.zIndex = 100;
-      player.style.zIndex = -100;
     } else {
       player.style.WebkitTransform = 'translate('+(-dx)+'px,'+(-dy)+'px) rotateY(-180deg) scale('+(1/sx)+','+(1/sy)+')';
       editor.offsetHeight;
@@ -946,8 +944,6 @@
       player.style.WebkitTransition = '-webkit-transform '+time+'s, z-index '+time+'s';
       editor.style.WebkitTransform = 'translate('+dx+'px,'+dy+'px) rotateY(180deg) scale('+sx+','+sy+')';
       player.style.WebkitTransform = 'none';
-      editor.style.zIndex = -100;
-      player.style.zIndex = 100;
     }
     flipped = !flipped;
   }
