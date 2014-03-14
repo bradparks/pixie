@@ -226,9 +226,66 @@ button::-moz-focus-inner {
   top: 451px;
   left: 5px;
   bottom: 0;
-  width: 481px;
+  width: 483px;
+}
+.sprite-panel .title-bar {
+  position: relative;
+  height: 29px;
+  line-height: 29px;
+  padding-left: 88px;
+  color: #5c5d5f;
+  font-size: 14px;
+}
+.new-group {
+  position: absolute;
+  right: 0;
+  top: 0;
+  left: 76px;
+  border-left: 1px solid #d0d1d2;
+  text-align: right;
+  height: 29px;
+  padding-right: 11px;
+}
+.stage-section {
+  position: absolute;
+  top: 31px;
+  left: 0;
+  width: 76px;
+  bottom: 0;
   border: 1px solid #d0d1d2;
-  border-radius: 7px 7px 0 0;
+  border-top: 0;
+  background: #e6e8e8;
+  text-align: center;
+  color: #5c5d5f;
+}
+.stage-icon {
+  margin: 4px;
+  width: 68px;
+  height: 51px;
+  background: #fff;
+  box-shadow: 0 0 1px rgba(0, 0, 0, .5);
+}
+.stage-label {
+  margin-top: 5px;
+  font-size: 11px;
+}
+.stage-info {
+  margin-top: 1px;
+  font-size: 9px;
+}
+.new-backdrop {
+  margin-top: 14px;
+  font-size: 10px;
+}
+.sprite-section {
+  position: absolute;
+  top: 31px;
+  right: 0;
+  left: 78px;
+  bottom: 0;
+  border: 1px solid #d0d1d2;
+  border-top: 0;
+  border-left: 0;
 }
 .tab-panel {
   position: absolute;
@@ -340,6 +397,6 @@ button::-moz-focus-inner {
   left: 209px;
   right: 4px;
   bottom: 4px;
-  background: #e0e0e0;
+  background: rgb(221, 222, 222);
   border: 1px solid #bcbdbe;
 }

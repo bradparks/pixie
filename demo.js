@@ -887,6 +887,24 @@
 
   function SpritePanel() {
     this.el = el('sprite-panel');
+
+    this.el.appendChild(this.elTitleBar = el('title-bar'));
+    this.elTitleBar.appendChild(this.elLabel = el('title-label'));
+    this.elLabel.textContent = 'Sprites';
+
+    this.elTitleBar.appendChild(this.elNewGroup = el('new-group'));
+    this.elNewGroup.textContent = 'New sprite:';
+
+    this.el.appendChild(this.elStageSection = el('stage-section'));
+    this.elStageSection.appendChild(this.elStageIcon = el('stage-icon'));
+    this.elStageSection.appendChild(this.elStageLabel = el('stage-label'));
+    this.elStageLabel.textContent = 'Stage';
+    this.elStageSection.appendChild(this.elStageInfo = el('stage-info'));
+    this.elStageInfo.textContent = '1 backdrop';
+    this.elStageSection.appendChild(this.elNewBackdrop = el('new-backdrop'));
+    this.elNewBackdrop.textContent = 'New backdrop:';
+
+    this.el.appendChild(this.elSpriteSection = el('sprite-section'));
   }
 
   var app = new vis.App();
