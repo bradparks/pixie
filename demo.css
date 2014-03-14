@@ -392,10 +392,10 @@ button::-moz-focus-inner {
 }
 .editor-workspace {
   position: absolute;
-  top: 4px;
-  left: 209px;
-  right: 4px;
-  bottom: 4px;
+  top: 5px;
+  left: 210px;
+  right: 5px;
+  bottom: 5px;
   background: rgb(221, 222, 222);
-  border: 1px solid #bcbdbe;
+  box-shadow: 0 0 0 1px #bcbdbe;
 }
