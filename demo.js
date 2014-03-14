@@ -627,6 +627,7 @@
       "changeVar:by:",
       "showVariable:",
       "hideVariable:",
+      "--",
 
       // lists
       "append:toList:",
@@ -648,13 +649,19 @@
   vis.Arg.prototype.acceptsDropOf = function(b) {
     return this.type !== 't' && (this.type !== 'b' || b.isBoolean) && (this.type !== 'm' || menusThatAcceptReporters.indexOf(this.menu) !== -1);
   };
+
+  vis.Workspace.prototype.padding = 10;
+  vis.Workspace.prototype.spacing = 10;
   
+  vis.Palette.prototype.padding = 6;
+  vis.Palette.prototype.extraSpace = 6;
+
   function el(tagName, className) {
     var e = document.createElement(className == null ? 'div' : tagName);
     e.className = className || tagName || '';
     return e;
   }
-  
+
   var def = Object.defineProperty;
 
   var ScriptEditor = function() {
@@ -663,56 +670,56 @@
     this.el.appendChild(this.elPalette = el('palette-contents'));
     this.el.appendChild(this.elWorkspace = el('editor-workspace'));
     this.createButtons();
-    
+
     this.palette = new vis.Palette(this.elPalette);
     this.workspace = new vis.Workspace(this.elWorkspace);
-    
+
     this.category = 1;
   };
-  
+
   ScriptEditor.prototype.createButtons = function() {
     var self = this;
     function buttonClick() {
       self.category = this.value;
     }
-    
+
     this.buttons = {};
     [1, 5, 2, 6, 3, 7, 4, 8, 9, 10].forEach(function(id) {
       var cat = vis.getCategory(id);
-      
+
       var b = el('button', 'palette-button');
       b.value = id;
       b.style.color = cat[2];
       b.innerHTML = '<div><strong>' + cat[1] + '</strong></div>';
       b.addEventListener('click', buttonClick);
-      
+
       this.buttons[cat[0]] = b;
       this.elButtons.appendChild(b);
     }, this);
   };
-  
-  ScriptEditor.prototype.install = function(scriptEditor) {
-    app.add(this.palette);
-    app.add(this.workspace);
+
+  ScriptEditor.prototype.install = function(parent) {
+    parent.add(this.palette);
+    parent.add(this.workspace);
     this.resize();
   };
-  
+
   ScriptEditor.prototype.resize = function() {
     this.palette.resize();
     this.workspace.resize();
   };
-  
-  ScriptEditor.prototype.uninstall = function() {
-    app.remove(this.palette);
-    app.remove(this.workspace);
+
+  ScriptEditor.prototype.uninstall = function(parent) {
+    parent.remove(this.palette);
+    parent.remove(this.workspace);
   };
-  
+
   def(ScriptEditor.prototype, 'category', {
     get: function() {return this._category},
     set: function(value) {
       value = Number(value);
       this._category = value;
-      
+
       if (this.categoryButton) {
         this.categoryButton.className = 'palette-button';
       }
@@ -725,12 +732,173 @@
     }
   });
 
-  var app = new vis.App();
+  function TabPanel() {
+    this.el = el('tab-panel');
+    this.el.appendChild(this.elContent = el('tab-panel-content'));
 
-  var editor = new ScriptEditor();
-  document.body.appendChild(editor.el);
-  editor.install(app);
+    this.tabPanels = [
+      this.scriptEditor = new ScriptEditor(),
+      null,
+      null];
+    this.tabs = [];
+
+    var self = this;
+    this.tabClick = function() {
+      self.panel = self.tabPanels[this.dataset.index];
+    };
+    ['Scripts', 'Costumes', 'Sounds'].forEach(this.makeTab, this);
+
+    this.panel = this.scriptEditor;
+  }
+
+  TabPanel.prototype.makeTab = function(text) {
+    var tab = el('tab');
+    tab.textContent = text;
+    tab.dataset.index = this.tabs.length;
+    tab.addEventListener('click', this.tabClick);
+    this.tabs.push(tab);
+    this.el.appendChild(tab);
+  };
+
+  def(TabPanel.prototype, 'panel', {
+    get: function() {return this._panel},
+    set: function(value) {
+      if (this._panel) {
+        this._tab.className = 'tab';
+        this.elContent.removeChild(this._panel.el);
+        if (this.parent) this.parent.remove(this._panel);
+      }
+      this._panel = value;
+      this._tab = value && this.tabs[this.tabPanels.indexOf(value)];
+      if (value) {
+        this._tab.className = 'tab selected';
+        this.elContent.appendChild(value.el);
+        if (this.parent) this.parent.add(value);
+      }
+    }
+  });
+
+  TabPanel.prototype.install = function(parent) {
+    if (this._panel) parent.add(this._panel);
+    this.resize();
+  };
+
+  TabPanel.prototype.resize = function() {
+    if (this._panel) this._panel.resize();
+  };
+
+  TabPanel.prototype.uninstall = function(parent) {
+    if (this._panel) parent.remove(this._panel);
+  };
   
-  console.log(app);
+  function TopBar() {
+    this.el = el('top-bar');
+    this.languageButton = this.addButton('Language', this.languageMenu);
+    this.fileButton = this.addButton('File', this.fileMenu, true);
+    this.editButton = this.addButton('Edit', this.editMenu, true);
+    this.tipsButton = this.addButton('Tips', this.showTips);
+    this.aboutButton = this.addButton('About', this.showAbout);
+  }
+  
+  TopBar.prototype.addButton = function(text, action, arrow) {
+    var button = el('button', 'top-button' + (text === 'Language' ? ' language' : ''));
+    button.textContent = text === 'Language' ? '' : text;
+    button.addEventListener('click', action.bind(this));
+    this.el.appendChild(button);
+    if (arrow) {
+      [['#ffffff', 'arrow normal'], ['#fba939', 'arrow hovered']].forEach(function(info) {
+        var canvas = el('canvas', info[1]);
+        canvas.width = 8;
+        canvas.height = 6;
+        var context = canvas.getContext('2d');
+        context.moveTo(0, 0);
+        context.lineTo(8, 0);
+        context.lineTo(4, 6);
+        context.fillStyle = info[0];
+        context.fill();
+        button.appendChild(canvas);
+      });
+    }
+    return button;
+  };
+  
+  TopBar.prototype.languageMenu = function() {
+    this.showMenu(this.languageButton, new vis.Menu(
+      'English').withContext('this'));
+  };
+  
+  TopBar.prototype.fileMenu = function() {
+    this.showMenu(this.fileButton, new vis.Menu(
+      'New',
+      vis.Menu.line,
+      'Save now',
+      'Save as a copy',
+      'Go to my stuff',
+      vis.Menu.line,
+      'Upload from your computer',
+      'Download to your computer',
+      vis.Menu.line,
+      'Revert').withContext('this'));
+  };
+  
+  TopBar.prototype.editMenu = function() {
+    this.showMenu(this.editButton, new vis.Menu(
+      'Undelete',
+      vis.Menu.line,
+      'Small stage layout',
+      vis.Menu.line,
+      'Turbo mode').withContext('this'));
+  };
+  TopBar.prototype.showTips = function() {};
+  TopBar.prototype.showAbout = function() {};
+  
+  TopBar.prototype.showMenu = function(button, menu) {
+    if (!this.parent) return;
+    var bb = button.getBoundingClientRect();
+    var bb2 = this.el.getBoundingClientRect();
+    menu.showAt(bb.left, bb2.bottom, this.parent);
+  };
+  
+  function StagePane() {
+    this.el = el('stage-pane stopped');
+    
+    this.el.appendChild(this.elTitleBar = el('title-bar'));
+    this.fullScreenButton = this.addButton('full-screen');
+    this.stopButton = this.addButton('stop');
+    this.runButton = this.addButton('run');
+    
+    this.elTitleBar.appendChild(this.elVersion = el('version'));
+    this.elVersion.textContent = 'js001';
+    
+    this.elTitleBar.appendChild(this.elName = el('input', 'project-name'));
+    this.elName.value = 'Untitled';
+    
+    this.elTitleBar.appendChild(this.elAuthor = el('project-author'));
+    this.elAuthor.textContent = 'by nXIII (unshared)';
+    
+    this.el.appendChild(this.elStage = el('stage'));
+  }
+  
+  StagePane.prototype.addButton = function(className) {
+    var button = el('button', 'title-button ' + className);
+    this.elTitleBar.appendChild(button);
+    return button;
+  };
+
+  var app = new vis.App();
+  
+  var topBar = new TopBar();
+  document.body.appendChild(topBar.el);
+  app.add(topBar);
+
+  var tabPanel = new TabPanel();
+  document.body.appendChild(tabPanel.el);
+  app.add(tabPanel);
+
+  var stagePane = new StagePane();
+  document.body.appendChild(stagePane.el);
+  app.add(stagePane);
+
+  window.app = app;
 
 }());

@@ -3,8 +3,194 @@ html, body {
   margin: 0;
   overflow: hidden;
 }
+body {
+  cursor: default;
+  font: 12px Arial, Verdana, DejaVu Sans, sans-serif;
+}
+button {
+  outline: 0;
+}
+button::-moz-focus-inner {
+  border: 0;
+}
+.top-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 28px;
+  background: #9c9ea2;
+  padding: 0 0 0 13px;
+}
+.top-button {
+  vertical-align: middle;
+  border: 0;
+  background: 0;
+  font: inherit;
+  font-weight: bold;
+  color: #fff;
+  margin: 0 12px 0 0;
+  height: 28px;
+  padding: 0 3px;
+}
+.top-button:hover {
+  color: #fba939;
+}
+.top-button.language {
+  width: 19px;
+  height: 19px;
+  border-width: 4px 0 5px;
+  background: url(assets.png) -67px 0;
+}
+.top-button.language:hover {
+  background-position: -67px -19px;
+}
+.arrow {
+  vertical-align: middle;
+  margin: -2px 0 0 3px;
+}
+.arrow.hovered,
+.top-button:hover .arrow.normal {
+  display: none
+}
+.top-button:hover .arrow.hovered {
+  display: inline-block;
+}
+.stage-pane {
+  position: absolute;
+  top: 33px;
+  left: 5px;
+  width: 482px;
+}
+.title-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  border: 1px solid #d0d1d2;
+  border-radius: 7px 7px 0 0;
+  height: 37px;
+  line-height: 37px;
+  background: linear-gradient(#ffffff, #e6e8e8);
+}
+.title-button {
+  vertical-align: middle;
+  background: url(assets.png);
+  border: 0;
+  padding: 0;
+  margin: 0;
+  float: right;
+}
+.title-button.full-screen {
+  width: 25px;
+  height: 20px;
+  margin: 8px 6px 9px 10px;
+  float: left;
+}
+.title-button.stop {
+  background-position: -46px 0;
+  width: 21px;
+  height: 21px;
+  margin: 9px 6px 7px;
+}
+.title-button.stop:hover,
+.stopped .title-button.stop {
+  background-position: -46px -21px;
+}
+.title-button.run {
+  background-position: -26px 0;
+  width: 20px;
+  height: 21px;
+  margin: 8px 6px 8px 14px;
+}
+.title-button.run:hover,
+.running .title-button.run {
+  background-position: -26px -21px;
+}
+.version {
+  position: absolute;
+  top: 29px;
+  left: 10px;
+  width: 25px;
+  text-align: center;
+  font-size: 9px;
+  line-height: 9px;
+  color: #909090;
+}
+.project-name {
+  position: absolute;
+  top: 2px;
+  left: 50px;
+  width: 350px;
+  margin: 0;
+  outline: 0;
+  font: inherit;
+  font-size: 13px;
+  line-height: 19px;
+  padding: 0 3px;
+  border: 0;
+  border-radius: 3px;
+  color: #5c5d5f;
+  box-shadow:
+    0 -1px rgb(124, 126, 128),
+    -1px 0 rgb(124, 126, 128),
+    0 0 0 1px rgb(199, 200, 202),
+    inset 1px 1px 1px -1px rgba(0, 0, 0, .5);
+}
+.project-author {
+  position: absolute;
+  top: 24px;
+  left: 54px;
+  line-height: 12px;
+  color: #5c5d5f;
+}
+.stage {
+  position: absolute;
+  top: 39px;
+  left: 0;
+  width: 480px;
+  height: 360px;
+  border: 1px solid #d0d1d2;
+  border-top: 0;
+  background: #fff;
+}
+.tab-panel {
+  position: absolute;
+  left: 492px;
+  top: 33px;
+  bottom: 22px;
+  right: 22px;
+}
+.tab {
+  display: inline-block;
+  padding: 0 13px 0 11px;
+  height: 26px;
+  line-height: 24px;
+  border: 1px solid #d0d1d2;
+  border-bottom: 0;
+  border-radius: 7px 7px 0 0;
+  background: #f2f2f2;
+  box-shadow: inset 0 -3px 3px -3px #d1d2d3;
+  position: relative;
+  color: #8f9193;
+}
+.tab.selected {
+  height: 27px;
+  color: #5c5d5f;
+  background: linear-gradient(#ffffff, #e6e8e8);
+  box-shadow: none;
+}
+.tab-panel-content {
+  position: absolute;
+  top: 27px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 1px solid #d0d1d2;
+  background: #e6e8e8;
+}
 .script-editor {
-  position: abolute;
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
@@ -14,8 +200,7 @@ html, body {
 .palette-contents {
   position: absolute;
   left: 0;
-  border-right: 1px solid #bcbdbe;
-  background: #e6e8e8;
+  background: 0;
 }
 .palette-buttons {
   width: 202px;
@@ -43,20 +228,18 @@ html, body {
   border: 0;
   background: 0;
   margin: 0 2px 2px 0;
-  outline: none;
   text-align: left;
   white-space: nowrap;
   overflow: hidden;
-}
-.palette-button::-moz-focus-inner {
-  border: 0;
+  font: inherit;
 }
 .palette-button div {
   border-left: 7px solid;
   padding-left: 4px;
 }
 .palette-button strong {
-  font: 12px/18px Helvetica, Arial, sans-serif;
+  line-height: 18px;
+  font-weight: inherit;
   color: #8f9193;
 }
 .palette-button:hover strong {
@@ -76,9 +259,10 @@ html, body {
 }
 .editor-workspace {
   position: absolute;
-  top: 0;
-  left: 210px;
-  right: 0;
-  bottom: 0;
+  top: 4px;
+  left: 209px;
+  right: 4px;
+  bottom: 4px;
   background: #e0e0e0;
+  border: 1px solid #bcbdbe;
 }
