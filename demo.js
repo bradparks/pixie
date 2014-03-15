@@ -752,7 +752,7 @@
   }
 
   TabPanel.prototype.makeTab = function(text) {
-    var tab = el('tab');
+    var tab = el('button', 'tab');
     tab.textContent = text;
     tab.dataset.index = this.tabs.length;
     tab.addEventListener('click', this.tabClick);
