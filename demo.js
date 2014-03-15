@@ -894,6 +894,10 @@
 
     this.elTitleBar.appendChild(this.elNewGroup = el('new-group'));
     this.elNewGroup.textContent = 'New sprite:';
+    this.elNewGroup.appendChild(el('button', 'new-button new-library'));
+    this.elNewGroup.appendChild(el('button', 'new-button new-paint'));
+    this.elNewGroup.appendChild(el('button', 'new-button new-import'));
+    this.elNewGroup.appendChild(el('button', 'new-button new-camera'));
 
     this.el.appendChild(this.elStageSection = el('stage-section'));
     this.elStageSection.appendChild(this.elStageIcon = el('stage-icon'));
@@ -905,6 +909,10 @@
     this.elNewBackdrop.textContent = 'New backdrop:';
 
     this.el.appendChild(this.elSpriteSection = el('sprite-section'));
+  }
+
+  function SpriteIcon() {
+
   }
 
   var app = new vis.App();

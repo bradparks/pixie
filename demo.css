@@ -244,6 +244,49 @@ button::-moz-focus-inner {
   text-align: right;
   height: 29px;
   padding-right: 11px;
+  line-height: 30px;
+}
+.new-button {
+  width: 19px;
+  height: 19px;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  top: 2px;
+  background: url(assets.png);
+}
+.new-library {
+  background-position: -115px 0;
+  margin-left: 8px;
+}
+.new-library:hover {
+  background-position: -115px -19px;
+}
+.new-paint {
+  background-position: -134px 0;
+  top: 3px;
+  margin-left: 3px;
+}
+.new-paint:hover {
+  background-position: -134px -19px;
+}
+.new-import {
+  background-position: -153px 0;
+  margin-left: 4px;
+}
+.new-import:hover {
+  background-position: -153px -19px;
+}
+.new-camera {
+  background-position: -172px 0;
+  top: 4px;
+  margin-left: 8px;
+}
+.new-camera:hover {
+  background-position: -172px -19px;
+  width: 20px;
+  margin-right: -1px;
 }
 .stage-section {
   position: absolute;
