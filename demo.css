@@ -306,6 +306,7 @@ button::-moz-focus-inner {
   position: relative;
   color: #8f9193;
 }
+.tab:hover,
 .tab.selected {
   height: 27px;
   color: #5c5d5f;
