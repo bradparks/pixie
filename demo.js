@@ -669,14 +669,31 @@
   }
 
 
-  function Editor() {
-    this.topBar = new TopBar();
-    this.tabPanel = new TabPanel();
-    this.stagePanel = new StagePanel();
+  function Sprite(name) {
+    this.objName = name;
+    this.scripts = [];
+  }
 
-    this.spritePanel = new SpritePanel();
-    this.spritePanel.addIcon('Sprite1');
-    this.spritePanel.addIcon('Sprite2');
+  Sprite.prototype.isSprite = true;
+
+  function Stage() {
+    this.objName = 'Stage';
+    this.scripts = [];
+  }
+
+  Stage.prototype.isStage = true;
+
+
+  function Editor() {
+    this.stage = new Stage();
+
+    this.topBar = new TopBar(this);
+    this.tabPanel = new TabPanel(this);
+    this.stagePanel = new StagePanel(this);
+
+    this.spritePanel = new SpritePanel(this);
+    this.spritePanel.addIcon(new Sprite('Sprite1'));
+    this.spritePanel.addIcon(new Sprite('Sprite2'));
     this.spritePanel.select(this.spritePanel.icons[0]);
 
     this.app = new vis.App();
@@ -716,6 +733,18 @@
     this.workspace = new vis.Workspace(this.elWorkspace);
 
     this.category = 1;
+  };
+
+  ScriptEditor.prototype.showSprite = function(sprite) {
+    if (this.sprite) {
+      this.sprite.scripts = this.workspace.scripts.slice(0);
+    }
+    if (this.sprite = sprite) {
+      this.workspace.clear();
+      sprite.scripts.forEach(function(script) {
+        this.workspace.add(script);
+      }, this);
+    }
   };
 
   ScriptEditor.prototype.createButtons = function() {
@@ -832,6 +861,12 @@
     if (this._panel) parent.remove(this._panel);
   };
 
+  TabPanel.prototype.showSprite = function(sprite) {
+    this.tabPanels.forEach(function(panel) {
+      if (panel) panel.showSprite(sprite);
+    });
+  };
+
   function TopBar() {
     this.el = el('top-bar');
     this.languageButton = this.addButton('Language', this.languageMenu);
@@ -926,8 +961,10 @@
     return button;
   };
 
-  function SpritePanel() {
-    this.stageIcon = new SpriteIcon(this, 'Stage');
+  function SpritePanel(editor) {
+    this.editor = editor;
+
+    this.stageIcon = new SpriteIcon(this, editor.stage);
     this.icons = [];
 
     this.el = el('sprite-panel');
@@ -959,6 +996,8 @@
     if (this.selectedIcon = icon) {
       icon.el.classList.add('selected');
     }
+    this.editor.selectedSprite = icon.sprite;
+    this.editor.tabPanel.showSprite(icon.sprite);
     return this;
   };
 
@@ -983,19 +1022,23 @@
     });
   };
 
-  function SpriteIcon(panel, name) {
+  function SpriteIcon(panel, sprite) {
     this.panel = panel;
+    this.sprite = sprite;
+
     this.el = el('sprite-icon');
     this.el.appendChild(this.elThumbnail = el('sprite-thumbnail'));
     this.el.appendChild(this.elName = el('sprite-icon-label'));
-    this.elName.textContent = name;
-    if (name === 'Stage') {
+    this.elName.textContent = sprite.objName;
+
+    if (sprite.isStage) {
       this.el.className += ' for-stage';
       this.el.appendChild(this.elInfo = el('sprite-icon-info'));
       this.elInfo.textContent = '1 backdrop';
     } else {
       this.el.appendChild(this.elButton = el('button', 'sprite-icon-button'));
     }
+
     this.el.addEventListener('click', function() {
       this.panel.select(this);
     }.bind(this));

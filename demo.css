@@ -324,6 +324,9 @@ button::-moz-focus-inner {
 .sprite-icon-label {
   margin-top: 5px;
   font-size: 11px;
+  white-space: pre;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .sprite-icon-info {
   margin: 1px 0 2px;
