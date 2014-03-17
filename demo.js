@@ -664,7 +664,48 @@
 
   var def = Object.defineProperty;
 
-  var ScriptEditor = function() {
+  function resize(o) {
+    if (o.resize) o.resize();
+  }
+
+
+  function Editor() {
+    this.topBar = new TopBar();
+    this.tabPanel = new TabPanel();
+    this.stagePanel = new StagePanel();
+
+    this.spritePanel = new SpritePanel();
+    this.spritePanel.addIcon('Sprite1');
+    this.spritePanel.addIcon('Sprite2');
+    this.spritePanel.select(this.spritePanel.icons[0]);
+
+    this.app = new vis.App();
+    this.app.add(this.topBar);
+    this.app.add(this.tabPanel);
+    this.app.add(this.stagePanel);
+    this.app.add(this.spritePanel);
+
+    this.el = el('editor');
+
+    this.el.appendChild(this.elFlipButton = el('button', 'flip'));
+    this.elFlipButton.innerHTML = '<i></i>See project page';
+
+    this.el.appendChild(this.topBar.el);
+    this.el.appendChild(this.tabPanel.el);
+    this.el.appendChild(this.stagePanel.el);
+    this.el.appendChild(this.spritePanel.el);
+
+    window.addEventListener('resize', this.resize.bind(this));
+  }
+
+  Editor.prototype.resize = function() {
+    resize(this.topBar);
+    resize(this.tabPanel);
+    resize(this.stagePanel);
+    resize(this.spritePanel);
+  };
+
+  function ScriptEditor() {
     this.el = el('script-editor');
     this.el.appendChild(this.elButtons = el('palette-buttons'));
     this.el.appendChild(this.elPalette = el('palette-contents'));
@@ -886,6 +927,9 @@
   };
 
   function SpritePanel() {
+    this.stageIcon = new SpriteIcon(this, 'Stage');
+    this.icons = [];
+
     this.el = el('sprite-panel');
 
     this.el.appendChild(this.elTitleBar = el('title-bar'));
@@ -900,45 +944,73 @@
     this.elNewGroup.appendChild(el('button', 'new-button new-camera'));
 
     this.el.appendChild(this.elStageSection = el('stage-section'));
-    this.elStageSection.appendChild(this.elStageIcon = el('stage-icon'));
-    this.elStageSection.appendChild(this.elStageLabel = el('stage-label'));
-    this.elStageLabel.textContent = 'Stage';
-    this.elStageSection.appendChild(this.elStageInfo = el('stage-info'));
-    this.elStageInfo.textContent = '1 backdrop';
+    this.elStageSection.appendChild(this.stageIcon.el);
     this.elStageSection.appendChild(this.elNewBackdrop = el('new-backdrop'));
     this.elNewBackdrop.textContent = 'New backdrop:';
 
     this.el.appendChild(this.elSpriteSection = el('sprite-section'));
+    this.select(this.stageIcon);
   }
 
-  function SpriteIcon() {
+  SpritePanel.prototype.select = function(icon) {
+    if (this.selectedIcon) {
+      this.selectedIcon.el.classList.remove('selected');
+    }
+    if (this.selectedIcon = icon) {
+      icon.el.classList.add('selected');
+    }
+    return this;
+  };
 
+  SpritePanel.prototype.addIcon = function(name) {
+    var icon = new SpriteIcon(this, name);
+    this.icons.push(icon);
+    this.elSpriteSection.appendChild(icon.el);
+    return this;
+  };
+
+  SpritePanel.prototype.install = function(parent) {
+    parent.add(this.stageIcon);
+    this.icons.forEach(function(icon) {
+      parent.add(icon);
+    });
+  };
+
+  SpritePanel.prototype.uninstall = function() {
+    parent.remove(this.stageIcon);
+    this.icons.forEach(function(icon) {
+      parent.remove(icon);
+    });
+  };
+
+  function SpriteIcon(panel, name) {
+    this.panel = panel;
+    this.el = el('sprite-icon');
+    this.el.appendChild(this.elThumbnail = el('sprite-thumbnail'));
+    this.el.appendChild(this.elName = el('sprite-icon-label'));
+    this.elName.textContent = name;
+    if (name === 'Stage') {
+      this.el.className += ' for-stage';
+      this.el.appendChild(this.elInfo = el('sprite-icon-info'));
+      this.elInfo.textContent = '1 backdrop';
+    } else {
+      this.el.appendChild(this.elButton = el('button', 'sprite-icon-button'));
+    }
+    this.el.addEventListener('click', function() {
+      this.panel.select(this);
+    }.bind(this));
   }
 
-  var app = new vis.App();
-  var editor = document.querySelector('.editor');
+  var editor = new Editor();
+  document.body.appendChild(editor.el);
+  editor.resize();
+  window.editor = editor;
+
   var player = document.querySelector('.player');
-
-  var topBar = new TopBar();
-  editor.appendChild(topBar.el);
-  app.add(topBar);
-
-  var tabPanel = new TabPanel();
-  editor.appendChild(tabPanel.el);
-  app.add(tabPanel);
-
-  var stagePanel = new StagePanel();
-  editor.appendChild(stagePanel.el);
-  app.add(stagePanel);
-
-  var spritePanel = new SpritePanel();
-  editor.appendChild(spritePanel.el);
-  app.add(spritePanel);
-
   var stagePanel = new StagePanel();
   player.appendChild(stagePanel.el);
 
-  var flip = document.querySelector('.flip');
+  var flip = editor.elFlipButton;
   var flipBack = document.querySelector('.flip-back');
 
   var flipped = false;
@@ -976,7 +1048,5 @@
 
   flip.addEventListener('click', doFlip);
   flipBack.addEventListener('click', doFlip);
-
-  window.app = app;
 
 }());

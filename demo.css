@@ -300,23 +300,59 @@ button::-moz-focus-inner {
   text-align: center;
   color: #5c5d5f;
 }
-.stage-icon {
-  margin: 4px;
+.sprite-icon {
+  position: relative;
+  display: inline-block;
+  margin: 3px;
+  padding: 1px;
+  width: 68px;
+  border-radius: 4px;
+  color: #5c5d5f;
+  text-align: center;
+}
+.for-stage {
+  display: block;
+}
+.sprite-thumbnail {
   width: 68px;
   height: 51px;
+}
+.for-stage .sprite-thumbnail {
   background: #fff;
   box-shadow: 0 0 1px rgba(0, 0, 0, .5);
 }
-.stage-label {
+.sprite-icon-label {
   margin-top: 5px;
   font-size: 11px;
 }
-.stage-info {
-  margin-top: 1px;
+.sprite-icon-info {
+  margin: 1px 0 2px;
   font-size: 9px;
 }
+.sprite-icon.selected {
+  box-shadow: 0 0 0 3px #179fd7;
+  background: #d0d0d0;
+}
+.sprite-icon-button {
+  visibility: hidden;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  width: 18px;
+  height: 18px;
+  background: url(assets.png) -211px 0;
+}
+.sprite-icon-button:hover {
+  background-position: -211px -18px;
+}
+.sprite-icon.selected > .sprite-icon-button {
+  visibility: visible;
+}
 .new-backdrop {
-  margin-top: 14px;
+  margin-top: 11px;
   font-size: 10px;
 }
 .sprite-section {
@@ -328,6 +364,7 @@ button::-moz-focus-inner {
   border: 1px solid #d0d1d2;
   border-top: 0;
   border-left: 0;
+  padding: 1px;
 }
 .tab-panel {
   position: absolute;
@@ -338,10 +375,10 @@ button::-moz-focus-inner {
 }
 .tab {
   display: inline-block;
-  padding: 0 13px 0 11px;
+  padding: 0 13px 2px 11px;
   margin: 0;
-  height: 26px;
-  line-height: 24px;
+  height: 24px;
+  font: inherit;
   border: 1px solid #d0d1d2;
   border-bottom: 0;
   border-radius: 7px 7px 0 0;
@@ -354,7 +391,7 @@ button::-moz-focus-inner {
 }
 .tab:hover,
 .tab.selected {
-  padding-bottom: 1px;
+  padding-bottom: 3px;
   color: #5c5d5f;
   background: linear-gradient(#ffffff, #e6e8e8);
   box-shadow: none;
