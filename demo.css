@@ -336,6 +336,10 @@ button::-moz-focus-inner {
   box-shadow: 0 0 0 3px #179fd7;
   background: #d0d0d0;
 }
+.sprite-icon.feedback {
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, .3);
+  background: rgba(0, 0, 0, .05);
+}
 .sprite-icon-button {
   visibility: hidden;
   margin: 0;

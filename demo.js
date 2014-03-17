@@ -1015,6 +1015,11 @@
     });
   };
 
+  SpritePanel.prototype.resize = function() {
+    resize(this.stageIcon);
+    this.icons.forEach(resize);
+  };
+
   SpritePanel.prototype.uninstall = function() {
     parent.remove(this.stageIcon);
     this.icons.forEach(function(icon) {
@@ -1043,6 +1048,19 @@
       this.panel.select(this);
     }.bind(this));
   }
+
+  SpriteIcon.prototype = Object.create(vis.Target.prototype);
+
+  SpriteIcon.prototype.acceptsDropOf = function(script) {
+    return !this.el.classList.contains('selected');
+  };
+
+  SpriteIcon.prototype.drop = function(script) {
+    var p = vis.Workspace.prototype.padding;
+    var pos = this.parent.dragPos || {x: p, y: p};
+    this.sprite.scripts.push(script.copy().moveTo(pos.x, pos.y));
+    return false;
+  };
 
   var editor = new Editor();
   document.body.appendChild(editor.el);
