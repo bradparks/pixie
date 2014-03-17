@@ -1059,31 +1059,31 @@
   var flipped = false;
   function doFlip() {
     var time = 1;
-    editor.style.WebkitTransition =
+    editor.el.style.WebkitTransition =
     player.style.WebkitTransition = 'none';
-    editor.style.WebkitTransform =
+    editor.el.style.WebkitTransform =
     player.style.WebkitTransform = 'none';
-    var ebb = editor.getBoundingClientRect();
+    var ebb = editor.el.getBoundingClientRect();
     var pbb = player.getBoundingClientRect();
     var dx = ((pbb.right + pbb.left) - (ebb.right + ebb.left)) / 2;
     var dy = ((pbb.bottom + pbb.top) - (ebb.bottom + ebb.top)) / 2;
     var sx = pbb.width / ebb.width;
     var sy = pbb.height / ebb.height;
     if (flipped) {
-      editor.style.WebkitTransform = 'translate('+dx+'px,'+dy+'px) rotateY(180deg) scale('+sx+','+sy+')';
-      editor.offsetHeight;
+      editor.el.style.WebkitTransform = 'translate('+dx+'px,'+dy+'px) rotateY(180deg) scale('+sx+','+sy+')';
+      editor.el.offsetHeight;
       player.offsetHeight;
-      editor.style.WebkitTransition =
+      editor.el.style.WebkitTransition =
       player.style.WebkitTransition = '-webkit-transform '+time+'s, z-index '+time+'s';
-      editor.style.WebkitTransform = 'none';
+      editor.el.style.WebkitTransform = 'none';
       player.style.WebkitTransform = 'translate('+(-dx)+'px,'+(-dy)+'px) rotateY(-180deg) scale('+(1/sx)+','+(1/sy)+')';
     } else {
       player.style.WebkitTransform = 'translate('+(-dx)+'px,'+(-dy)+'px) rotateY(-180deg) scale('+(1/sx)+','+(1/sy)+')';
-      editor.offsetHeight;
+      editor.el.offsetHeight;
       player.offsetHeight;
-      editor.style.WebkitTransition =
+      editor.el.style.WebkitTransition =
       player.style.WebkitTransition = '-webkit-transform '+time+'s, z-index '+time+'s';
-      editor.style.WebkitTransform = 'translate('+dx+'px,'+dy+'px) rotateY(180deg) scale('+sx+','+sy+')';
+      editor.el.style.WebkitTransform = 'translate('+dx+'px,'+dy+'px) rotateY(180deg) scale('+sx+','+sy+')';
       player.style.WebkitTransform = 'none';
     }
     flipped = !flipped;
