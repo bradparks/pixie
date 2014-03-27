@@ -19,6 +19,7 @@ body {
   box-shadow: 0 0 0 1px #888;
   min-width: 960px;
   min-height: 600px;
+  overflow: hidden;
 }
 .player {
   position: relative;
@@ -34,22 +35,29 @@ body {
 .player .project-author {
   display: none;
 }
-.flip,
-.flip-back {
+.project-buttons {
   position: absolute;
   top: 33px;
   right: 5px;
+  z-index: 1;
+}
+.project-button {
   height: 22px;
   font: inherit;
   font-weight: bold;
   line-height: 22px;
   color: #fff;
   margin: 0;
-  padding: 0 7px 0 5px;
   border: 0;
+  padding: 0 8px;
   border-radius: 4px;
+  background: #9c9ea2;
+  margin-left: 5px;
+}
+.flip,
+.flip-back {
+  padding: 0 7px 0 5px;
   background: #179fd7;
-  z-index: 1;
 }
 .flip i,
 .flip-back i {
@@ -63,10 +71,10 @@ body {
   background: url(assets.png) -86px 0;
 }
 .flip-back {
+  position: absolute;
   top: auto;
   right: 5px;
   bottom: 5px;
-  z-index: 0;
 }
 button {
   outline: 0;
@@ -81,7 +89,7 @@ button::-moz-focus-inner {
   right: 0;
   height: 28px;
   background: #9c9ea2;
-  padding: 0 0 0 13px;
+  padding: 0 0 0 82px;
 }
 .top-button {
   vertical-align: middle;
@@ -90,9 +98,12 @@ button::-moz-focus-inner {
   font: inherit;
   font-weight: bold;
   color: #fff;
-  margin: 0 12px 0 0;
+  margin: 0 8px 0 0;
   height: 28px;
   padding: 0 3px;
+}
+.top-button.first {
+  margin: 0 12px 0 9px;
 }
 .top-button:hover {
   color: #fba939;
@@ -314,8 +325,8 @@ button::-moz-focus-inner {
   display: block;
 }
 .sprite-thumbnail {
-  width: 68px;
-  height: 51px;
+  position: relative;
+  display: block;
 }
 .for-stage .sprite-thumbnail {
   background: #fff;
@@ -379,6 +390,7 @@ button::-moz-focus-inner {
   top: 33px;
   bottom: 22px;
   right: 22px;
+  -webkit-transition: bottom .2s;
 }
 .tab {
   display: inline-block;
@@ -489,4 +501,34 @@ button::-moz-focus-inner {
   bottom: 5px;
   background: rgb(221, 222, 222);
   box-shadow: 0 0 0 1px #bcbdbe;
+}
+.backpack-panel {
+  position: absolute;
+  bottom: -117px;
+  left: 492px;
+  right: 22px;
+  height: 136px;
+  -webkit-transition: bottom .2s;
+}
+.backpack-title {
+  background: linear-gradient(#ffffff, #e6e8e8);
+  border: 1px solid #d0d1d2;
+  border-radius: 7px 7px 0 0;
+  height: 19px;
+  line-height: 16px;
+  padding: 0 17px;
+  color: #5c5d5f;
+  font-size: 14px;
+}
+.backpack-content {
+  height: 114px;
+  border: 1px solid #d0d1d2;
+  border-top: none;
+  background: #f2f2f2;
+}
+.backpack-open .tab-panel {
+  bottom: 140px;
+}
+.backpack-open .backpack-panel {
+  bottom: 1px;
 }

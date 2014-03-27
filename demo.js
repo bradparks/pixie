@@ -131,13 +131,13 @@
       // control - sprite
       "wait:elapsed:from:": ["c", "wait %n secs", 6, 1],
 
-      "doRepeat": ["c", "repeat %n %t", 6, 10],
-      "doForever": ["f", "forever %t", 6],
+      "doRepeat": ["c", "@loop repeat %n %t", 6, 10],
+      "doForever": ["f", "@loop forever %t", 6],
 
       "doIf": ["c", "if %b then %t", 6],
       "doIfElse": ["c", "if %b then %t else %t", 6],
       "doWaitUntil": ["c", "wait until %b", 6],
-      "doUntil": ["c", "repeat until %b %t", 6],
+      "doUntil": ["c", "@loop repeat until %b %t", 6],
 
       "stopScripts": ["f", "stop %m.stop", 6, "all"],
 
@@ -650,11 +650,22 @@
     return this.type !== 't' && (this.type !== 'b' || b.isBoolean) && (this.type !== 'm' || menusThatAcceptReporters.indexOf(this.menu) !== -1);
   };
 
-  vis.Workspace.prototype.padding = 10;
+  vis.Workspace.prototype.paddingX = 10;
+  vis.Workspace.prototype.paddingY = 10;
   vis.Workspace.prototype.spacing = 10;
 
-  vis.Palette.prototype.padding = 6;
+  vis.Palette.prototype.paddingX = 6;
+  vis.Palette.prototype.paddingY = 7;
+  vis.Palette.prototype.spacing = 5;
   vis.Palette.prototype.extraSpace = 6;
+  vis.Palette.prototype.spaceSize = 25;
+
+  vis.Block.prototype.click = function() {
+    var app = this.app;
+    if (app && app.exec) {
+      app.exec.toggleThread(this.topScript);
+    }
+  };
 
   function el(tagName, className) {
     var e = document.createElement(className == null ? 'div' : tagName);
@@ -668,49 +679,198 @@
     if (o.resize) o.resize();
   }
 
+  function inherits(sub, sup) {
+    sub.prototype = Object.create(sup.prototype);
+    sub.prototype.constructor = sub;
+  }
+
+
+  function ScratchObj(name) {
+    this.name = name;
+    this.scripts = [];
+    this.costumes = [];
+    this.costume = 0;
+  }
+
+  ScratchObj.prototype.addCostume = function(costume) {
+    if (this.costumes.indexOf(costume) === -1) {
+      this.costumes.push(costume);
+      costume.owner = this;
+    }
+    return this;
+  };
+
+  ScratchObj.prototype.redraw = function() {
+    this.stage.redraw();
+  };
+
+
+  function Costume(name, canvas, cx, cy) {
+    if (typeof canvas === 'string') {
+      var img = document.createElement('img');
+      img.src = canvas;
+      canvas = img;
+    }
+    if (canvas.tagName === 'IMG') {
+      var img = canvas;
+      canvas = document.createElement('canvas');
+      img.onload = function() {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        canvas.getContext('2d').drawImage(img, 0, 0);
+        this.owner.redraw();
+      }.bind(this);
+    }
+    this.name = name;
+    this.canvas = canvas;
+    this.cx = cx || 0;
+    this.cy = cy || 0;
+  }
+
 
   function Sprite(name) {
-    this.objName = name;
-    this.scripts = [];
+    ScratchObj.call(this, name);
+    this.rotationStyle = 'normal';
+    this.x = 0;
+    this.y = 0;
+    this.direction = 90;
+    this.scale = 1;
   }
+  inherits(Sprite, ScratchObj);
 
   Sprite.prototype.isSprite = true;
 
+  Sprite.prototype.drawOn = function(context) {
+    var costume = this.costumes[this.costume];
+    if (costume) {
+      context.save();
+      context.translate(240 + this.x, 180 - this.y);
+      if (this.rotationStyle === 'normal') {
+        context.rotate((this.direction - 90) * Math.PI / 180);
+      } else if (this.rotationStyle === 'leftRight' && this.direction < 0) {
+        context.scale(-1, 1);
+      }
+      context.scale(this.scale, this.scale);
+
+      context.drawImage(costume.canvas, -costume.cx, -costume.cy);
+      context.restore();
+    }
+  };
+
+
   function Stage() {
-    this.objName = 'Stage';
-    this.scripts = [];
+    ScratchObj.call(this, 'Stage');
+    this.children = [];
+    this.canvas = document.createElement('canvas');
+    this.canvas.width = 480;
+    this.canvas.height = 360;
+    this.context = this.canvas.getContext('2d');
   }
+  inherits(Stage, ScratchObj);
 
   Stage.prototype.isStage = true;
 
+  Stage.prototype.add = function(child) {
+    if (this.children.indexOf(child) === -1) {
+      this.children.push(child);
+      child.stage = this;
+    }
+    return this;
+  };
+
+  Stage.prototype.redraw = function() {
+    this.canvas.width = this.canvas.width;
+    this.drawOn(this.context);
+  };
+
+  Stage.prototype.drawOn = function(context) {
+    var costume = this.costumes[this.costume];
+    if (costume) {
+      context.drawImage(costume.canvas, 0, 0);
+    }
+    var children = this.children;
+    for (var i = 0, length = children.length; i < length; i++) {
+      children[i].drawOn(context);
+    }
+  };
+
+
+  function LocalBackpack() {}
+
+  LocalBackpack.prototype.isBackpack = true;
+
+
+  function Interpreter() {
+    this.threads = [];
+  }
+
+  Interpreter.prototype.toggleThread = function(script) {
+    if (script.isReporter) {
+      // TODO
+      return;
+    }
+    var threads = this.threads;
+    for (var i = threads.length; i--;) {
+      if (threads[i].topScript === script) {
+        threads.splice(i, 1);
+        return;
+      }
+    }
+    threads.push(new Thread(script));
+    return null;
+  };
+
+  Interpreter.prototype.findThread = function(script) {
+    var threads = this.threads;
+    for (var i = threads.length; i--;) {
+      if (threads[i].topScript === script) return threads[i];
+    }
+    return null;
+  };
+
+
+  function Thread(script) {
+    this.topScript = script;
+  }
+
 
   function Editor() {
+    this.exec = new Interpreter();
+
     this.stage = new Stage();
+    this.stage.add(new Sprite('Sprite1')
+      .addCostume(new Costume('costume1', 'costume1.svg', 47, 55))
+      .addCostume(new Costume('costume2', 'costume2.png', 57, 41)));
+    this.backpack = new LocalBackpack();
 
     this.topBar = new TopBar(this);
     this.tabPanel = new TabPanel(this);
-    this.stagePanel = new StagePanel(this);
-
+    this.stagePanel = new StagePanel(this.stage);
+    this.backpackPanel = new BackpackPanel(this);
     this.spritePanel = new SpritePanel(this);
-    this.spritePanel.addIcon(new Sprite('Sprite1'));
-    this.spritePanel.addIcon(new Sprite('Sprite2'));
-    this.spritePanel.select(this.spritePanel.icons[0]);
 
     this.app = new vis.App();
+    this.app.editor = this;
+    this.app.exec = this.exec;
     this.app.add(this.topBar);
     this.app.add(this.tabPanel);
     this.app.add(this.stagePanel);
     this.app.add(this.spritePanel);
+    this.app.add(this.backpackPanel);
 
     this.el = el('editor');
 
-    this.el.appendChild(this.elFlipButton = el('button', 'flip'));
+    this.el.appendChild(this.elTopButtons = el('project-buttons'));
+    this.elTopButtons.appendChild(this.elShareButton = el('button', 'project-button'));
+    this.elShareButton.innerHTML = 'Share';
+    this.elTopButtons.appendChild(this.elFlipButton = el('button', 'project-button flip'));
     this.elFlipButton.innerHTML = '<i></i>See project page';
 
     this.el.appendChild(this.topBar.el);
     this.el.appendChild(this.tabPanel.el);
     this.el.appendChild(this.stagePanel.el);
     this.el.appendChild(this.spritePanel.el);
+    this.el.appendChild(this.backpackPanel.el);
 
     window.addEventListener('resize', this.resize.bind(this));
   }
@@ -722,7 +882,10 @@
     resize(this.spritePanel);
   };
 
-  function ScriptEditor() {
+
+  function ScriptEditor(editor) {
+    this.editor = editor;
+
     this.el = el('script-editor');
     this.el.appendChild(this.elButtons = el('palette-buttons'));
     this.el.appendChild(this.elPalette = el('palette-contents'));
@@ -802,7 +965,10 @@
     }
   });
 
-  function TabPanel() {
+
+  function TabPanel(editor) {
+    this.editor = editor;
+
     this.el = el('tab-panel');
     this.el.appendChild(this.elContent = el('tab-panel-content'));
 
@@ -867,9 +1033,13 @@
     });
   };
 
-  function TopBar() {
+
+  function TopBar(editor) {
+    this.editor = editor;
+
     this.el = el('top-bar');
     this.languageButton = this.addButton('Language', this.languageMenu);
+    this.languageButton.classList.add('first');
     this.fileButton = this.addButton('File', this.fileMenu, true);
     this.editButton = this.addButton('Edit', this.editMenu, true);
     this.tipsButton = this.addButton('Tips', this.showTips);
@@ -922,7 +1092,6 @@
       'Undelete',
       vis.Menu.line,
       'Small stage layout',
-      vis.Menu.line,
       'Turbo mode').withContext('this'));
   };
   TopBar.prototype.showTips = function() {};
@@ -935,7 +1104,10 @@
     menu.showAt(bb.left, bb2.bottom, this.parent);
   };
 
-  function StagePanel() {
+
+  function StagePanel(stage) {
+    this.stage = stage;
+
     this.el = el('stage-panel stopped');
 
     this.el.appendChild(this.elTitleBar = el('title-bar'));
@@ -952,7 +1124,8 @@
     this.elTitleBar.appendChild(this.elAuthor = el('project-author'));
     this.elAuthor.textContent = 'by nXIII (unshared)';
 
-    this.el.appendChild(this.elStage = el('stage'));
+    this.el.appendChild(this.elStage = stage.canvas);
+    this.elStage.classList.add('stage');
   }
 
   StagePanel.prototype.addButton = function(className) {
@@ -960,6 +1133,7 @@
     this.elTitleBar.appendChild(button);
     return button;
   };
+
 
   function SpritePanel(editor) {
     this.editor = editor;
@@ -986,7 +1160,9 @@
     this.elNewBackdrop.textContent = 'New backdrop:';
 
     this.el.appendChild(this.elSpriteSection = el('sprite-section'));
-    this.select(this.stageIcon);
+
+    editor.stage.children.forEach(this.addIcon, this);
+    this.select(this.icons[0] || this.stageIcon);
   }
 
   SpritePanel.prototype.select = function(icon) {
@@ -1027,14 +1203,21 @@
     });
   };
 
+
   function SpriteIcon(panel, sprite) {
     this.panel = panel;
     this.sprite = sprite;
 
     this.el = el('sprite-icon');
-    this.el.appendChild(this.elThumbnail = el('sprite-thumbnail'));
+    this.el.appendChild(this.elThumbnail = el('canvas', 'sprite-thumbnail'));
+    this.elTmp = el('canvas', '');
+    this.elThumbnail.width = this.elTmp.width = 68;
+    this.elThumbnail.height = this.elTmp.height = 51;
+    this.context = this.elThumbnail.getContext('2d');
+    this.tmpContext = this.elTmp.getContext('2d');
+
     this.el.appendChild(this.elName = el('sprite-icon-label'));
-    this.elName.textContent = sprite.objName;
+    this.elName.textContent = sprite.name;
 
     if (sprite.isStage) {
       this.el.className += ' for-stage';
@@ -1047,20 +1230,85 @@
     this.el.addEventListener('click', function() {
       this.panel.select(this);
     }.bind(this));
-  }
 
-  SpriteIcon.prototype = Object.create(vis.Target.prototype);
+    setInterval(this.update.bind(this), 200);
+  }
+  inherits(SpriteIcon, vis.Target);
+
+  def(SpriteIcon.prototype, 'contextMenu', {get: function() {
+    return !this.sprite.isStage && new vis.Menu(
+      'duplicate',
+      vis.Menu.line,
+      'hide',
+      'delete',
+      vis.Menu.line,
+      'save to local file');
+  }});
 
   SpriteIcon.prototype.acceptsDropOf = function(script) {
     return !this.el.classList.contains('selected');
   };
 
   SpriteIcon.prototype.drop = function(script) {
-    var p = vis.Workspace.prototype.padding;
-    var pos = this.parent.dragPos || {x: p, y: p};
+    var pos = this.parent.dragPos || {
+      x: vis.Workspace.prototype.paddingX,
+      y: vis.Workspace.prototype.paddingY
+    };
     this.sprite.scripts.push(script.copy().moveTo(pos.x, pos.y));
     return false;
   };
+
+  SpriteIcon.prototype.update = function() {
+    var costume = this.sprite.costumes[this.sprite.costume];
+    if (costume === this.costume) return;
+    this.costume = costume.canvas && costume;
+
+    var w = this.elThumbnail.width;
+    var h = this.elThumbnail.height;
+    this.context.clearRect(0, 0, w, h);
+    if (!costume.canvas) return;
+
+    var cw = costume.canvas.width;
+    var ch = costume.canvas.height;
+    var scale = Math.min((w - 4) / cw, (h - 4) / ch);
+    var aw = scale * cw;
+    var ah = scale * ch;
+    var x = (w - aw)/2
+    var y = (h - ah)/2;
+
+    this.tmpContext.width = this.tmpContext.width;
+    this.tmpContext.drawImage(costume.canvas, x, y, aw, ah);
+
+    var ps = [-1, 0, 1];
+    for (var i = 0, l = ps.length; i < l; i++) {
+      for (var j = 0; j < l; j++) {
+        if (i !== j) {
+          this.context.shadowOffsetX = 10000 + ps[i];
+          this.context.shadowOffsetY = 10000 + ps[j];
+          this.context.shadowColor = 'rgba(0, 0, 0, .1)';
+          this.context.drawImage(this.elTmp, -10000, -10000);
+        }
+      }
+    }
+    this.context.drawImage(this.elTmp, 0, 0);
+  };
+
+
+  function BackpackPanel(editor) {
+    this.editor = editor;
+
+    this.el = el('backpack-panel');
+    this.el.appendChild(this.elTitle = el('backpack-title'));
+    this.elTitle.textContent = 'Backpack';
+    this.el.appendChild(this.elContent = el('backpack-content'));
+
+    this.elTitle.addEventListener('click', this.toggle.bind(this));
+  }
+
+  BackpackPanel.prototype.toggle = function() {
+    this.editor.el.classList.toggle('backpack-open');
+  };
+
 
   var editor = new Editor();
   document.body.appendChild(editor.el);
@@ -1068,7 +1316,7 @@
   window.editor = editor;
 
   var player = document.querySelector('.player');
-  var stagePanel = new StagePanel();
+  var stagePanel = new StagePanel(new Stage());
   player.appendChild(stagePanel.el);
 
   var flip = editor.elFlipButton;
