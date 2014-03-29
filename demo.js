@@ -777,12 +777,14 @@
     this.y = 0;
     this.direction = 90;
     this.scale = 1;
+    this.visible = true;
   }
   inherits(Sprite, ScratchObj);
 
   Sprite.prototype.isSprite = true;
 
   Sprite.prototype.drawOn = function(context) {
+    if (!this.visible) return;
     var costume = this.costumes[this.costume];
     if (costume) {
       context.save();
