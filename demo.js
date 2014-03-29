@@ -667,10 +667,53 @@
     }
   };
 
+  vis.Icon.prototype.icons.turnRight = function(context) {
+    context.canvas.width = 16;
+    context.canvas.height = 15;
+    if (!assetsLoaded) return onAssetsLoaded(this.redraw, this);
+    context.drawImage(assets, 229, 0, 16, 15, 0, 0, 16, 15);
+  };
+
+  vis.Icon.prototype.icons.turnLeft = function(context) {
+    context.canvas.width = 16;
+    context.canvas.height = 15;
+    if (!assetsLoaded) return onAssetsLoaded(this.redraw, this);
+    context.drawImage(assets, 229, 15, 16, 15, 0, 0, 16, 15);
+  };
+
+  vis.Icon.prototype.icons.greenFlag = function(context) {
+    context.canvas.width = 23;
+    context.canvas.height = 23;
+    if (!assetsLoaded) return onAssetsLoaded(this.redraw, this);
+    context.drawImage(assets, 245, 0, 23, 23, 0, 0, 23, 23);
+  };
+
   function el(tagName, className) {
     var e = document.createElement(className == null ? 'div' : tagName);
     e.className = className || tagName || '';
     return e;
+  }
+
+  var assets = document.createElement('img');
+  var assetsLoaded = false;
+  assets.src = 'assets.png';
+
+  assets.onload = function() {
+    assetsLoaded = true;
+    var i = onAssetsLoadedQueue.length;
+    while (i--) {
+      var q = onAssetsLoadedQueue[i];
+      q[0].call(q[1]);
+    }
+  };
+
+  var onAssetsLoadedQueue = [];
+  function onAssetsLoaded(fn, thisArg) {
+    if (assetsLoaded) {
+      fn.call(thisArg);
+    } else {
+      onAssetsLoadedQueue.push([fn, thisArg]);
+    }
   }
 
   var def = Object.defineProperty;
