@@ -662,7 +662,7 @@
   vis.Block.prototype.click = function() {
     var app = this.app;
     if (app && app.exec) {
-      app.exec.toggleThread(this.topScript);
+      app.exec.toggleThread(this.topScript, app.editor.selectedSprite);
     }
   };
 
@@ -744,6 +744,14 @@
 
   ScratchObj.prototype.redraw = function() {
     this.stage.redraw();
+  };
+
+
+  ScratchObj.prototype.forEachScript = function(fn, context) {
+    var s = this.scripts;
+    for (var i = 0, l = s.length; i < l; i++) {
+      fn.call(context, this, s[i]);
+    }
   };
 
 
@@ -838,17 +846,55 @@
     }
   };
 
+  Stage.prototype.forEachScript = function(fn, context) {
+    var children = this.children;
+    for (var i = 0, l = children.length; i < l; i++) {
+      children[i].forEachScript(fn, context);
+    }
+    ScratchObj.prototype.forEachScript.call(this, fn, context);
+  };
+
 
   function LocalBackpack() {}
 
   LocalBackpack.prototype.isBackpack = true;
 
 
-  function Interpreter() {
+  function Interpreter(stage) {
+    this.stage = stage;
+    this.frameRate = 30;
+    this.warpTime = 500;
+
     this.threads = [];
+    this.warpThread = null;
+
+    this.turbo = false;
+    this.yield = false;
+    this.waiting = false;
+    this.redraw = false;
+
+    this.addPrimitives(this.table = {});
   }
 
-  Interpreter.prototype.toggleThread = function(script) {
+  Interpreter.prototype.triggerGreenFlag = function() {
+    this.stopAll();
+    this.trigger('whenGreenFlag');
+  };
+
+  Interpreter.prototype.trigger = function(event, arg) {
+    if (arg !== undefined) arg = (''+arg).toLowerCase();
+    this.stage.forEachScript(function(sprite, script) {
+      if (!script.isEmpty && script.blocks[0].name === event && (arg === undefined || (''+script.blocks[0].args[0].value).toLowerCase() === arg)) {
+        this.toggleThread(script, sprite);
+      }
+    }, this);
+  };
+
+  Interpreter.prototype.stopAll = function() {
+    this.threads = [];
+  };
+
+  Interpreter.prototype.toggleThread = function(script, target) {
     if (script.isReporter) {
       // TODO
       return;
@@ -860,7 +906,7 @@
         return;
       }
     }
-    threads.push(new Thread(script));
+    threads.push(new Thread(this, script, target));
     return null;
   };
 
@@ -872,20 +918,294 @@
     return null;
   };
 
+  Interpreter.prototype.install = function() {
+    this.interval = setInterval(this.step.bind(this), 1000 / this.frameRate);
+  };
 
-  function Thread(script) {
+  Interpreter.prototype.uninstall = function() {
+    clearInterval(this.interval);
+  };
+
+  Interpreter.prototype.step = function() {
+    if (this.threads.length === 0) return;
+
+    var maxTime = 1000 / this.frameRate * .75;
+
+    this.redraw = false;
+    this.start = Date.now();
+    this.time = this.start;
+    do {
+      if (this.warpThread && this.warpThread.done) this.warpThread = null;
+
+      var canRun = false;
+
+      var threads = this.threads;
+      for (var i = 0, l = threads.length; i < l; i++) {
+        this.activeThread = threads[i];
+        this.stepActiveThread();
+
+        if (!this.waiting) canRun = true;
+        if (this.activeThread.done) {
+          threads.splice(i, 1);
+          i--;
+          l--;
+        }
+      }
+    } while ((this.turbo || !this.redraw) && canRun && this.threads.length && this.time - this.start < maxTime);
+
+    if (this.redraw) {
+      this.stage.redraw();
+    }
+  };
+
+  Interpreter.prototype.stepActiveThread = function() {
+    var thread = this.activeThread;
+
+    this.yield = false;
+    this.waiting = false;
+    while (!this.yield) {
+      if (this.warpThread === thread) this.time = Date.now();
+
+      this.evalBlock(thread.script.blocks[thread.pc++]);
+
+      while (thread.pc >= thread.script.blocks.length) {
+        if (thread.unwarp) {
+          this.warpThread = null;
+        }
+        if (!thread.popStack()) {
+          thread.done = true;
+          return;
+        }
+        if (thread.isLoop) {
+          if (this.activeThread !== this.warpThread || this.time - this.start > this.warpTime) return;
+        }
+      }
+    }
+  };
+
+  Interpreter.prototype.evalBlock = function(b) {
+    return (b.fn || (b.fn = this.table[b.name] || this.primUndefined))(b);
+  };
+
+  Interpreter.prototype.startScript = function(s, isLoop, args) {
+    if (s.blocks.length === 0) {
+      this.yield = true;
+      return;
+    }
+    var thread = this.activeThread;
+    thread.isLoop = isLoop;
+    if (isLoop) thread.pc--;
+    thread.pushStack(s);
+    if (args) thread.args = args;
+  };
+
+  Interpreter.prototype.arg = function(b, i) {
+    var a = b.args[i];
+    return a.isArg ? a.value : this.evalBlock(a);
+  };
+
+  Interpreter.prototype.narg = function(b, i) {
+    var a = b.args[i];
+    var x = a.isArg ? a.value : this.evalBlock(a);
+    return Number(x) || 0;
+  };
+
+  Interpreter.prototype.barg = function() {
+    var a = b.args[i];
+    var x = a.isArg ? a.value : this.evalBlock(a);
+    return x && x !== '0' && x !== 'false';
+  };
+
+  Interpreter.prototype.addPrimitives = function(table) {
+    var interp = this;
+
+    function moveSpriteTo(sprite, x, y) {
+      sprite.x = x;
+      sprite.y = y;
+      if (sprite.visible) interp.redraw = true;
+    }
+
+    function turnSprite(sprite, d) {
+      d = d % 360;
+      if (d <= -180) d += 360;
+      if (d > 180) d -= 360;
+      sprite.direction = d;
+      if (sprite.visible) interp.redraw = true;
+    }
+
+    function spriteNamed(name) {
+      var sprites = interp.stage.sprites;
+      for (var i = 0, l = sprites.length; i < l; i++) {
+        sprites[i];
+      }
+    }
+
+    // Motion
+
+    table['forward:'] = function(b) {
+      var sprite = interp.activeThread.target;
+      if (!sprite.isSprite) return;
+
+      var steps = interp.narg(b, 0);
+      var d = sprite.direction * Math.PI / 180;
+      moveSpriteTo(sprite, sprite.x + Math.sin(d) * steps, sprite.y + Math.cos(d) * steps);
+    };
+
+    table['turnRight:'] = function(b) {
+      var sprite = interp.activeThread.target;
+      if (sprite.isSprite) turnSprite(sprite, sprite.direction + interp.narg(b, 0));
+    };
+
+    table['turnLeft:'] = function(b) {
+      var sprite = interp.activeThread.target;
+      if (sprite.isSprite) turnSprite(sprite, sprite.direction - interp.narg(b, 0));
+    };
+
+    table['heading:'] = function(b) {
+      var sprite = interp.activeThread.target;
+      if (sprite.isSprite) turnSprite(sprite, interp.narg(b, 0));
+    };
+
+    table['pointTowards:'] = function(b) {
+      var sprite = interp.activeThread.target;
+      if (!sprite.isSprite) return;
+
+      var name = interp.arg(b, 0);
+      if (name === '_mouse_') {
+        pointSpriteTowards(sprite, 0, 0); // TODO
+      } else {
+        var other = spriteNamed(name);
+        pointSpriteTowards(sprite, other.x, other.y);
+      }
+    };
+
+    // Looks
+
+    table['say:'] = function(b) {console.log(interp.arg(b, 0))};
+
+    // Events
+
+    table['whenGreenFlag'] = this.primNoop;
+    table['whenKeyPressed'] = this.primNoop;
+    table['whenClicked'] = this.primNoop;
+    table['whenSceneStarts'] = this.primNoop;
+    table['whenSensorGreaterThan'] = this.primNoop;
+    table['whenIReceive'] = this.primNoop;
+
+    // Control
+
+    table['doRepeat'] = function(b) {
+      if (interp.activeThread.tmp === null) {
+        interp.activeThread.tmp = Math.max(0, interp.arg(b, 0));
+      }
+      if (interp.activeThread.tmp >= 0.5) {
+        interp.activeThread.tmp--;
+        interp.startScript(b.args[1].script, true);
+      } else {
+        interp.activeThread.tmp = null;
+      }
+    };
+    table['doForever'] = function(b) {interp.startScript(b.args[0].script, true)};
+
+    // Operators
+
+    table['+'] = function(b) {return interp.narg(b, 0) + interp.narg(b, 1)};
+    table['-'] = function(b) {return interp.narg(b, 0) - interp.narg(b, 1)};
+    table['*'] = function(b) {return interp.narg(b, 0) * interp.narg(b, 1)};
+    table['/'] = function(b) {return interp.narg(b, 0) / interp.narg(b, 1)};
+
+    table['&'] = function(b) {return interp.barg(b, 0) && interp.barg(b, 1)};
+    table['|'] = function(b) {return interp.barg(b, 0) || interp.barg(b, 1)};
+
+    table['\\\\'] =
+    table['%'] = function(b) {
+      var m = interp.narg(b, 1);
+      var x = interp.narg(b, 0) % m;
+      if (x / m < 0) x += m;
+      return x;
+    };
+  };
+
+  Interpreter.prototype.primNoop = function() {};
+
+  Interpreter.prototype.primUndefined = function(b) {
+    console.log('undefined: ' + b.name);
+  };
+
+
+  function Thread(exec, script, target) {
+    this.exec = exec;
     this.topScript = script;
+    this.target = target;
+
+    this.stack = [];
+    this.sp = 0;
+    this.expandStack();
+
+    this.script = script;
+    this.pc = 0;
+    this.tmp = null;
+    this.isLoop = false;
+    this.unwarp = false;
+    this.args = [];
+
+    this.done = false;
+    this.yield = false;
   }
+
+  Thread.prototype.pushStack = function(script) {
+    if (this.sp === this.stack.length) this.expandStack();
+
+    var state = this.stack[this.sp++];
+    state.script = this.script;
+    state.pc = this.pc;
+    state.tmp = this.tmp;
+    state.isLoop = this.isLoop;
+    state.unwarp = this.unwarp;
+    state.args = this.args;
+
+    this.script = script;
+    this.pc = 0;
+    this.tmp = null;
+    this.isLoop = false;
+    this.unwarp = false;
+  };
+
+  Thread.prototype.popStack = function() {
+    if (this.sp === 0) return false;
+
+    var state = this.stack[--this.sp];
+    this.script = state.script;
+    this.pc = state.pc;
+    this.tmp = state.tmp;
+    this.isLoop = state.isLoop;
+    this.unwarp = state.unwarp;
+    this.args = state.args;
+    return true;
+  };
+
+  Thread.prototype.expandStack = function() {
+    var i = this.stack.length || 4;
+    while (i--) {
+      this.stack.push({
+        script: null,
+        pc: null,
+        tmp: null,
+        isLoop: null,
+        args: null
+      });
+    }
+  };
 
 
   function Editor() {
-    this.exec = new Interpreter();
-
     this.stage = new Stage();
     this.stage.add(new Sprite('Sprite1')
       .addCostume(new Costume('costume1', 'costume1.svg', 47, 55))
       .addCostume(new Costume('costume2', 'costume2.png', 57, 41)));
     this.backpack = new LocalBackpack();
+
+    this.exec = new Interpreter(this.stage);
 
     this.topBar = new TopBar(this);
     this.tabPanel = new TabPanel(this);
@@ -896,6 +1216,7 @@
     this.app = new vis.App();
     this.app.editor = this;
     this.app.exec = this.exec;
+    this.app.add(this.exec);
     this.app.add(this.topBar);
     this.app.add(this.tabPanel);
     this.app.add(this.stagePanel);
@@ -1156,8 +1477,12 @@
 
     this.el.appendChild(this.elTitleBar = el('title-bar'));
     this.fullScreenButton = this.addButton('full-screen');
-    this.stopButton = this.addButton('stop');
-    this.runButton = this.addButton('run');
+    this.stopButton = this.addButton('stop', function() {
+      this.parent.exec.stopAll();
+    });
+    this.runButton = this.addButton('run', function() {
+      this.parent.exec.triggerGreenFlag();
+    });
 
     this.elTitleBar.appendChild(this.elVersion = el('version'));
     this.elVersion.textContent = 'js001';
@@ -1172,9 +1497,10 @@
     this.elStage.classList.add('stage');
   }
 
-  StagePanel.prototype.addButton = function(className) {
+  StagePanel.prototype.addButton = function(className, fn) {
     var button = el('button', 'title-button ' + className);
     this.elTitleBar.appendChild(button);
+    if (fn) button.addEventListener('click', fn.bind(this));
     return button;
   };
 
