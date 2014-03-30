@@ -1519,10 +1519,10 @@
 
     this.elTitleBar.appendChild(this.elNewGroup = el('new-group'));
     this.elNewGroup.textContent = 'New sprite:';
-    this.elNewGroup.appendChild(el('button', 'new-button new-library'));
-    this.elNewGroup.appendChild(el('button', 'new-button new-paint'));
-    this.elNewGroup.appendChild(el('button', 'new-button new-import'));
-    this.elNewGroup.appendChild(el('button', 'new-button new-camera'));
+    this.addNewButton('new-library', this.newFromLibrary);
+    this.addNewButton('new-paint');
+    this.addNewButton('new-import');
+    this.addNewButton('new-camera');
 
     this.el.appendChild(this.elStageSection = el('stage-section'));
     this.elStageSection.appendChild(this.stageIcon.el);
@@ -1534,6 +1534,13 @@
     editor.stage.children.forEach(this.addIcon, this);
     this.select(this.icons[0] || this.stageIcon);
   }
+
+  SpritePanel.prototype.newFromLibrary = function() {
+    var sprite = new Sprite('Sprite'+(this.editor.stage.children.length + 1))
+      .addCostume(new Costume('costume1', 'costume1.svg', 47, 55));
+    this.editor.stage.add(sprite);
+    this.addIcon(sprite);
+  };
 
   SpritePanel.prototype.select = function(icon) {
     if (this.selectedIcon) {
@@ -1551,7 +1558,17 @@
     var icon = new SpriteIcon(this, name);
     this.icons.push(icon);
     this.elSpriteSection.appendChild(icon.el);
+    if (this.parent) {
+      this.parent.add(icon);
+      icon.resize();
+    }
     return this;
+  };
+
+  SpritePanel.prototype.addNewButton = function(name, fn) {
+    var button = el('button', 'new-button '+name);
+    if (fn) button.addEventListener('click', fn.bind(this));
+    this.elNewGroup.appendChild(button);
   };
 
   SpritePanel.prototype.install = function(parent) {
