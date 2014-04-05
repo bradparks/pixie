@@ -696,7 +696,7 @@
   };
 
   vis.Script.prototype.runningEffect = function() {
-    var canvas = this.shadow(0, 0, 12, '#ff8');
+    var canvas = this.shadow(0, 0, 12, '#ff9');
     var ctx = canvas.getContext('2d');
     ctx.drawImage(canvas, 0, 0);
     ctx.drawImage(canvas, 0, 0);
