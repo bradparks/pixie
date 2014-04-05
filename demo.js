@@ -657,7 +657,7 @@
   vis.Palette.prototype.paddingY = 7;
   vis.Palette.prototype.spacing = 5;
   vis.Palette.prototype.extraSpace = 6;
-  vis.Palette.prototype.spaceSize = 25;
+  vis.Palette.prototype.spaceSize = 15;
 
   vis.Block.prototype.click = function() {
     var app = this.app;
