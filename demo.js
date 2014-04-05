@@ -687,6 +687,28 @@
     context.drawImage(assets, 245, 0, 23, 23, 0, 0, 23, 23);
   };
 
+  vis.Script.prototype.addRunningEffect = function() {
+    if (!this._runningEffect) {
+      this.addEffect(this.runningEffect);
+      this._runningEffect = true;
+    }
+    return this;
+  };
+
+  vis.Script.prototype.runningEffect = function() {
+    var canvas = this.shadow(0, 0, 12, '#ff8');
+    var ctx = canvas.getContext('2d');
+    ctx.drawImage(canvas, 0, 0);
+    ctx.drawImage(canvas, 0, 0);
+    return canvas;
+  };
+
+  vis.Script.prototype.removeRunningEffect = function() {
+    this.removeEffect(this.runningEffect);
+    this._runningEffect = false;
+    return this;
+  };
+
   function el(tagName, className) {
     var e = document.createElement(className == null ? 'div' : tagName);
     e.className = className || tagName || '';
@@ -899,23 +921,30 @@
       // TODO
       return;
     }
+    if (script.thread) {
+      this.stopThread(script.thread);
+      script.thread = null;
+      return;
+    }
+    script.addRunningEffect();
+    this.threads.push(script.thread = new Thread(this, script, target));
+  };
+
+  Interpreter.prototype.findThread = function(script, target) {
     var threads = this.threads;
     for (var i = threads.length; i--;) {
-      if (threads[i].topScript === script) {
-        threads.splice(i, 1);
-        return;
-      }
+      var t = threads[i];
+      if (t.topScript === script && t.target === target) return t;
     }
-    threads.push(new Thread(this, script, target));
     return null;
   };
 
-  Interpreter.prototype.findThread = function(script) {
-    var threads = this.threads;
-    for (var i = threads.length; i--;) {
-      if (threads[i].topScript === script) return threads[i];
+  Interpreter.prototype.stopThread = function(thread) {
+    if (thread) {
+      var i = this.threads.indexOf(thread);
+      if (i !== -1) this.threads.splice(i, 1);
+      thread.topScript.removeRunningEffect();
     }
-    return null;
   };
 
   Interpreter.prototype.install = function() {
@@ -946,11 +975,14 @@
 
         if (!this.waiting) canRun = true;
         if (this.activeThread.done) {
+          this.activeThread.topScript.thread = null;
+          this.activeThread.topScript.removeRunningEffect();
           threads.splice(i, 1);
           i--;
           l--;
         }
       }
+      this.time = Date.now();
     } while ((this.turbo || !this.redraw) && canRun && this.threads.length && this.time - this.start < maxTime);
 
     if (this.redraw) {
@@ -966,7 +998,9 @@
     while (!this.yield) {
       if (this.warpThread === thread) this.time = Date.now();
 
-      this.evalBlock(thread.script.blocks[thread.pc++]);
+      if (thread.pc < thread.script.blocks.length) {
+        this.evalBlock(thread.script.blocks[thread.pc++]);
+      }
 
       while (thread.pc >= thread.script.blocks.length) {
         if (thread.unwarp) {
@@ -988,13 +1022,13 @@
   };
 
   Interpreter.prototype.startScript = function(s, isLoop, args) {
-    if (s.blocks.length === 0) {
+    var thread = this.activeThread;
+    if (isLoop) thread.pc--;
+    if (s.isEmpty) {
       this.yield = true;
       return;
     }
-    var thread = this.activeThread;
     thread.isLoop = isLoop;
-    if (isLoop) thread.pc--;
     thread.pushStack(s);
     if (args) thread.args = args;
   };
@@ -1323,6 +1357,12 @@
       }
       this.categoryButton = this.buttons[value];
       this.categoryButton.className = 'palette-button selected';
+
+      var scripts = this.palette.scripts;
+      for (var i = scripts.length; i--;) {
+        this.editor.exec.stopThread(scripts[i].thread);
+      }
+
       this.palette.clear();
       (palettes[value] || []).forEach(function(name) {
         this.palette.add(name === '--' ? vis.Palette.space() : new vis.Script().add(new vis.Block(name)));
@@ -1338,7 +1378,7 @@
     this.el.appendChild(this.elContent = el('tab-panel-content'));
 
     this.tabPanels = [
-      this.scriptEditor = new ScriptEditor(),
+      this.scriptEditor = new ScriptEditor(editor),
       null,
       null];
     this.tabs = [];
@@ -1539,7 +1579,7 @@
     var sprite = new Sprite('Sprite'+(this.editor.stage.children.length + 1))
       .addCostume(new Costume('costume1', 'costume1.svg', 47, 55));
     this.editor.stage.add(sprite);
-    this.addIcon(sprite);
+    this.select(this.addIcon(sprite));
   };
 
   SpritePanel.prototype.select = function(icon) {
@@ -1562,7 +1602,7 @@
       this.parent.add(icon);
       icon.resize();
     }
-    return this;
+    return icon;
   };
 
   SpritePanel.prototype.addNewButton = function(name, fn) {
