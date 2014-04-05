@@ -311,8 +311,17 @@
       triggerSensor: function() {
         return new vis.Menu('loudness', 'timer', 'video motion');
       },
-      stop: function() {
-        return new vis.Menu('all', 'this script', 'other scripts in sprite');
+      stop: function(arg) {
+        function item(value, type) {
+          return [value, function() {
+            arg.value = value;
+            if (arg.parent) arg.parent.type = type;
+          }];
+        }
+        return new vis.Menu(
+          item('all', 'f'),
+          item('this script', 'f'),
+          item('other scripts in sprite', 'c'));
       },
       spriteOnly: function() {
         return new vis.Menu('myself', vis.Menu.line, 'Sprite1', 'Sprite2');
