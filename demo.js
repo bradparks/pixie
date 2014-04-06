@@ -1077,6 +1077,26 @@
     return x && x !== '0' && x !== 'false';
   };
 
+  Interpreter.prototype.startTimed = function(duration) {
+    var thread = this.activeThread;
+    thread.tmp = this.time + Math.max(duration * 1000, 0);
+    thread.pc--;
+    this.yield = true;
+  };
+
+  Interpreter.prototype.stepTimed = function() {
+    var thread = this.activeThread;
+    if (this.time >= thread.tmp) {
+      thread.tmp = null;
+      thread.extra = null;
+      return true;
+    } else {
+      thread.pc--;
+      this.yield = true;
+      return false;
+    }
+  };
+
   Interpreter.prototype.addPrimitives = function(table) {
     var interp = this;
 
@@ -1143,6 +1163,52 @@
       } else {
         var other = spriteNamed(name);
         if (other) pointSpriteTowards(sprite, other.x, other.y);
+      }
+    };
+
+    table['gotoX:y:'] = function(b) {
+      var sprite = interp.activeThread.target;
+      if (sprite.isSprite) moveSpriteTo(sprite, interp.narg(b, 0), interp.narg(b, 1));
+    };
+
+    table['gotoSpriteOrMouse:'] = function(b) {
+      var sprite = interp.activeThread.target;
+      if (!sprite.isSprite) return;
+
+      var name = interp.arg(b, 0);
+      if (name === 'mouse-pointer') { // FIXME: _mouse_
+        moveSpriteTo(sprite, interp.stage.mouseX, interp.stage.mouseY);
+      } else {
+        var other = spriteNamed(name);
+        if (other) moveSpriteTo(sprite, other.x, other.y);
+      }
+    };
+
+    table['glideSecs:toX:y:elapsed:from:'] = function(b) {
+      var sprite = interp.activeThread.target;
+      if (!sprite.isSprite) return;
+
+      if (interp.activeThread.tmp === null) {
+        var duration = interp.narg(b, 0);
+        interp.startTimed(duration);
+        interp.activeThread.extra = {
+          start: interp.time,
+          ms: duration * 1000,
+          sx: sprite.x,
+          sy: sprite.y,
+          x: interp.narg(b, 1),
+          y: interp.narg(b, 2)
+        };
+        interp.redraw = true;
+      } else {
+        var extra = interp.activeThread.extra;
+        if (interp.stepTimed()) {
+          moveSpriteTo(sprite, extra.x, extra.y);
+        } else {
+          var p = (interp.time - extra.start) / extra.ms;
+          var q = 1 - p;
+          moveSpriteTo(sprite, extra.sx * q + extra.x * p, extra.sy * q + extra.y * p);
+        }
       }
     };
 
@@ -1223,6 +1289,7 @@
 
     this.stack = [];
     this.sp = 0;
+    this.extra = null;
     this.expandStack();
 
     this.script = script;
