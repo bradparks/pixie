@@ -2,6 +2,16 @@
   'use strict';
 
   var vis = Visual({
+    strings: {
+      '_mouse_': 'mouse-pointer',
+      '_edge_': 'edge',
+      '_myself_': 'myself',
+      '_stage_': 'Stage'
+    },
+    // for testing translation
+    // getText: function(key) {
+    //   return 'TR: ' + (vis.options.strings[key] || key);
+    // },
     categories: {
       0: ["undefined", '#d42828'],
       1: ["Motion", '#4a6cd4'],
@@ -28,7 +38,7 @@
       "pointTowards:": ["c", "point towards %m.spriteOrMouse", 1, ""],
 
       "gotoX:y:": ["c", "go to x:%n y:%n", 1, 0, 0],
-      "gotoSpriteOrMouse:": ["c", "go to %m.spriteOrMouse", 1, "mouse-pointer"],
+      "gotoSpriteOrMouse:": ["c", "go to %m.spriteOrMouse", 1, "_mouse_"],
       "glideSecs:toX:y:elapsed:from:": ["c", "glide %n secs to x:%n y:%n", 1, 1, 0, 0],
 
       "changeXposBy:": ["c", "change x by %n", 1, 10],
@@ -141,7 +151,7 @@
       "stopScripts": ["f", "stop %m.stop", 6, "all"],
 
       "whenCloned": ["h", "when I start as a clone", 6],
-      "createCloneOf": ["c", "create clone of %m.spriteOnly", 6, 'myself'],
+      "createCloneOf": ["c", "create clone of %m.spriteOnly", 6, '_myself_'],
       "deleteClone": ["f", "delete this clone", 6],
 
       // sensing
@@ -253,11 +263,14 @@
     },
     menus: {
       direction: function() {
-        return new vis.Menu(
-          ['(90) right', 90],
-          ['(-90) left', -90],
-          ['(0) up', 0],
-          ['(180) down', 180]);
+        var m = new vis.Menu;
+        [[90, 'right'],
+         [-90, 'left'],
+         [0, 'up'],
+         [180, 'down']].forEach(function(item) {
+          m.add(['('+item[0]+') '+vis.getText(item[1]), item[0]]);
+        });
+        return m;
       },
       var: function() {
         return new vis.Menu('variable', 'another', vis.Menu.line, 'local');
@@ -266,54 +279,48 @@
         return new vis.Menu('list', 'another', vis.Menu.line, 'local');
       },
       key: function() {
-        var m = new vis.Menu('up arrow', 'down arrow', 'left arrow', 'right arrow', 'space');
-        var z = 'z'.charCodeAt(0);
-        for (var i = 'a'.charCodeAt(0); i <= z; i++) {
-          m.add(String.fromCharCode(i));
-        }
-        var nine = '9'.charCodeAt(0);
-        for (var i = '0'.charCodeAt(0); i <= nine; i++) {
-          m.add(String.fromCharCode(i));
-        }
+        var m = new vis.Menu('up arrow', 'down arrow', 'left arrow', 'right arrow', 'space').translate().addAll('abcdefghijklmnopqrstuvwxyz0123456789'.split(''));
         return m;
       },
-      spriteOrMouse: function() {
-        return new vis.Menu('mouse-pointer', vis.Menu.line, 'Sprite2');
+      spriteOrMouse: function(arg) {
+        return spriteMenu(arg, '_mouse_');
       },
-      touching: function() {
-        return new vis.Menu('mouse-pointer', 'edge', vis.Menu.line, 'Sprite2');
+      touching: function(arg) {
+        return spriteMenu(arg, '_mouse_', '_edge_');
       },
       rotationStyle: function() {
-        return new vis.Menu('left-right', 'all around', "don't rotate");
+        return new vis.Menu('left-right', 'all around', "don't rotate").translate();
       },
       effect: function() {
-        return new vis.Menu('color', 'fisheye', 'whirl', 'pixelate', 'mosaic', 'brightness', 'ghost');
+        return new vis.Menu('color', 'fisheye', 'whirl', 'pixelate', 'mosaic', 'brightness', 'ghost').translate();
       },
-      costume: function() {
-        return new vis.Menu('costume1', 'costume2', 'costume3');
+      costume: function(arg) {
+        return new vis.Menu().addAll(arg.app.editor.selectedSprite.costumes.map(getName));
       },
-      backdrop: function() {
-        return new vis.Menu('backdrop1', 'backdrop2', 'backdrop3');
+      backdrop: function(arg) {
+        return new vis.Menu().addAll(arg.app.editor.stage.costumes.map(getName));
       },
-      sound: function() {
-        return new vis.Menu('pop');
+      sound: function(arg) {
+        return new vis.Menu().addAll(arg.app.editor.selectedSprite.sounds.map(getName)).add(vis.Menu.line).add(['record...', function() {
+          // TODO record a sound
+        }]);
       },
       broadcast: function() {
         return new vis.Menu(
           'broadcast1',
           vis.Menu.line,
-          ['new message...', function() {
+          [vis.getText('new message...'), function() {
             var arg = this;
             var value = prompt('Message name?');
             if (value != null) arg.value = value;
           }]);
       },
       triggerSensor: function() {
-        return new vis.Menu('loudness', 'timer', 'video motion');
+        return new vis.Menu('loudness', 'timer', 'video motion').translate();
       },
       stop: function(arg) {
         function item(value, type) {
-          return [value, function() {
+          return [vis.getText(value), function() {
             arg.value = value;
             if (arg.parent) arg.parent.type = type;
           }];
@@ -323,67 +330,60 @@
           item('this script', 'f'),
           item('other scripts in sprite', 'c'));
       },
-      spriteOnly: function() {
-        return new vis.Menu('myself', vis.Menu.line, 'Sprite1', 'Sprite2');
+      spriteOnly: function(arg) {
+        return spriteMenu(arg, '_myself_');
       },
       videoMotionType: function() {
-        return new vis.Menu('motion', 'direction');
+        return new vis.Menu('motion', 'direction').translate();
       },
       stageOrThis: function() {
-        return new vis.Menu('stage', 'this sprite');
+        return new vis.Menu('Stage', 'this sprite').translate();
       },
       videoState: function() {
-        return new vis.Menu('off', 'on', 'on-flipped');
+        return new vis.Menu('off', 'on', 'on-flipped').translate();
       },
-      spriteOrStage: function() {
-        return new vis.Menu('Stage', vis.Menu.line, 'Sprite2');
+      spriteOrStage: function(arg) {
+        return spriteMenu(arg, '_stage_');
       },
       attribute: function(arg) {
-        return arg.parent.args[1].value === 'Stage' ? new vis.Menu('backdrop #', 'backdrop name', 'volume') : new vis.Menu('x position', 'y position', 'direction', 'costume #', 'costume name', 'size', 'volume');
+        return arg.parent.args[1].value === '_stage_' ? new vis.Menu('backdrop #', 'backdrop name', 'volume').translate() : new vis.Menu('x position', 'y position', 'direction', 'costume #', 'costume name', 'size', 'volume').translate(); // TODO variables
       },
       timeAndDate: function() {
-        return new vis.Menu('year', 'month', 'date', 'day of week', 'hour', 'minute', 'second');
+        return new vis.Menu('year', 'month', 'date', 'day of week', 'hour', 'minute', 'second').translate();
       },
       mathOp: function() {
-        return new vis.Menu('abs', 'floor', 'ceiling', 'sqrt', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'ln', 'log', 'e ^', '10 ^');
+        return new vis.Menu('abs', 'floor', 'ceiling', 'sqrt', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'ln', 'log', 'e ^', '10 ^').translate();
       },
       drum: function() {
-        var m = new vis.Menu();
-        ['Snare Drum', 'Bass Drum', 'Side Stick', 'Crash Cymbal', 'Open Hi-Hat', 'Closed Hi-Hat', 'Tambourine', 'Hand Clap', 'Claves', 'Wood Block', 'Cowbell', 'Triangle', 'Bongo', 'Conga', 'Cabassa', 'Guiro', 'Vibraslap', 'Open Culca'].forEach(function(x, i) {
-          m.add(['('+(i + 1)+') ' + x, i + 1]);
-        });
+        return new vis.Menu().addAll(['Snare Drum', 'Bass Drum', 'Side Stick', 'Crash Cymbal', 'Open Hi-Hat', 'Closed Hi-Hat', 'Tambourine', 'Hand Clap', 'Claves', 'Wood Block', 'Cowbell', 'Triangle', 'Bongo', 'Conga', 'Cabassa', 'Guiro', 'Vibraslap', 'Open Culca'].map(function(x, i) {return ['('+(i + 1)+') ' + vis.getText(x), i + 1]}));
         return m;
       },
       instrument: function() {
-        var m = new vis.Menu();
-        ['Piano', 'Electric Piano', 'Organ', 'Guitar', 'Electric Guitar', 'Bass', 'Pizzicato', 'Cello', 'Trombone', 'Clarinet', 'Saxophone', 'Flute', 'Wooden Flute', 'Bassoon', 'Choir', 'Vibraphone', 'Music Box', 'Steel Drum', 'Marimba', 'Synth Lead', 'Synth Pad'].forEach(function(x, i) {
-          m.add(['('+(i + 1)+') ' + x, i + 1]);
-        });
-        return m;
+        return new vis.Menu().addAll(['Piano', 'Electric Piano', 'Organ', 'Guitar', 'Electric Guitar', 'Bass', 'Pizzicato', 'Cello', 'Trombone', 'Clarinet', 'Saxophone', 'Flute', 'Wooden Flute', 'Bassoon', 'Choir', 'Vibraphone', 'Music Box', 'Steel Drum', 'Marimba', 'Synth Lead', 'Synth Pad'].map(function(x, i) {return ['('+(i + 1)+') ' + vis.getText(x), i + 1]}));
       },
       note: function() {
-        return new vis.Menu(
-          ['(48) Low C', 48],
-          ['(50) D', 50],
-          ['(52) E', 52],
-          ['(53) F', 53],
-          ['(55) G', 55],
-          ['(57) A', 57],
-          ['(59) B', 59],
-          ['(60) Middle C', 60],
-          ['(62) D', 62],
-          ['(64) E', 64],
-          ['(65) F', 65],
-          ['(67) G', 67],
-          ['(69) A', 69],
-          ['(71) B', 71],
-          ['(72) High C', 72]);
+        return new vis.Menu().addAll([
+          [48, 'Low C'],
+          [50, 'D'],
+          [52, 'E'],
+          [53, 'F'],
+          [55, 'G'],
+          [57, 'A'],
+          [59, 'B'],
+          [60, 'Middle C'],
+          [62, 'D'],
+          [64, 'E'],
+          [65, 'F'],
+          [67, 'G'],
+          [69, 'A'],
+          [71, 'B'],
+          [72, 'High C']].map(function(i) {return ['('+i[0]+') '+vis.getText(i[1]), i[0]]}));
       },
       listItem: function() {
-        return new vis.Menu(1, 'last', 'random');
+        return new vis.Menu(1).addTranslated('last').addTranslated('random');
       },
       listDeleteItem: function() {
-        return new vis.Menu(1, 'last', vis.Menu.line, 'all');
+        return new vis.Menu(1).addTranslated('last').add(vis.Menu.line).addTranslated('all');
       }
     }
   });
@@ -414,6 +414,10 @@
       "xpos",
       "ypos",
       "heading",
+    ],
+    101: [
+      {text: "Stage selected:"},
+      {text: "No motion blocks"}
     ],
     2: [
       // looks
@@ -679,6 +683,24 @@
     // TODO
   };
 
+  vis.Arg.prototype.menuTranslations = {
+    'attribute': ['x position', 'y position', 'direction', 'costume #', 'costume name', 'size', 'volume', 'backdrop #', 'backdrop name', 'volume'],
+    'backdrop': ['next backdrop', 'previous backdrop'],
+    'broadcast': ['new message...'],
+    'list': ['delete list', 'rename list'],
+    'sound': ['record...'],
+    'var': ['delete variable', 'rename variable'],
+    'costume': []
+  };
+
+  vis.Arg.prototype.shouldTranslate = function(value) {
+    if (['spriteOnly', 'spriteOrMouse', 'spriteOrStage', 'touching'].indexOf(this.menu) !== -1) {
+      return ['_myself_', '_mouse_', '_edge_', '_stage_'].indexOf(value) !== -1;
+    }
+    var translations = this.menuTranslations[this.menu];
+    return translations ? translations.indexOf(value) !== -1 : true;
+  };
+
   vis.Icon.prototype.icons.turnRight = function(context) {
     context.canvas.width = 16;
     context.canvas.height = 15;
@@ -751,6 +773,24 @@
   }
 
   var def = Object.defineProperty;
+  var slice = [].slice;
+
+  function spriteMenu(arg) { // TODO include/exclude self
+    var m = new vis.Menu;
+    var a = slice.call(arguments, 1);
+    for (var i = 0, l = a.length; i < l; i++) {
+      m.add(a[i]);
+    }
+    m.translate().add(vis.Menu.line);
+    arg.app.editor.stage.children.forEach(function(sprite) {
+      m.add(sprite.name);
+    });
+    return m;
+  }
+
+  function getName(o) {
+    return o.name;
+  }
 
   function resize(o) {
     if (o.resize) o.resize();
@@ -771,6 +811,7 @@
     this.scripts = [];
     this.costumes = [];
     this.costume = 0;
+    this.sounds = [];
   }
 
   ScratchObj.prototype.addCostume = function(costume) {
@@ -988,7 +1029,7 @@
       return;
     }
 
-    var maxTime = 1000 / this.frameRate * .75;
+    var maxTime = 1000 / this.frameRate * .2;
 
     this.redraw = false;
     this.start = Date.now();
@@ -1049,6 +1090,10 @@
   };
 
   Interpreter.prototype.evalBlock = function(b) {
+    // log block arguments
+    // console.log.apply(console, [b.name].concat(b.args.map(function(a) {
+    //   return a.isArg ? a.value : ['block'];
+    // })));
     return (b.fn || (b.fn = this.table[b.name] || this.primUndefined))(b);
   };
 
@@ -1162,7 +1207,7 @@
       if (!sprite.isSprite) return;
 
       var name = interp.arg(b, 0);
-      if (name === 'mouse-pointer') { // FIXME: _mouse_
+      if (name === '_mouse_') {
         pointSpriteTowards(sprite, interp.stage.mouseX, interp.stage.mouseY);
       } else {
         var other = spriteNamed(name);
@@ -1180,7 +1225,7 @@
       if (!sprite.isSprite) return;
 
       var name = interp.arg(b, 0);
-      if (name === 'mouse-pointer') { // FIXME: _mouse_
+      if (name === '_mouse_') {
         moveSpriteTo(sprite, interp.stage.mouseX, interp.stage.mouseY);
       } else {
         var other = spriteNamed(name);
@@ -1214,6 +1259,36 @@
           moveSpriteTo(sprite, extra.sx * q + extra.x * p, extra.sy * q + extra.y * p);
         }
       }
+    };
+
+    table['changeXposBy:'] = function(b) {
+      var sprite = interp.activeThread.target;
+      if (sprite.isSprite) moveSpriteTo(sprite, sprite.x + interp.narg(b, 0), sprite.y);
+    };
+
+    table['xpos:'] = function(b) {
+      var sprite = interp.activeThread.target;
+      if (sprite.isSprite) moveSpriteTo(sprite, interp.narg(b, 0), sprite.y);
+    };
+
+    table['changeYposBy:'] = function(b) {
+      var sprite = interp.activeThread.target;
+      if (sprite.isSprite) moveSpriteTo(sprite, sprite.x, sprite.y + interp.narg(b, 0));
+    };
+
+    table['ypos:'] = function(b) {
+      var sprite = interp.activeThread.target;
+      if (sprite.isSprite) moveSpriteTo(sprite, sprite.x, interp.narg(b, 0));
+    };
+
+    var ROTATION_STYLES = {
+      'all around': 'normal',
+      'left-right': 'leftRight',
+      "don't rotate": 'none'
+    }
+    table['setRotationStyle'] = function(b) {
+      var sprite = interp.activeThread.target;
+      if (sprite.isSprite) sprite.rotationStyle = ROTATION_STYLES[interp.arg(b, 0)] || 'normal';
     };
 
     // Looks
@@ -1497,17 +1572,26 @@
       this.categoryButton = this.buttons[value];
       this.categoryButton.className = 'palette-button selected';
 
-      var scripts = this.palette.scripts;
-      for (var i = scripts.length; i--;) {
-        this.editor.exec.stopThread(scripts[i].thread);
-      }
-
-      this.palette.clear();
-      (palettes[value] || []).forEach(function(name) {
-        this.palette.add(name === '--' ? vis.Palette.space() : new vis.Script().add(new vis.Block(name)));
-      }, this);
+      this.refreshPalette();
     }
   });
+
+  ScriptEditor.prototype.refreshPalette = function() {
+    var scripts = this.palette.scripts;
+    for (var i = scripts.length; i--;) {
+      this.editor.exec.stopThread(scripts[i].thread);
+    }
+
+    this.palette.clear();
+    (this.editor.selectedSprite && this.editor.selectedSprite.isStage && palettes[this._category + 100] || palettes[this._category] || []).forEach(function(t) {
+      if (t.text) {
+        var div = el('palette-label');
+        div.textContent = vis.getText(t.text);
+        return this.palette.add(vis.Palette.element(div));
+      }
+      this.palette.add(t === '--' ? vis.Palette.space() : new vis.Script().add(new vis.Block(t)));
+    }, this);
+  };
 
 
   function TabPanel(editor) {
@@ -1763,7 +1847,9 @@
       icon.el.classList.add('selected');
     }
     this.editor.selectedSprite = icon.sprite;
-    this.editor.tabPanel.showSprite(icon.sprite);
+    var tabPanel = this.editor.tabPanel;
+    tabPanel.showSprite(icon.sprite);
+    tabPanel.scriptEditor.refreshPalette();
     return this;
   };
 
@@ -1842,7 +1928,7 @@
       'hide',
       'delete',
       vis.Menu.line,
-      'save to local file');
+      'save to local file').translate();
   }});
 
   SpriteIcon.prototype.acceptsDropOf = function(script) {

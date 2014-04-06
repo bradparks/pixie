@@ -512,6 +512,10 @@ button::-moz-focus-inner {
   top: 114px;
   bottom: 0;
 }
+.palette-label {
+  color: #5c5d5f;
+  padding: 0 2px;
+}
 .editor-workspace {
   position: absolute;
   top: 5px;
