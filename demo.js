@@ -209,6 +209,7 @@
       "computeFunction:of:": ["r", "%m.mathOp of %n", 8, "sqrt", 9],
 
       // variables
+      "readVariable": ["r", "%l.var", 9, 'variable'],
       "setVar:to:": ["c", "set %m.var to %s", 9, 'variable', 0],
       "changeVar:by:": ["c", "change %m.var by %n", 9, 'variable', 1],
       "showVariable:": ["c", "show variable %m.var", 9, 'variable'],
@@ -590,6 +591,7 @@
       // variables
       {text: "Make a Variable", action: "newVariable"},
       {if: "variables", then: [
+        "readVariable",
         "--",
         "setVar:to:",
         "changeVar:by:",
@@ -623,7 +625,7 @@
 
   var menusThatAcceptReporters = ['broadcast', 'costume', 'backdrop', 'scene', 'sound', 'spriteOnly', 'spriteOrMouse', 'spriteOrStage', 'touching'];
   vis.Arg.prototype.acceptsDropOf = function(b) {
-    return this.type !== 't' && (this.type !== 'b' || b.isBoolean) && (this.type !== 'm' || menusThatAcceptReporters.indexOf(this.menu) !== -1);
+    return this.type !== 't' && this.type !== 'l' && (this.type !== 'b' || b.isBoolean) && (this.type !== 'm' || menusThatAcceptReporters.indexOf(this.menu) !== -1);
   };
 
   vis.Workspace.prototype.paddingX = 10;
