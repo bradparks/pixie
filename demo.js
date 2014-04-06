@@ -399,23 +399,23 @@
         "forward:",
         "turnRight:",
         "turnLeft:",
-        "--",
+        "---",
         "heading:",
         "pointTowards:",
-        "--",
+        "---",
         "gotoX:y:",
         "gotoSpriteOrMouse:",
         "glideSecs:toX:y:elapsed:from:",
-        "--",
+        "---",
         "changeXposBy:",
         "xpos:",
         "changeYposBy:",
         "ypos:",
-        "--",
+        "---",
         "bounceOffEdge",
         "--",
         "setRotationStyle",
-        "--",
+        "---",
         "xpos",
         "ypos",
         "heading"
@@ -504,9 +504,9 @@
       "whenKeyPressed",
       "whenClicked",
       "whenSceneStarts",
-      "--",
+      "---",
       "whenSensorGreaterThan",
-      "--",
+      "---",
       "whenIReceive",
       "broadcast:",
       "doBroadcastAndWait",
@@ -1568,8 +1568,8 @@
       div.textContent = vis.getText(t.text);
       return this.palette.add(vis.Palette.element(div));
     }
-    if (t === '--') {
-      return this.palette.add(vis.Palette.space());
+    if (t === '--' || t === '---') {
+      return this.palette.add(vis.Palette.space(t.length * 10 - 5));
     }
     this.palette.add(new vis.Script().add(new vis.Block(t)));
   };
