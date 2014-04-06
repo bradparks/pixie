@@ -1924,11 +1924,21 @@
     return !this.sprite.isStage && new vis.Menu(
       'duplicate',
       vis.Menu.line,
-      'hide',
+      this.sprite.visible ? ['hide', this.hideSprite] : ['show', this.showSprite],
       'delete',
       vis.Menu.line,
-      'save to local file').translate();
+      'save to local file').withContext(this).translate();
   }});
+
+  SpriteIcon.prototype.hideSprite = function() {
+    this.sprite.visible = false;
+    this.sprite.stage.redraw();
+  };
+
+  SpriteIcon.prototype.showSprite = function() {
+    this.sprite.visible = true;
+    this.sprite.stage.redraw();
+  };
 
   SpriteIcon.prototype.acceptsDropOf = function(script) {
     return !this.el.classList.contains('selected');
