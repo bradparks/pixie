@@ -752,6 +752,10 @@
     if (o.resize) o.resize();
   }
 
+  function step(o) {
+    if (o.step) o.step();
+  }
+
   function inherits(sub, sup) {
     sub.prototype = Object.create(sup.prototype);
     sub.prototype.constructor = sub;
@@ -843,7 +847,11 @@
 
   function Stage() {
     ScratchObj.call(this, 'Stage');
+
+    this.mouseX = 0;
+    this.mouseY = 0;
     this.children = [];
+
     this.canvas = document.createElement('canvas');
     this.canvas.width = 480;
     this.canvas.height = 360;
@@ -891,8 +899,9 @@
   LocalBackpack.prototype.isBackpack = true;
 
 
-  function Interpreter(stage) {
+  function Interpreter(stage, editor) {
     this.stage = stage;
+    this.editor = editor;
     this.frameRate = 30;
     this.warpTime = 500;
 
@@ -922,6 +931,11 @@
   };
 
   Interpreter.prototype.stopAll = function() {
+    var threads = this.threads;
+    for (var i = threads.length; i--;) {
+      threads[i].topScript.removeRunningEffect();
+      threads[i].topScript.thread = null;
+    }
     this.threads = [];
   };
 
@@ -932,7 +946,6 @@
     }
     if (script.thread) {
       this.stopThread(script.thread);
-      script.thread = null;
       return;
     }
     script.addRunningEffect();
@@ -953,6 +966,7 @@
       var i = this.threads.indexOf(thread);
       if (i !== -1) this.threads.splice(i, 1);
       thread.topScript.removeRunningEffect();
+      thread.topScript.thread = null;
     }
   };
 
@@ -965,7 +979,10 @@
   };
 
   Interpreter.prototype.step = function() {
-    if (this.threads.length === 0) return;
+    if (this.threads.length === 0) {
+      if (this.editor) this.editor.stagePanel.running = false;
+      return;
+    }
 
     var maxTime = 1000 / this.frameRate * .75;
 
@@ -997,6 +1014,7 @@
     if (this.redraw) {
       this.stage.redraw();
     }
+    if (this.editor) this.editor.stagePanel.running = !!this.threads.length;
   };
 
   Interpreter.prototype.stepActiveThread = function() {
@@ -1077,10 +1095,16 @@
     }
 
     function spriteNamed(name) {
-      var sprites = interp.stage.sprites;
-      for (var i = 0, l = sprites.length; i < l; i++) {
-        sprites[i];
+      var children = interp.stage.children;
+      for (var i = 0, l = children.length; i < l; i++) {
+        if (children[i].name === name) return children[i];
       }
+      if (interp.stage.name === name) return interp.stage;
+      return null;
+    }
+
+    function pointSpriteTowards(sprite, x, y) {
+      turnSprite(sprite, 90 - Math.atan2(y - sprite.y, x - sprite.x) * 180 / Math.PI);
     }
 
     // Motion
@@ -1114,17 +1138,33 @@
       if (!sprite.isSprite) return;
 
       var name = interp.arg(b, 0);
-      if (name === '_mouse_') {
-        pointSpriteTowards(sprite, 0, 0); // TODO
+      if (name === 'mouse-pointer') { // FIXME: _mouse_
+        pointSpriteTowards(sprite, interp.stage.mouseX, interp.stage.mouseY);
       } else {
         var other = spriteNamed(name);
-        pointSpriteTowards(sprite, other.x, other.y);
+        if (other) pointSpriteTowards(sprite, other.x, other.y);
       }
     };
 
     // Looks
 
     table['say:'] = function(b) {console.log(interp.arg(b, 0))};
+
+    table['show'] = function() {
+      var sprite = interp.activeThread.target;
+      if (sprite.isSprite) {
+        sprite.visible = true;
+        interp.redraw = true;
+      }
+    };
+
+    table['hide'] = function() {
+      var sprite = interp.activeThread.target;
+      if (sprite.isSprite) {
+        sprite.visible = false;
+        interp.redraw = true;
+      }
+    };
 
     // Events
 
@@ -1248,7 +1288,7 @@
       .addCostume(new Costume('costume2', 'costume2.png', 57, 41)));
     this.backpack = new LocalBackpack();
 
-    this.exec = new Interpreter(this.stage);
+    this.exec = new Interpreter(this.stage, this);
 
     this.topBar = new TopBar(this);
     this.tabPanel = new TabPanel(this);
@@ -1283,11 +1323,30 @@
     window.addEventListener('resize', this.resize.bind(this));
   }
 
+  Editor.prototype.start = function() {
+    this.interval = setInterval(this.step.bind(this), 1000 / 60);
+  };
+
+  Editor.prototype.stop = function() {
+    clearInterval(this.interval);
+  };
+
   Editor.prototype.resize = function() {
+    resize(this.exec);
     resize(this.topBar);
     resize(this.tabPanel);
     resize(this.stagePanel);
     resize(this.spritePanel);
+    resize(this.backpackPanel);
+  };
+
+  Editor.prototype.step = function() {
+    step(this.exec);
+    step(this.topBar);
+    step(this.tabPanel);
+    step(this.stagePanel);
+    step(this.spritePanel);
+    step(this.backpackPanel);
   };
 
 
@@ -1521,6 +1580,7 @@
 
   function StagePanel(stage) {
     this.stage = stage;
+    this._running = false;
 
     this.el = el('stage-panel stopped');
 
@@ -1544,6 +1604,16 @@
 
     this.el.appendChild(this.elStage = stage.canvas);
     this.elStage.classList.add('stage');
+
+    this.el.appendChild(this.elMouseCoords = el('mouse-coords'));
+    this.elMouseCoords.appendChild(this.elMouseXLabel = el('mouse-label x-axis'));
+    this.elMouseXLabel.textContent = 'x:';
+    this.elMouseCoords.appendChild(this.elMouseX = el('mouse-coord x-axis'));
+    this.elMouseCoords.appendChild(this.elMouseXLabel = el('mouse-label y-axis'));
+    this.elMouseXLabel.textContent = 'y:';
+    this.elMouseCoords.appendChild(this.elMouseY = el('mouse-coord x-axis'));
+
+    document.addEventListener('mousemove', this.updateMouse.bind(this));
   }
 
   StagePanel.prototype.addButton = function(className, fn) {
@@ -1552,6 +1622,29 @@
     if (fn) button.addEventListener('click', fn.bind(this));
     return button;
   };
+
+  StagePanel.prototype.resize = function() {
+    var bb = this.elStage.getBoundingClientRect();
+    this.stageCenterX = (bb.left + bb.right) / 2;
+    this.stageCenterY = (bb.top + bb.bottom) / 2;
+  };
+
+  StagePanel.prototype.updateMouse = function(e) {
+    this.stage.mouseX = Math.max(-240, Math.min(240, e.clientX - this.stageCenterX));
+    this.stage.mouseY = Math.max(-180, Math.min(180, this.stageCenterY - e.clientY));
+    this.elMouseX.textContent = this.stage.mouseX;
+    this.elMouseY.textContent = this.stage.mouseY;
+  };
+
+  def(StagePanel.prototype, 'running', {
+    get: function() {return this._running},
+    set: function(running) {
+      if (running !== this._running) {
+        this._running = running;
+        this.el.className = running ? 'stage-panel running' : 'stage-panel stopped';
+      }
+    }
+  });
 
 
   function SpritePanel(editor) {
@@ -1749,6 +1842,7 @@
   var editor = new Editor();
   document.body.appendChild(editor.el);
   editor.resize();
+  editor.start();
   window.editor = editor;
 
   var player = document.querySelector('.player');

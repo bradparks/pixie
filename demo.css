@@ -138,6 +138,25 @@ button::-moz-focus-inner {
   top: 0;
   left: 0;
 }
+.mouse-coords {
+  position: absolute;
+  right: 9px;
+  top: 401px;
+  color: #5c5d5f;
+}
+.mouse-label {
+  display: inline-block;
+  font-weight: bold;
+  width: 16px;
+}
+.mouse-label.y-axis {
+  width: 17px;
+}
+.mouse-coord {
+  display: inline-block;
+  font-size: 10px;
+  width: 27px;
+}
 .title-bar {
   position: absolute;
   top: 0;
@@ -224,11 +243,10 @@ button::-moz-focus-inner {
 .stage {
   position: absolute;
   top: 39px;
-  left: 0;
+  left: 1px;
   width: 480px;
   height: 360px;
-  border: 1px solid #d0d1d2;
-  border-top: 0;
+  box-shadow: 0 0 0 1px #d0d1d2;
   background: #fff;
 }
 .sprite-panel {
