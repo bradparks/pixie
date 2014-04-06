@@ -646,7 +646,7 @@
   };
 
   vis.Block.prototype.help = function() {
-    // TODO
+    alert('Help is not available yet.'); // TODO
   };
 
   vis.Arg.prototype.menuTranslations = {
