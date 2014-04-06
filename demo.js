@@ -82,10 +82,10 @@
       "scale": ["r", "size", 2],
 
       // stage looks
-      "startSceneAndWait": ["c", "switch backdrop to %m.backdrop and wait", 102, "backdrop1"],
-      "nextScene": ["c", "next backdrop", 102],
+      "startSceneAndWait": ["c", "switch backdrop to %m.backdrop and wait", 2, "backdrop1"],
+      "nextScene": ["c", "next backdrop", 2],
 
-      "backgroundIndex": ["r", "backdrop #", 102],
+      "backgroundIndex": ["r", "backdrop #", 2],
 
       // sound
       "playSound:": ["c", "play sound %m.sound", 3, "pop"],
@@ -391,74 +391,70 @@
   var palettes = {
     1: [
       // motion
-      "forward:",
-      "turnRight:",
-      "turnLeft:",
-      "--",
-      "heading:",
-      "pointTowards:",
-      "--",
-      "gotoX:y:",
-      "gotoSpriteOrMouse:",
-      "glideSecs:toX:y:elapsed:from:",
-      "--",
-      "changeXposBy:",
-      "xpos:",
-      "changeYposBy:",
-      "ypos:",
-      "--",
-      "bounceOffEdge",
-      "--",
-      "setRotationStyle",
-      "--",
-      "xpos",
-      "ypos",
-      "heading",
-    ],
-    101: [
-      {text: "Stage selected:"},
-      {text: "No motion blocks"}
+      {if: "stage", then: [
+        {text: "Stage selected:"},
+        {text: "No motion blocks"}
+      ], else: [
+        "forward:",
+        "turnRight:",
+        "turnLeft:",
+        "--",
+        "heading:",
+        "pointTowards:",
+        "--",
+        "gotoX:y:",
+        "gotoSpriteOrMouse:",
+        "glideSecs:toX:y:elapsed:from:",
+        "--",
+        "changeXposBy:",
+        "xpos:",
+        "changeYposBy:",
+        "ypos:",
+        "--",
+        "bounceOffEdge",
+        "--",
+        "setRotationStyle",
+        "--",
+        "xpos",
+        "ypos",
+        "heading"
+      ]}
     ],
     2: [
       // looks
-      "say:duration:elapsed:from:",
-      "say:",
-      "think:duration:elapsed:from:",
-      "think:",
-      "--",
-      "show",
-      "hide",
-      "--",
-      "lookLike:",
-      "nextCostume",
+      {if: "sprite", then: [
+        "say:duration:elapsed:from:",
+        "say:",
+        "think:duration:elapsed:from:",
+        "think:",
+        "--",
+        "show",
+        "hide",
+        "--",
+        "lookLike:",
+        "nextCostume"
+      ]},
       "startScene",
+      {if: "stage", then: [
+        "startSceneAndWait",
+        "nextScene"
+      ]},
       "--",
       "changeGraphicEffect:by:",
       "setGraphicEffect:to:",
       "filterReset",
       "--",
-      "changeSizeBy:",
-      "setSizeTo:",
-      "--",
-      "comeToFront",
-      "goBackByLayers:",
-      "--",
-      "costumeIndex",
+      {if: "sprite", then: [
+        "changeSizeBy:",
+        "setSizeTo:",
+        "--",
+        "comeToFront",
+        "goBackByLayers:",
+        "--",
+        "costumeIndex"
+      ]},
       "sceneName",
-      "scale",
-    ],
-    102: [
-      // stage looks
-      "startScene",
-      "startSceneAndWait",
-      "nextScene",
-      "--",
-      "changeGraphicEffect:by:",
-      "setGraphicEffect:to:",
-      "filterReset",
-      "--",
-      "sceneName",
-      "backgroundIndex",
+      {if: "stage", then: ["backgroundIndex"], else: ["scale"]}
     ],
     3: [
       // sound
@@ -483,26 +479,23 @@
     4: [
       // pen
       "clearPenTrails",
-      "--",
-      "stampCostume",
-      "--",
-      "putPenDown",
-      "putPenUp",
-      "--",
-      "penColor:",
-      "changePenHueBy:",
-      "setPenHueTo:",
-      "--",
-      "changePenShadeBy:",
-      "setPenShadeTo:",
-      "--",
-      "changePenSizeBy:",
-      "penSize:",
-      "--",
-    ],
-    104: [
-      // stage pen
-      "clearPenTrails",
+      {if: "sprite", then: [
+        "--",
+        "stampCostume",
+        "--",
+        "putPenDown",
+        "putPenUp",
+        "--",
+        "penColor:",
+        "changePenHueBy:",
+        "setPenHueTo:",
+        "--",
+        "changePenShadeBy:",
+        "setPenShadeTo:",
+        "--",
+        "changePenSizeBy:",
+        "penSize:"
+      ]}
     ],
     5: [
       // triggers
@@ -531,34 +524,19 @@
       "--",
       "stopScripts",
       "--",
-      "whenCloned",
+      {if: "sprite", then: ["whenCloned"]},
       "createCloneOf",
-      "deleteClone",
-      "--",
-    ],
-    106: [
-      // control - stage
-      "wait:elapsed:from:",
-      "--",
-      "doRepeat",
-      "doForever",
-      "--",
-      "doIf",
-      "doIfElse",
-      "doWaitUntil",
-      "doUntil",
-      "--",
-      "stopScripts",
-      "--",
-      "createCloneOf",
+      {if: "sprite", then: ["deleteClone"]}
     ],
     7: [
       // sensing
-      "touching:",
-      "touchingColor:",
-      "color:sees:",
-      "distanceTo:",
-      "--",
+      {if: "sprite", then: [
+        "touching:",
+        "touchingColor:",
+        "color:sees:",
+        "distanceTo:",
+        "--",
+      ]},
       "doAsk",
       "answer",
       "--",
@@ -580,32 +558,7 @@
       "--",
       "timeAndDate",
       "timestamp",
-      "getUserName",
-    ],
-    107: [
-      // stage sensing
-      "doAsk",
-      "answer",
-      "--",
-      "keyPressed:",
-      "mousePressed",
-      "mouseX",
-      "mouseY",
-      "--",
-      "soundLevel",
-      "--",
-      "senseVideoMotion",
-      "setVideoState",
-      "setVideoTransparency",
-      "--",
-      "timer",
-      "timerReset",
-      "--",
-      "getAttribute:of:",
-      "--",
-      "timeAndDate",
-      "timestamp",
-      "getUserName",
+      "getUserName"
     ],
     8: [
       // operators
@@ -631,29 +584,40 @@
       "%",
       "rounded",
       "--",
-      "computeFunction:of:",
+      "computeFunction:of:"
     ],
     9: [
       // variables
-      'setVar:to:',
-      "changeVar:by:",
-      "showVariable:",
-      "hideVariable:",
-      "--",
+      {text: "Make a Variable", action: "newVariable"},
+      {if: "variables", then: [
+        "--",
+        "setVar:to:",
+        "changeVar:by:",
+        "showVariable:",
+        "hideVariable:",
+        "--"
+      ]},
 
       // lists
-      "append:toList:",
-      "--",
-      "deleteLine:ofList:",
-      "insert:at:ofList:",
-      "setLine:ofList:to:",
-      "--",
-      "getLine:ofList:",
-      "lineCountOfList:",
-      "list:contains:",
-      "--",
-      "showList:",
-      "hideList:"
+      {text: "Make a List", action: "newList"},
+      {if: "lists", then: [
+        "--",
+        "append:toList:",
+        "--",
+        "deleteLine:ofList:",
+        "insert:at:ofList:",
+        "setLine:ofList:to:",
+        "--",
+        "getLine:ofList:",
+        "lineCountOfList:",
+        "list:contains:",
+        "--",
+        "showList:",
+        "hideList:"
+      ]}
+    ],
+    10: [
+      {text: "Make a Block", action: "newBlock"}
     ]
   };
 
@@ -1583,14 +1547,38 @@
     }
 
     this.palette.clear();
-    (this.editor.selectedSprite && this.editor.selectedSprite.isStage && palettes[this._category + 100] || palettes[this._category] || []).forEach(function(t) {
-      if (t.text) {
-        var div = el('palette-label');
-        div.textContent = vis.getText(t.text);
-        return this.palette.add(vis.Palette.element(div));
-      }
-      this.palette.add(t === '--' ? vis.Palette.space() : new vis.Script().add(new vis.Block(t)));
-    }, this);
+    (palettes[this._category] || []).forEach(this.eval, this);
+  };
+
+  ScriptEditor.prototype.eval = function(t) {
+    if (t.if) {
+      ((this.evalCondition(t.if) ? t.then : t.else) || []).forEach(this.eval, this);
+      return;
+    }
+    if (t.action) {
+      var button = el('button', 'palette-action');
+      button.textContent = t.text;
+      if (this[t.action]) button.addEventListener('click', this[t.action].bind(this));
+      return this.palette.add(vis.Palette.element(button));
+    }
+    if (t.text) {
+      var div = el('palette-label');
+      div.textContent = vis.getText(t.text);
+      return this.palette.add(vis.Palette.element(div));
+    }
+    if (t === '--') {
+      return this.palette.add(vis.Palette.space());
+    }
+    this.palette.add(new vis.Script().add(new vis.Block(t)));
+  };
+
+  ScriptEditor.prototype.evalCondition = function(condition) {
+    switch (condition) {
+      case 'variables': return true; // TODO
+      case 'lists': return false; // TODO
+      case 'stage': return this.editor.selectedSprite && this.editor.selectedSprite.isStage;
+      case 'sprite': return !this.editor.selectedSprite || this.editor.selectedSprite.isSprite;
+    }
   };
 
 

@@ -516,6 +516,20 @@ button::-moz-focus-inner {
   color: #5c5d5f;
   padding: 0 2px;
 }
+.palette-action {
+  margin: 0;
+  border: 1px solid #d0d1d2;
+  border-radius: 6px;
+  padding: 0 7px 1px;
+  height: 26px;
+  background: linear-gradient(#ffffff, #e6e8e8);
+  color: #5c5d5f;
+  font: inherit;
+}
+.palette-action:hover {
+  background: #179fd7;
+  color: #ffffff;
+}
 .editor-workspace {
   position: absolute;
   top: 5px;
