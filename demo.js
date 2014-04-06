@@ -675,6 +675,10 @@
     }
   };
 
+  vis.Block.prototype.help = function() {
+    // TODO
+  };
+
   vis.Icon.prototype.icons.turnRight = function(context) {
     context.canvas.width = 16;
     context.canvas.height = 15;
