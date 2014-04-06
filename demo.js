@@ -1750,6 +1750,7 @@
     this.el.appendChild(this.elStage = stage.canvas);
     this.elStage.classList.add('stage');
 
+    this._showMouseCoords = true;
     this.el.appendChild(this.elMouseCoords = el('mouse-coords'));
     this.elMouseCoords.appendChild(this.elMouseXLabel = el('mouse-label x-axis'));
     this.elMouseXLabel.textContent = 'x:';
@@ -1780,6 +1781,14 @@
     this.elMouseX.textContent = this.stage.mouseX;
     this.elMouseY.textContent = this.stage.mouseY;
   };
+
+  def(StagePanel.prototype, 'showMouseCoords', {
+    get: function() {return this._showMouseCoords},
+    set: function(value) {
+      this._showMouseCoords = value;
+      this.elMouseCoords.style.visibility = value ? 'visible' : 'hidden';
+    }
+  });
 
   def(StagePanel.prototype, 'running', {
     get: function() {return this._running},
@@ -1994,6 +2003,7 @@
 
   var player = document.querySelector('.player');
   var stagePanel = new StagePanel(new Stage());
+  stagePanel.showMouseCoords = false;
   player.appendChild(stagePanel.el);
 
   var flip = editor.elFlipButton;
