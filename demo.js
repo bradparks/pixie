@@ -646,7 +646,7 @@
   };
 
   vis.Block.prototype.help = function() {
-    alert('Help is not available yet.'); // TODO
+    Dialog.alert('Help', 'Help is not available yet.'); // TODO
   };
 
   vis.Arg.prototype.menuTranslations = {
@@ -778,6 +778,7 @@
     this.costumes = [];
     this.costume = 0;
     this.sounds = [];
+    this.variables = [];
   }
 
   ScratchObj.prototype.addCostume = function(costume) {
@@ -792,6 +793,19 @@
     this.stage.redraw();
   };
 
+  ScratchObj.prototype.findLocal = function(name) {
+    var vars = this.variables;
+    for (var i = vars.length; i--;) {
+      if (vars[i].name === name) {
+        return vars[i];
+      }
+    }
+    return null;
+  };
+
+  ScratchObj.prototype.findVariable = function(name) {
+    return this.findVariable(name) || this.stage && this.stage.findVariable(name);
+  };
 
   ScratchObj.prototype.forEachScript = function(fn, context) {
     var s = this.scripts;
@@ -902,6 +916,17 @@
       children[i].forEachScript(fn, context);
     }
     ScratchObj.prototype.forEachScript.call(this, fn, context);
+  };
+
+  Stage.prototype.findNestedLocal = function(name) {
+    var l = this.findLocal(name);
+    if (l) return l;
+    var children = this.children;
+    for (var i = 0, l = children.length; i < l; i++) {
+      var l = children[i].findLocal(name);
+      if (l) return l;
+    }
+    return null;
   };
 
 
@@ -1461,6 +1486,10 @@
     step(this.backpackPanel);
   };
 
+  Editor.prototype.newVariable = function() {
+    var name = prompt('');
+  };
+
 
   function ScriptEditor(editor) {
     this.editor = editor;
@@ -1558,9 +1587,10 @@
       return;
     }
     if (t.action) {
-      var button = el('button', 'palette-action');
+      var editor = this.editor;
+      var button = el('button', 'ui-button');
       button.textContent = t.text;
-      if (this[t.action]) button.addEventListener('click', this[t.action].bind(this));
+      if (editor[t.action]) button.addEventListener('click', editor[t.action].bind(editor));
       return this.palette.add(vis.Palette.element(button));
     }
     if (t.text) {
@@ -1931,13 +1961,17 @@
   }});
 
   SpriteIcon.prototype.hideSprite = function() {
-    this.sprite.visible = false;
-    this.sprite.stage.redraw();
+    if (this.sprite.isSprite) {
+      this.sprite.visible = false;
+      this.sprite.stage.redraw();
+    }
   };
 
   SpriteIcon.prototype.showSprite = function() {
-    this.sprite.visible = true;
-    this.sprite.stage.redraw();
+    if (this.sprite.isSprite) {
+      this.sprite.visible = true;
+      this.sprite.stage.redraw();
+    }
   };
 
   SpriteIcon.prototype.acceptsDropOf = function(script) {
@@ -2002,6 +2036,147 @@
 
   BackpackPanel.prototype.toggle = function() {
     this.editor.el.classList.toggle('backpack-open');
+  };
+
+
+  function Dialog(title, content) {
+    this.el = el('dialog');
+    this.el.appendChild(this.elTitle = el('dialog-title'));
+    this.el.appendChild(this.elContent = content || el('dialog-content'));
+    if (content) content.classList.add('dialog-content');
+
+    this.el.addEventListener('mousedown', this.mouseDown.bind(this));
+    this.mouseMove = this.mouseMove.bind(this);
+    this.mouseUp = this.mouseUp.bind(this);
+
+    this.title = title;
+    this.x = 0;
+    this.y = 0;
+  }
+
+  def(Dialog.prototype, 'title', {
+    get: function() {return this._title},
+    set: function(value) {this._title = this.elTitle.textContent = value}
+  });
+
+  Dialog.prototype.padding = 4;
+
+  Dialog.prototype.moveTo = function(x, y) {
+    var p = this.padding;
+    vis.util.moveTo.call(this, Math.max(p, Math.min(innerWidth - this.width - p, x)), Math.max(p, Math.min(innerHeight - this.height - p, y)));
+  };
+
+  Dialog.prototype.show = function(editor) {
+    this.editor = editor;
+
+    document.body.appendChild(this.el);
+    var ebb = editor.el.getBoundingClientRect();
+    var tbb = this.el.getBoundingClientRect();
+
+    this.width = tbb.width | 0;
+    this.height = tbb.height | 0;
+    this.moveTo(Math.floor((ebb.left + ebb.right - tbb.width) / 2), Math.floor((ebb.top + ebb.bottom - tbb.height) / 2));
+
+    return this;
+  };
+
+  Dialog.prototype.hide = function() {
+    if (this.editor) {
+      document.body.removeChild(this.el);
+      this.editor = null;
+    }
+    return this;
+  };
+
+  Dialog.alert = function(title, text, button, fn, context) {
+    if (typeof button === 'function' || button == null) {
+      context = fn;
+      fn = button;
+      button = vis.getText('OK');
+    }
+
+    var d = new Dialog(title, Dialog.content(
+      Dialog.label(text),
+      Dialog.buttons(
+        [button, function() {
+          d.hide();
+          if (fn) fn.call(context);
+        }])));
+    return d.show(editor);
+  };
+
+  Dialog.confirm = function(title, text, yes, no, fn, context) {
+    if (typeof yes === 'function' || yes == null) {
+      context = no;
+      fn = yes;
+      no = vis.getText('Cancel');
+      yes = vis.getText('OK');
+    }
+    if (typeof no === 'function' || no == null) {
+      context = fn;
+      fn = no;
+      no = vis.getText('Cancel');
+    }
+
+    var d = new Dialog(title, Dialog.content(
+      Dialog.label(text),
+      Dialog.buttons(
+        [yes, function() {
+          d.hide();
+          if (fn) fn.call(context, true);
+        }],
+        [no, function() {
+          d.hide();
+          if (fn) fn.call(context, false);
+        }])));
+    return d.show(editor);
+  };
+
+  Dialog.label = function(text) {
+    var div = el('dialog-label');
+    div.textContent = text;
+    return div;
+  };
+
+  Dialog.content = function() {
+    var div = el('');
+    var a = slice.call(arguments);
+    for (var i = 0, l = a.length; i < l; i++) {
+      div.appendChild(a[i]);
+    }
+    return div;
+  };
+
+  Dialog.buttons = function() {
+    var div = el('dialog-buttons');
+    var a = slice.call(arguments);
+    for (var i = 0, l = a.length; i < l; i++) {
+      var b = a[i];
+      if (typeof b !== 'object') b = [b, b];
+      var button = el('button', 'ui-button');
+      button.textContent = b[0];
+      div.appendChild(button);
+      if (b[1]) button.addEventListener('click', b[1]);
+    }
+    return div;
+  };
+
+  Dialog.prototype.mouseDown = function(e) {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON' || e.target.tagName === 'SELECT') return;
+    this.dragX = this.x - e.clientX;
+    this.dragY = this.y - e.clientY;
+    document.addEventListener('mousemove', this.mouseMove);
+    document.addEventListener('mouseup', this.mouseUp);
+  };
+
+  Dialog.prototype.mouseMove = function(e) {
+    this.moveTo(this.dragX + e.clientX, this.dragY + e.clientY);
+  };
+
+  Dialog.prototype.mouseUp = function(e) {
+    this.moveTo(this.dragX + e.clientX, this.dragY + e.clientY);
+    document.removeEventListener('mousemove', this.mouseMove);
+    document.removeEventListener('mouseup', this.mouseUp);
   };
 
 

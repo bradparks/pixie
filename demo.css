@@ -516,7 +516,7 @@ button::-moz-focus-inner {
   color: #5c5d5f;
   padding: 0 2px;
 }
-.palette-action {
+.ui-button {
   margin: 0;
   border: 1px solid #d0d1d2;
   border-radius: 6px;
@@ -525,8 +525,9 @@ button::-moz-focus-inner {
   background: linear-gradient(#ffffff, #e6e8e8);
   color: #5c5d5f;
   font: inherit;
+  font-size: 12px;
 }
-.palette-action:hover {
+.ui-button:hover {
   background: #179fd7;
   color: #ffffff;
 }
@@ -568,4 +569,42 @@ button::-moz-focus-inner {
 }
 .backpack-open .backpack-panel {
   bottom: 1px;
+}
+.dialog {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 2;
+  color: #5c5d5f;
+  text-align: center;
+  border-radius: 7px 7px 0 0;
+  box-shadow: 3px 3px 8px rgba(51, 51, 51, .75);
+  /*box-shadow: 0 3px 8px rgba(0, 0, 0, .3);*/
+}
+.dialog-title {
+  display: block;
+  border: 1px solid #b0b0b0;
+  border-radius: 7px 7px 0 0;
+  background: linear-gradient(#e0e0e0, #d0d0d0);
+  font-size: 14px;
+  height: 30px;
+  line-height: 30px;
+  padding: 0 14px;
+}
+.dialog-content {
+  background: #fff;
+  padding: 14px;
+  border: 1px solid #b0b0b0;
+  border-top: 0;
+  font-size: 14px;
+}
+.dialog-label {
+  margin-bottom: 14px;
+}
+.dialog-buttons {
+  margin-top: 14px;
+}
+.dialog .ui-button {
+  min-width: 51px;
+  margin: 0 5px;
 }
