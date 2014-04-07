@@ -1591,15 +1591,16 @@
       Dialog.line(),
       cloud.el,
       Dialog.buttons(
-        [vis.getText('OK'), function() {
-          d.hide();
-          if (list) {
-            this.addList(name.value, local.value, cloud.value);
-          } else {
-            this.addVariable(name.value, local.value, cloud.value);
-          }
-        }.bind(this)],
+        [vis.getText('OK'), function() {d.commit()}],
         [vis.getText('Cancel'), function() {d.hide()}])));
+
+    d.oncommit = function() {
+      if (list) {
+        this.addList(name.value, local.value, cloud.value);
+      } else {
+        this.addVariable(name.value, local.value, cloud.value);
+      }
+    }.bind(this);
     d.show(this);
   };
 
@@ -2180,6 +2181,7 @@
     this.el.appendChild(this.elContent = content || el('dialog-content'));
     if (content) content.classList.add('dialog-content');
 
+    this.el.addEventListener('keydown', this.keyDown.bind(this));
     this.el.addEventListener('mousedown', this.mouseDown.bind(this));
     this.mouseMove = this.mouseMove.bind(this);
     this.mouseUp = this.mouseUp.bind(this);
@@ -2218,7 +2220,7 @@
   };
 
   Dialog.prototype.focusFirst = function(el) {
-    if (el.tagName === 'INPUT' || el.tagName === 'SELECT') {
+    if (el.tagName === 'INPUT' || el.tagName === 'SELECT' || el.tagName === 'BUTTON') {
       el.focus();
       return true;
     }
@@ -2237,6 +2239,18 @@
     return this;
   };
 
+  Dialog.prototype.commit = function() {
+    if (this.oncommit) this.oncommit();
+    this.hide();
+    return this;
+  };
+
+  Dialog.prototype.cancel = function() {
+    if (this.oncancel) this.oncancel();
+    this.hide();
+    return this;
+  };
+
   Dialog.alert = function(title, text, button, fn, context) {
     if (typeof button === 'function' || button == null) {
       context = fn;
@@ -2247,10 +2261,9 @@
     var d = new Dialog(title, Dialog.content(
       Dialog.label(text),
       Dialog.buttons(
-        [button, function() {
-          d.hide();
-          if (fn) fn.call(context);
-        }])));
+        [button, function() {d.commit()}])));
+
+    if (fn) d.oncommit = fn.bind(context);
     return d;
   };
 
@@ -2270,14 +2283,13 @@
     var d = new Dialog(title, Dialog.content(
       Dialog.label(text),
       Dialog.buttons(
-        [yes, function() {
-          d.hide();
-          if (fn) fn.call(context, true);
-        }],
-        [no, function() {
-          d.hide();
-          if (fn) fn.call(context, false);
-        }])));
+        [yes, function() {d.commit()}],
+        [no, function() {d.cancel()}])));
+
+    if (fn) {
+      d.oncommit = fn.bind(context, true);
+      d.oncancel = fn.bind(context, false);
+    }
     return d;
   };
 
@@ -2411,6 +2423,15 @@
       if (b[1]) button.addEventListener('click', b[1]);
     }
     return div;
+  };
+
+  Dialog.prototype.keyDown = function(e) {
+    if (e.keyCode === 13) {
+      this.commit();
+    }
+    if (e.keyCode === 27) {
+      this.cancel();
+    }
   };
 
   Dialog.prototype.mouseDown = function(e) {
