@@ -591,7 +591,7 @@
       // variables
       {text: "Make a Variable", action: "newVariable"},
       {if: "variables", then: [
-        "readVariable",
+        {all: "variables"},
         "--",
         "setVar:to:",
         "changeVar:by:",
@@ -603,6 +603,7 @@
       // lists
       {text: "Make a List", action: "newList"},
       {if: "lists", then: [
+        {all: "lists"},
         "--",
         "append:toList:",
         "--",
@@ -646,7 +647,8 @@
   };
 
   vis.Block.prototype.help = function() {
-    Dialog.alert('Help', 'Help is not available yet.'); // TODO
+    // TODO
+    Dialog.alert('Help', 'Help is not available yet.').show(this.app.editor);
   };
 
   vis.Arg.prototype.menuTranslations = {
@@ -835,6 +837,12 @@
     this.canvas = canvas;
     this.cx = cx || 0;
     this.cy = cy || 0;
+  }
+
+
+  function Variable(name) {
+    this.name = name;
+    this.value = 0;
   }
 
 
@@ -1457,6 +1465,8 @@
     this.el.appendChild(this.spritePanel.el);
     this.el.appendChild(this.backpackPanel.el);
 
+    this.tabPanel.scriptEditor.category = 1;
+
     window.addEventListener('resize', this.resize.bind(this));
   }
 
@@ -1486,8 +1496,24 @@
     step(this.backpackPanel);
   };
 
+  Editor.prototype.addVariable = function(name, local) {
+    name = name.trim();
+    if (!name || (local ? this.selectedSprite.findLocal(name) : this.stage.findNestedLocal(name))) return;
+    (local ? this.selectedSprite : this.stage).variables.push(new Variable(name));
+    this.tabPanel.scriptEditor.refreshPalette();
+  };
+
   Editor.prototype.newVariable = function() {
-    var name = prompt('');
+    var name = Dialog.field(vis.getText('Variable name'));
+    var d = new Dialog(vis.getText('New Variable'), Dialog.content(
+      name.el,
+      Dialog.buttons(
+        [vis.getText('OK'), function() {
+          d.hide();
+          this.addVariable(name.field.value, false);
+        }.bind(this)],
+        [vis.getText('Cancel'), function() {d.hide()}])));
+    d.show(this);
   };
 
 
@@ -1502,8 +1528,6 @@
 
     this.palette = new vis.Palette(this.elPalette);
     this.workspace = new vis.Workspace(this.elWorkspace);
-
-    this.category = 1;
   };
 
   ScriptEditor.prototype.showSprite = function(sprite) {
@@ -1601,15 +1625,36 @@
     if (t === '--' || t === '---') {
       return this.palette.add(vis.Palette.space(t.length * 10 - 5));
     }
+    if (t.all) {
+      return (this.evalAll(t.all) || []).forEach(function(item) {
+        this.palette.add(item);
+      }, this);
+    }
     this.palette.add(new vis.Script().add(new vis.Block(t)));
   };
 
   ScriptEditor.prototype.evalCondition = function(condition) {
+    var stage = this.editor.stage;
+    var sprite = this.editor.selectedSprite;
     switch (condition) {
-      case 'variables': return true; // TODO
+      case 'variables': return stage.variables.length || sprite.variables.length; // TODO
       case 'lists': return false; // TODO
-      case 'stage': return this.editor.selectedSprite && this.editor.selectedSprite.isStage;
-      case 'sprite': return !this.editor.selectedSprite || this.editor.selectedSprite.isSprite;
+      case 'stage': return sprite.isStage;
+      case 'sprite': return sprite.isSprite;
+    }
+  };
+
+  ScriptEditor.prototype.evalAll = function(all) {
+    function makeVariable(v) {
+      return new vis.Script().add(new vis.Block('readVariable', [v.name]));
+    }
+    var stage = this.editor.stage;
+    var sprite = this.editor.selectedSprite;
+    switch (all) {
+      case 'variables':
+        return stage.variables.map(makeVariable).concat(sprite.isStage ? [] : sprite.variables.map(makeVariable));
+      case 'lists':
+        return [];
     }
   };
 
@@ -2102,7 +2147,7 @@
           d.hide();
           if (fn) fn.call(context);
         }])));
-    return d.show(editor);
+    return d;
   };
 
   Dialog.confirm = function(title, text, yes, no, fn, context) {
@@ -2129,13 +2174,24 @@
           d.hide();
           if (fn) fn.call(context, false);
         }])));
-    return d.show(editor);
+    return d;
   };
 
   Dialog.label = function(text) {
     var div = el('dialog-label');
     div.textContent = text;
     return div;
+  };
+
+  Dialog.field = function(label) {
+    var div = el('label', 'dialog-label');
+    div.textContent = label + ':';
+    var field = el('input', 'dialog-field');
+    div.appendChild(field);
+    return {
+      field: field,
+      el: div
+    };
   };
 
   Dialog.content = function() {

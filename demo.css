@@ -599,6 +599,7 @@ button::-moz-focus-inner {
   font-size: 14px;
 }
 .dialog-label {
+  display: block;
   margin-bottom: 14px;
 }
 .dialog-buttons {
@@ -607,4 +608,13 @@ button::-moz-focus-inner {
 .dialog .ui-button {
   min-width: 51px;
   margin: 0 5px;
+}
+.dialog-field {
+  margin: 0 0 0 8px;
+  padding: 4px 1px;
+  border: 1px solid #d0d1d2;
+  background: #fff;
+  font: inherit;
+  font-size: 12px;
+  outline: 0;
 }
