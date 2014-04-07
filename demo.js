@@ -331,8 +331,9 @@
           vis.Menu.line,
           [vis.getText('new message...'), function() {
             var arg = this;
-            var value = prompt('Message name?');
-            if (value != null) arg.value = value;
+            Dialog.prompt(vis.getText('New Message'), vis.getText('Message name'), function(value) { // NS
+              if (value) arg.value = value;
+            }).show(arg.app.editor);
           }]);
       },
       triggerSensor: function() {
@@ -2335,6 +2336,35 @@
     if (fn) {
       d.oncommit = fn.bind(context, true);
       d.oncancel = fn.bind(context, false);
+    }
+    return d;
+  };
+
+  Dialog.prompt = function(title, label, yes, no, fn, context) {
+    if (typeof yes === 'function' || yes == null) {
+      context = no;
+      fn = yes;
+      no = vis.getText('Cancel');
+      yes = vis.getText('OK');
+    }
+    if (typeof no === 'function' || no == null) {
+      context = fn;
+      fn = no;
+      no = vis.getText('Cancel');
+    }
+
+    var field = new Dialog.Field(label);
+    var d = new Dialog(title, Dialog.content(
+      field.el,
+      Dialog.buttons(
+        [yes, function() {d.commit()}],
+        [no, function() {d.cancel()}])));
+
+    if (fn) {
+      d.oncommit = function() {
+        fn.call(context, field.value);
+      };
+      d.oncancel = fn.bind(context, null);
     }
     return d;
   };
