@@ -216,6 +216,7 @@
       "hideVariable:": ["c", "hide variable %m.var", 9, 'variable'],
 
       // lists
+      "contentsOfList:": ["r", "%l.list", 12, 'list'],
       "append:toList:": ["c", "add %s to %m.list", 12, 'thing', 'list'],
 
       "deleteLine:ofList:": ["c", "delete %d.listDeleteItem of %m.list", 12, '1', 'list'],
@@ -273,11 +274,29 @@
         });
         return m;
       },
-      var: function() {
-        return new vis.Menu('variable', 'another', vis.Menu.line, 'local');
+      var: function(arg) {
+        var m = new vis.Menu;
+        var editor = arg.app.editor;
+        m.addAll(editor.stage.variables.map(getName));
+        if (editor.selectedSprite.isSprite && editor.selectedSprite.variables.length) {
+          if (editor.stage.variables.length) {
+            m.add(vis.Menu.line);
+          }
+          m.addAll(editor.selectedSprite.variables.map(getName))
+        }
+        return m;
       },
-      list: function() {
-        return new vis.Menu('list', 'another', vis.Menu.line, 'local');
+      list: function(arg) {
+        var m = new vis.Menu;
+        var editor = arg.app.editor;
+        m.addAll(editor.stage.lists.map(getName));
+        if (editor.selectedSprite.isSprite && editor.selectedSprite.lists.length) {
+          if (editor.stage.lists.length) {
+            m.add(vis.Menu.line);
+          }
+          m.addAll(editor.selectedSprite.lists.map(getName))
+        }
+        return m;
       },
       key: function() {
         var m = new vis.Menu('up arrow', 'down arrow', 'left arrow', 'right arrow', 'space').translate().addAll('abcdefghijklmnopqrstuvwxyz0123456789'.split(''));
@@ -781,6 +800,7 @@
     this.costume = 0;
     this.sounds = [];
     this.variables = [];
+    this.lists = [];
   }
 
   ScratchObj.prototype.addCostume = function(costume) {
@@ -798,15 +818,25 @@
   ScratchObj.prototype.findLocal = function(name) {
     var vars = this.variables;
     for (var i = vars.length; i--;) {
-      if (vars[i].name === name) {
-        return vars[i];
-      }
+      if (vars[i].name === name) return vars[i];
     }
     return null;
   };
 
   ScratchObj.prototype.findVariable = function(name) {
-    return this.findVariable(name) || this.stage && this.stage.findVariable(name);
+    return this.findLocal(name) || this.stage && this.stage.findLocal(name);
+  };
+
+  ScratchObj.prototype.findLocalList = function(name) {
+    var lists = this.lists;
+    for (var i = lists.length; i--;) {
+      if (lists[i].name === name) return lists[i];
+    }
+    return null;
+  };
+
+  ScratchObj.prototype.findList = function(name) {
+    return this.findLocalList(name) || this.stage && this.stage.findLocalList(name);
   };
 
   ScratchObj.prototype.forEachScript = function(fn, context) {
@@ -843,6 +873,12 @@
   function Variable(name) {
     this.name = name;
     this.value = 0;
+  }
+
+
+  function List(name, contents) {
+    this.name = name;
+    this.contents = contents || [];
   }
 
 
@@ -932,6 +968,17 @@
     var children = this.children;
     for (var i = 0, l = children.length; i < l; i++) {
       var l = children[i].findLocal(name);
+      if (l) return l;
+    }
+    return null;
+  };
+
+  Stage.prototype.findNestedLocalList = function(name) {
+    var l = this.findLocalList(name);
+    if (l) return l;
+    var children = this.children;
+    for (var i = 0, l = children.length; i < l; i++) {
+      var l = children[i].findLocalList(name);
       if (l) return l;
     }
     return null;
@@ -1498,7 +1545,7 @@
 
   Editor.prototype.addVariable = function(name, local, cloud) {
     name = name.trim();
-    if (!name || (local ? this.selectedSprite.findLocal(name) : this.stage.findNestedLocal(name))) {
+    if (!name || (local && this.selectedSprite.isSprite ? this.selectedSprite.findVariable(name) : this.stage.findNestedLocal(name))) {
       // Dialog.alert(vis.getText('New Variable'), vis.getText('A variable with that name already exists.')).show(this);
       return;
     }
@@ -1506,20 +1553,39 @@
     this.tabPanel.scriptEditor.refreshPalette();
   };
 
+  Editor.prototype.addList = function(name, local, cloud) {
+    name = name.trim();
+    if (!name || (local && this.selectedSprite.isSprite ? this.selectedSprite.findList(name) : this.stage.findNestedLocalList(name))) {
+      // Dialog.alert(vis.getText('New List'), vis.getText('A list with that name already exists.')).show(this);
+      return;
+    }
+    (local ? this.selectedSprite : this.stage).lists.push(new List(name));
+    this.tabPanel.scriptEditor.refreshPalette();
+  };
+
   Editor.prototype.newVariable = function() {
-    var name = new Dialog.Field(vis.getText('Variable name'));
+    this.newDialog(false);
+  };
+
+  Editor.prototype.newList = function() {
+    this.newDialog(true);
+  };
+
+  Editor.prototype.newDialog = function(list) {
+    var name = new Dialog.Field(vis.getText(list ? 'List name' : 'Variable name'));
     var local = new Dialog.Radio(
-      ['For all sprites', false],
-      ['For this sprite only', true]);
-    var cloud = new Dialog.CheckBox('Cloud variable (stored on server)');
+      [vis.getText('For all sprites'), false],
+      [vis.getText('For this sprite only'), true]);
+    var cloud = new Dialog.CheckBox(vis.getText(list ? 'Cloud list (stored on server)' : 'Cloud variable (stored on server)'));
     local.setEnabled(1, this.selectedSprite.isSprite);
+    cloud.enabled = !list;
     local.onchange = function() {
-      cloud.enabled = !local.value;
+      cloud.enabled = !list && !local.value;
     };
     cloud.onchange = function() {
       local.setEnabled(1, this.selectedSprite.isSprite && !cloud.value);
     }.bind(this);
-    var d = new Dialog(vis.getText('New Variable'), Dialog.content(
+    var d = new Dialog(vis.getText(list ? 'New List' : 'New Variable'), Dialog.content(
       name.el,
       local.el,
       Dialog.line(),
@@ -1527,7 +1593,11 @@
       Dialog.buttons(
         [vis.getText('OK'), function() {
           d.hide();
-          this.addVariable(name.value, local.value, cloud.value);
+          if (list) {
+            this.addList(name.value, local.value, cloud.value);
+          } else {
+            this.addVariable(name.value, local.value, cloud.value);
+          }
         }.bind(this)],
         [vis.getText('Cancel'), function() {d.hide()}])));
     d.show(this);
@@ -1655,7 +1725,7 @@
     var sprite = this.editor.selectedSprite;
     switch (condition) {
       case 'variables': return stage.variables.length || sprite.variables.length; // TODO
-      case 'lists': return false; // TODO
+      case 'lists': return stage.lists.length || sprite.lists.length; // TODO
       case 'stage': return sprite.isStage;
       case 'sprite': return sprite.isSprite;
     }
@@ -1665,13 +1735,16 @@
     function makeVariable(v) {
       return new vis.Script().add(new vis.Block('readVariable', [v.name]));
     }
+    function makeList(v) {
+      return new vis.Script().add(new vis.Block('contentsOfList:', [v.name]));
+    }
     var stage = this.editor.stage;
     var sprite = this.editor.selectedSprite;
     switch (all) {
       case 'variables':
         return stage.variables.map(makeVariable).concat(sprite.isStage ? [] : sprite.variables.map(makeVariable));
       case 'lists':
-        return [];
+        return stage.lists.map(makeList).concat(sprite.isStage ? [] : sprite.lists.map(makeList));
     }
   };
 
