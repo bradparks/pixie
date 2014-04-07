@@ -325,11 +325,8 @@
           // TODO record a sound
         }]);
       },
-      broadcast: function() {
-        return new vis.Menu(
-          'broadcast1',
-          vis.Menu.line,
-          [vis.getText('new message...'), function() {
+      broadcast: function(arg) {
+        return new vis.Menu().addAll(arg.app.editor.broadcastNames).add(vis.Menu.line).add([vis.getText('new message...'), function() {
             var arg = this;
             Dialog.prompt(vis.getText('New Message'), vis.getText('Message name'), function(value) { // NS
               if (value) arg.value = value;
@@ -1619,6 +1616,27 @@
     }.bind(this);
     d.show(this);
   };
+
+  def(Editor.prototype, 'broadcastNames', {get: function() {
+    function add(sprite, script) {
+      if (!script || !script.isScript) return;
+      var b = script.blocks;
+      for (var i = b.length; i--;) {
+        var a = b[i].args;
+        for (var j = a.length; j--;) {
+          if (a[j].type === 't') {
+            add(a[j].script);
+          } else if (a[j].menu === 'broadcast') {
+            names[a[j].value] = true;
+          }
+        }
+      }
+    }
+    var names = {};
+    this.stage.forEachScript(add);
+    this.tabPanel.scriptEditor.palette.scripts.forEach(add.bind(null, null));
+    return Object.keys(names);
+  }});
 
 
   function ScriptEditor(editor) {
