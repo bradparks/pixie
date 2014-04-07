@@ -1616,17 +1616,23 @@
 
     this.palette = new vis.Palette(this.elPalette);
     this.workspace = new vis.Workspace(this.elWorkspace);
+
+    this.workspace.on('change', this.save, this);
+  };
+
+  ScriptEditor.prototype.save = function() {
+    if (this.sprite) this.sprite.scripts = this.workspace.scripts.slice(0);
   };
 
   ScriptEditor.prototype.showSprite = function(sprite) {
-    if (this.sprite) {
-      this.sprite.scripts = this.workspace.scripts.slice(0);
-    }
-    if (this.sprite = sprite) {
+    this.save();
+    this.sprite = null;
+    if (sprite) {
       this.workspace.clear();
       sprite.scripts.forEach(function(script) {
         this.workspace.add(script);
       }, this);
+      this.sprite = sprite;
     }
   };
 
