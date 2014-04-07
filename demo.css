@@ -621,6 +621,10 @@ button::-moz-focus-inner {
 .dialog-radio-label {
   margin: 0 8px;
   font-size: 12px;
+  opacity: .4;
+}
+.dialog-radio-label.enabled {
+  opacity: 1;
 }
 .dialog-radio {
   border: 1px solid #fff;
@@ -633,16 +637,31 @@ button::-moz-focus-inner {
   background: #ffffff;
   vertical-align: middle;
 }
-.dialog-radio:hover,
+.dialog-radio-label.enabled .dialog-radio:hover,
 .dialog-radio.selected {
   background: #373737;
 }
 .dialog-check-box-label {
   font-size: 12px;
+  opacity: .4;
+}
+.dialog-check-box-label.enabled {
+  opacity: 1;
 }
 .dialog-check-box {
   margin: 0 5px 0 0;
   outline: 0;
+  padding: 0;
+  border: 0;
+  background: url(assets.png) -268px 0;
+  width: 13px;
+  height: 12px;
+  vertical-align: middle;
+  position: relative;
+  top: -1px;
+}
+.dialog-check-box.checked {
+  background-position: -268px -12px;
 }
 .dialog-separator {
   border-top: 1px solid #d0d0d0;

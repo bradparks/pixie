@@ -1496,19 +1496,29 @@
     step(this.backpackPanel);
   };
 
-  Editor.prototype.addVariable = function(name, local) {
+  Editor.prototype.addVariable = function(name, local, cloud) {
     name = name.trim();
-    if (!name || (local ? this.selectedSprite.findLocal(name) : this.stage.findNestedLocal(name))) return;
+    if (!name || (local ? this.selectedSprite.findLocal(name) : this.stage.findNestedLocal(name))) {
+      // Dialog.alert(vis.getText('New Variable'), vis.getText('A variable with that name already exists.')).show(this);
+      return;
+    }
     (local ? this.selectedSprite : this.stage).variables.push(new Variable(name));
     this.tabPanel.scriptEditor.refreshPalette();
   };
 
   Editor.prototype.newVariable = function() {
-    var name = Dialog.field(vis.getText('Variable name'));
-    var local = Dialog.radio(
+    var name = new Dialog.Field(vis.getText('Variable name'));
+    var local = new Dialog.Radio(
       ['For all sprites', false],
       ['For this sprite only', true]);
-    var cloud = Dialog.checkBox('Cloud variable (stored on server)');
+    var cloud = new Dialog.CheckBox('Cloud variable (stored on server)');
+    local.setEnabled(1, this.selectedSprite.isSprite);
+    local.onchange = function() {
+      cloud.enabled = !local.value;
+    };
+    cloud.onchange = function() {
+      local.setEnabled(1, this.selectedSprite.isSprite && !cloud.value);
+    }.bind(this);
     var d = new Dialog(vis.getText('New Variable'), Dialog.content(
       name.el,
       local.el,
@@ -1517,7 +1527,7 @@
       Dialog.buttons(
         [vis.getText('OK'), function() {
           d.hide();
-          this.addVariable(name.field.value, false);
+          this.addVariable(name.value, local.value, cloud.value);
         }.bind(this)],
         [vis.getText('Cancel'), function() {d.hide()}])));
     d.show(this);
@@ -2204,68 +2214,104 @@
     return div;
   };
 
-  Dialog.field = function(label) {
-    var div = el('label', 'dialog-label');
-    div.textContent = label + ':';
-    var field = el('input', 'dialog-field');
-    div.appendChild(field);
-    return {
-      value: function() {return field.value},
-      el: div
-    };
+  Dialog.Field = function(label) {
+    this.el = el('label', 'dialog-label');
+    this.el.textContent = label + ':';
+    this.field = el('input', 'dialog-field');
+    this.field.addEventListener('input', this.change.bind(this));
+    this.el.appendChild(this.field);
   };
 
-  Dialog.radio = function() {
-    function click() {
-      if (r) r.classList.remove('selected');
-      r = this;
-      v = a[this.dataset.index][1];
-      r.classList.add('selected');
-    }
-    var div = el('dialog-label');
-    var v = null;
-    var r = null;
-    var a = slice.call(arguments);
+  Dialog.Field.prototype.change = function() {
+    this.value = this.field.value;
+  };
+
+  Dialog.Radio = function() {
+    this.el = el('dialog-label');
+    this.radios = [];
+    this.labels = [];
+    this.values = [];
+    var a = this.args = slice.call(arguments);
     for (var i = 0, l = a.length; i < l; i++) {
       var s = a[i];
-      var label = el('label', 'dialog-radio-label');
+      var label = el('label', 'dialog-radio-label enabled');
       var radio = el('button', 'dialog-radio');
       radio.dataset.index = i;
-      radio.addEventListener('click', click);
+      radio.addEventListener('click', this.click.bind(this, i));
       label.appendChild(radio);
       label.appendChild(document.createTextNode(s[0]));
-      div.appendChild(label);
-      if (v == null) {
+      this.el.appendChild(label);
+      this.labels.push(label);
+      this.radios.push(radio);
+      this.values.push(s[1]);
+      if (this.value == null) {
         radio.classList.add('selected');
-        r = radio;
-        v = s[1];
+        this.radio = radio;
+        this.value = s[1];
       }
     }
-    return {
-      value: function() {return v},
-      el: div
-    };
   };
 
-  Dialog.checkBox = function(label) {
-    var checked = false;
-    var div = el('label', 'dialog-label dialog-check-box-label');
-    var button = el('input', 'dialog-check-box');
-    button.type = 'checkbox';
-    button.addEventListener('click', function() {
-      if (checked = !checked) {
-        button.classList.add('checked');
+  Dialog.Radio.prototype.setEnabled = function(i, enabled) {
+    var radio = this.radios[i];
+    if (radio) {
+      radio.dataset.enabled = !!enabled;
+      var label = this.labels[i];
+      if (enabled) {
+        label.classList.add('enabled');
       } else {
-        button.classList.remove('checked');
+        label.classList.remove('enabled');
       }
-    });
-    div.appendChild(button);
-    div.appendChild(document.createTextNode(label));
-    return {
-      value: function() {return checked},
-      el: div
-    };
+    }
   };
+
+  Dialog.Radio.prototype.click = function(i) {
+    var radio = this.radios[i];
+    if (radio.dataset.enabled !== 'false') {
+      if (this.radio) this.radio.classList.remove('selected');
+      this.radio = radio;
+      this.value = this.values[i];
+      radio.classList.add('selected');
+      if (this.onchange) this.onchange();
+    }
+  };
+
+  Dialog.Radio.prototype.onchange = null;
+
+  Dialog.CheckBox = function(label) {
+    this._enabled = true;
+    this.value = false;
+    this.el = el('label', 'dialog-label dialog-check-box-label enabled');
+    this.button = el('button', 'dialog-check-box');
+    this.button.addEventListener('click', this.click.bind(this));
+    this.el.appendChild(this.button);
+    this.el.appendChild(document.createTextNode(label));
+  };
+
+  Dialog.CheckBox.prototype.click = function(e) {
+    e.preventDefault();
+    if (!this._enabled) return;
+    if (this.value = !this.value) {
+      this.button.classList.add('checked');
+    } else {
+      this.button.classList.remove('checked');
+    }
+    if (this.onchange) this.onchange();
+  };
+
+  def(Dialog.CheckBox.prototype, 'enabled', {
+    get: function() {return this._enabled},
+    set: function(value) {
+      this._enabled = value;
+      if (value) {
+        this.el.classList.add('enabled');
+      } else {
+        this.el.classList.remove('enabled');
+      }
+    }
+  });
+
+  Dialog.CheckBox.prototype.onchange = null;
 
   Dialog.line = function() {
     return el('dialog-separator');
