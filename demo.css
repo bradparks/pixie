@@ -516,6 +516,11 @@ button::-moz-focus-inner {
   color: #5c5d5f;
   padding: 0 2px;
 }
+.palette-separator {
+  width: 100px;
+  border-top: 1px solid #bcbdbe;
+  border-bottom: 1px solid #f2f2f2;
+}
 .ui-button {
   margin: 0;
   border: 1px solid #d0d1d2;

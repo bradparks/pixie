@@ -1750,15 +1750,19 @@
       div.textContent = vis.getText(t.text);
       return this.palette.add(vis.Palette.element(div));
     }
+    if (t === '==') {
+      return this.palette.add(vis.Palette.element(el('palette-separator')));
+    }
     if (t === '--' || t === '---') {
       return this.palette.add(vis.Palette.space(t.length * 10 - 5));
     }
     if (t.all) {
-      return (this.evalAll(t.all) || []).forEach(function(item) {
-        this.palette.add(item);
-      }, this);
+      return (this.evalAll(t.all) || []).forEach(this.eval, this);
     }
-    this.palette.add(new vis.Script().add(new vis.Block(t)));
+    if (!t.pop) {
+      t = [t];
+    }
+    this.palette.add(new vis.Script().add(new vis.Block(t[0], t.slice(1))));
   };
 
   ScriptEditor.prototype.evalCondition = function(condition) {
@@ -1773,19 +1777,23 @@
   };
 
   ScriptEditor.prototype.evalAll = function(all) {
-    function makeVariable(v) {
-      return new vis.Script().add(new vis.Block('readVariable', [v.name]));
+    function getter(get) {
+      return function(name) {return [get, name]};
     }
-    function makeList(v) {
-      return new vis.Script().add(new vis.Block('contentsOfList:', [v.name]));
+
+    function collection(key, make) { // NS
+      var stagec = stage[key].map(getName).sort().map(make);
+      var spritec = sprite.isStage ? [] : sprite[key].map(getName).sort().map(make);
+      return stagec.concat(stagec.length && spritec.length ? "==" : [], spritec);
     }
+
     var stage = this.editor.stage;
     var sprite = this.editor.selectedSprite;
     switch (all) {
       case 'variables':
-        return stage.variables.map(makeVariable).concat(sprite.isStage ? [] : sprite.variables.map(makeVariable));
+        return collection('variables', getter('readVariable'));
       case 'lists':
-        return stage.lists.map(makeList).concat(sprite.isStage ? [] : sprite.lists.map(makeList));
+        return collection('lists', getter('contentsOfList:'));
     }
   };
 
