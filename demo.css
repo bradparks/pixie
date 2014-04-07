@@ -618,3 +618,34 @@ button::-moz-focus-inner {
   font-size: 12px;
   outline: 0;
 }
+.dialog-radio-label {
+  margin: 0 8px;
+  font-size: 12px;
+}
+.dialog-radio {
+  border: 1px solid #fff;
+  border-radius: 100px;
+  width: 11px;
+  height: 11px;
+  padding: 0;
+  margin: 0 7px 0 0;
+  box-shadow: 0 0 0 1px #373737;
+  background: #ffffff;
+  vertical-align: middle;
+}
+.dialog-radio:hover,
+.dialog-radio.selected {
+  background: #373737;
+}
+.dialog-check-box-label {
+  font-size: 12px;
+}
+.dialog-check-box {
+  margin: 0 5px 0 0;
+  outline: 0;
+}
+.dialog-separator {
+  border-top: 1px solid #d0d0d0;
+  border-bottom: 1px solid #909090;
+  margin: -3px 0 10px;
+}

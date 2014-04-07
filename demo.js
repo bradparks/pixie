@@ -1505,8 +1505,15 @@
 
   Editor.prototype.newVariable = function() {
     var name = Dialog.field(vis.getText('Variable name'));
+    var local = Dialog.radio(
+      ['For all sprites', false],
+      ['For this sprite only', true]);
+    var cloud = Dialog.checkBox('Cloud variable (stored on server)');
     var d = new Dialog(vis.getText('New Variable'), Dialog.content(
       name.el,
+      local.el,
+      Dialog.line(),
+      cloud.el,
       Dialog.buttons(
         [vis.getText('OK'), function() {
           d.hide();
@@ -2120,9 +2127,23 @@
 
     this.width = tbb.width | 0;
     this.height = tbb.height | 0;
-    this.moveTo(Math.floor((ebb.left + ebb.right - tbb.width) / 2), Math.floor((ebb.top + ebb.bottom - tbb.height) / 2));
+    this.moveTo(Math.floor((Math.max(0, ebb.left) + Math.min(innerWidth, ebb.right) - tbb.width) / 2), Math.floor((Math.max(0, ebb.top) + Math.min(innerHeight, ebb.bottom) - tbb.height) / 2));
+
+    this.focusFirst(this.elContent);
 
     return this;
+  };
+
+  Dialog.prototype.focusFirst = function(el) {
+    if (el.tagName === 'INPUT' || el.tagName === 'SELECT') {
+      el.focus();
+      return true;
+    }
+    var c = el.childNodes;
+    for (var i = 0, l = c.length; i < l; i++) {
+      if (this.focusFirst(c[i])) return true;
+    }
+    return false;
   };
 
   Dialog.prototype.hide = function() {
@@ -2189,9 +2210,65 @@
     var field = el('input', 'dialog-field');
     div.appendChild(field);
     return {
-      field: field,
+      value: function() {return field.value},
       el: div
     };
+  };
+
+  Dialog.radio = function() {
+    function click() {
+      if (r) r.classList.remove('selected');
+      r = this;
+      v = a[this.dataset.index][1];
+      r.classList.add('selected');
+    }
+    var div = el('dialog-label');
+    var v = null;
+    var r = null;
+    var a = slice.call(arguments);
+    for (var i = 0, l = a.length; i < l; i++) {
+      var s = a[i];
+      var label = el('label', 'dialog-radio-label');
+      var radio = el('button', 'dialog-radio');
+      radio.dataset.index = i;
+      radio.addEventListener('click', click);
+      label.appendChild(radio);
+      label.appendChild(document.createTextNode(s[0]));
+      div.appendChild(label);
+      if (v == null) {
+        radio.classList.add('selected');
+        r = radio;
+        v = s[1];
+      }
+    }
+    return {
+      value: function() {return v},
+      el: div
+    };
+  };
+
+  Dialog.checkBox = function(label) {
+    var checked = false;
+    var div = el('label', 'dialog-label dialog-check-box-label');
+    var button = el('input', 'dialog-check-box');
+    button.type = 'checkbox';
+    button.addEventListener('click', function() {
+      if (checked = !checked) {
+        button.classList.add('checked');
+      } else {
+        button.classList.remove('checked');
+      }
+    });
+    div.appendChild(button);
+    div.appendChild(document.createTextNode(label));
+    return {
+      value: function() {return checked},
+      el: div
+    };
+  };
+
+  Dialog.line = function() {
+    return el('dialog-separator');
   };
 
   Dialog.content = function() {
@@ -2218,7 +2295,7 @@
   };
 
   Dialog.prototype.mouseDown = function(e) {
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON' || e.target.tagName === 'SELECT') return;
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON' || e.target.tagName === 'SELECT' || e.target.tagName === 'LABEL') return;
     this.dragX = this.x - e.clientX;
     this.dragY = this.y - e.clientY;
     document.addEventListener('mousemove', this.mouseMove);
