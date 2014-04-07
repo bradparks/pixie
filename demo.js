@@ -1560,7 +1560,7 @@
     name = name.trim();
     if (!name) return;
     if (local && this.selectedSprite.isSprite ? this.selectedSprite.findVariable(name) : this.stage.findNestedLocal(name)) {
-      // Dialog.alert(vis.getText('New Variable'), vis.getText('A variable with that name already exists.')).show(this);
+      Dialog.alert(vis.getText('New Variable'), vis.getText('A variable with that name already exists.')).show(this); // NS
       return;
     }
     (local ? this.selectedSprite : this.stage).variables.push(new Variable(name));
@@ -1571,7 +1571,7 @@
     name = name.trim();
     if (!name) return;
     if (local && this.selectedSprite.isSprite ? this.selectedSprite.findList(name) : this.stage.findNestedLocalList(name)) {
-      // Dialog.alert(vis.getText('New List'), vis.getText('A list with that name already exists.')).show(this);
+      Dialog.alert(vis.getText('New List'), vis.getText('A list with that name already exists.')).show(this); // NS
       return;
     }
     (local ? this.selectedSprite : this.stage).lists.push(new List(name));
@@ -1592,8 +1592,8 @@
       [vis.getText('For all sprites'), false],
       [vis.getText('For this sprite only'), true]);
     var cloud = new Dialog.CheckBox(vis.getText(list ? 'Cloud list (stored on server)' : 'Cloud variable (stored on server)'));
-    local.setEnabled(1, this.selectedSprite.isSprite);
-    cloud.enabled = !list;
+    local.setEnabled(1, this.selectedSprite.isSprite); // NS
+    cloud.enabled = !list; // NS
     local.onchange = function() {
       cloud.enabled = !list && !local.value;
     };
@@ -2245,7 +2245,7 @@
   Dialog.prototype.padding = 4;
 
   Dialog.prototype.moveTo = function(x, y) {
-    var p = this.padding;
+    var p = this.padding; // NS
     vis.util.moveTo.call(this, Math.max(p, Math.min(innerWidth - this.width - p, x)), Math.max(p, Math.min(innerHeight - this.height - p, y)));
   };
 
