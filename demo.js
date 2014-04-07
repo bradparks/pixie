@@ -846,6 +846,11 @@
     }
   };
 
+  ScratchObj.prototype.destroy = function() {
+    if (this.stage) this.stage.remove(this);
+    return this;
+  };
+
 
   function Costume(name, canvas, cx, cy) {
     if (typeof canvas === 'string') {
@@ -937,6 +942,14 @@
     }
     return this;
   };
+
+  Stage.prototype.remove = function(child) {
+    if (!child || child.stage !== this) return;
+    var i = this.children.indexOf(child);
+    if (i !== -1) this.children.splice(i, 1);
+    child.stage = null;
+    return this;
+  }
 
   Stage.prototype.redraw = function() {
     this.canvas.width = this.canvas.width;
@@ -1545,7 +1558,8 @@
 
   Editor.prototype.addVariable = function(name, local, cloud) {
     name = name.trim();
-    if (!name || (local && this.selectedSprite.isSprite ? this.selectedSprite.findVariable(name) : this.stage.findNestedLocal(name))) {
+    if (!name) return;
+    if (local && this.selectedSprite.isSprite ? this.selectedSprite.findVariable(name) : this.stage.findNestedLocal(name)) {
       // Dialog.alert(vis.getText('New Variable'), vis.getText('A variable with that name already exists.')).show(this);
       return;
     }
@@ -1555,7 +1569,8 @@
 
   Editor.prototype.addList = function(name, local, cloud) {
     name = name.trim();
-    if (!name || (local && this.selectedSprite.isSprite ? this.selectedSprite.findList(name) : this.stage.findNestedLocalList(name))) {
+    if (!name) return;
+    if (local && this.selectedSprite.isSprite ? this.selectedSprite.findList(name) : this.stage.findNestedLocalList(name)) {
       // Dialog.alert(vis.getText('New List'), vis.getText('A list with that name already exists.')).show(this);
       return;
     }
@@ -2017,6 +2032,12 @@
     if (this.selectedIcon = icon) {
       icon.el.classList.add('selected');
     }
+    var tbb = this.elSpriteSection.getBoundingClientRect();
+    var ibb = icon.el.getBoundingClientRect();
+    var t = ibb.top - 3;
+    var b = ibb.bottom + 3;
+    if (t < tbb.top) this.elSpriteSection.scrollTop += t - tbb.top;
+    else if (b > tbb.bottom) this.elSpriteSection.scrollTop += b - tbb.bottom;
     this.editor.selectedSprite = icon.sprite;
     var tabPanel = this.editor.tabPanel;
     tabPanel.showSprite(icon.sprite);
@@ -2024,8 +2045,8 @@
     return this;
   };
 
-  SpritePanel.prototype.addIcon = function(name) {
-    var icon = new SpriteIcon(this, name);
+  SpritePanel.prototype.addIcon = function(sprite) {
+    var icon = new SpriteIcon(this, sprite);
     this.icons.push(icon);
     this.elSpriteSection.appendChild(icon.el);
     if (this.parent) {
@@ -2033,6 +2054,16 @@
       icon.resize();
     }
     return icon;
+  };
+
+  SpritePanel.prototype.removeIcon = function(icon) {
+    var i = this.icons.indexOf(icon);
+    if (i !== -1) this.icons.splice(i, 1);
+    this.elSpriteSection.removeChild(icon.el);
+    if (this.parent) {
+      this.parent.remove(icon);
+    }
+    this.select(this.icons[i] || this.icons[i - 1] || this.stageIcon);
   };
 
   SpritePanel.prototype.addNewButton = function(name, fn) {
@@ -2063,6 +2094,7 @@
 
   function SpriteIcon(panel, sprite) {
     this.panel = panel;
+    this.editor = panel.editor;
     this.sprite = sprite;
 
     this.el = el('sprite-icon');
@@ -2097,7 +2129,7 @@
       'duplicate',
       vis.Menu.line,
       this.sprite.visible ? ['hide', this.hideSprite] : ['show', this.showSprite],
-      'delete',
+      ['delete', this.deleteSprite],
       vis.Menu.line,
       'save to local file').withContext(this).translate();
   }});
@@ -2113,6 +2145,14 @@
     if (this.sprite.isSprite) {
       this.sprite.visible = true;
       this.sprite.stage.redraw();
+    }
+  };
+
+  SpriteIcon.prototype.deleteSprite = function() {
+    if (this.sprite.isSprite) {
+      this.sprite.destroy();
+      this.editor.stage.redraw();
+      this.panel.removeIcon(this);
     }
   };
 
@@ -2306,6 +2346,7 @@
   };
 
   Dialog.Field = function(label) {
+    this.value = '';
     this.el = el('label', 'dialog-label');
     this.el.textContent = label + ':';
     this.field = el('input', 'dialog-field');
