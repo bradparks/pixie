@@ -653,8 +653,8 @@ button::-moz-focus-inner {
 .dialog-check-box-label.enabled {
   opacity: 1;
 }
-.dialog-check-box {
-  margin: 0 5px 0 0;
+.check-box {
+  margin: 0;
   outline: 0;
   padding: 0;
   border: 0;
@@ -663,9 +663,12 @@ button::-moz-focus-inner {
   height: 12px;
   vertical-align: middle;
   position: relative;
+}
+.dialog-check-box-label .check-box {
+  margin: 0 5px 0 0;
   top: -1px;
 }
-.dialog-check-box.checked {
+.check-box.checked {
   background-position: -268px -12px;
 }
 .dialog-separator {

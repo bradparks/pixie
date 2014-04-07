@@ -433,9 +433,9 @@
         "--",
         "setRotationStyle",
         "---",
-        "xpos",
-        "ypos",
-        "heading"
+        {watcher: "xpos"},
+        {watcher: "ypos"},
+        {watcher: "heading"}
       ]}
     ],
     2: [
@@ -469,10 +469,10 @@
         "comeToFront",
         "goBackByLayers:",
         "--",
-        "costumeIndex"
+        {watcher: "costumeIndex"}
       ]},
-      "sceneName",
-      {if: "stage", then: ["backgroundIndex"], else: ["scale"]}
+      {watcher: "sceneName"},
+      {if: "stage", then: [{watcher: "backgroundIndex"}], else: [{watcher: "scale"}]}
     ],
     3: [
       // sound
@@ -488,11 +488,11 @@
       "--",
       "changeVolumeBy:",
       "setVolumeTo:",
-      "volume",
+      {watcher: "volume"},
       "--",
       "changeTempoBy:",
       "setTempoTo:",
-      "tempo",
+      {watcher: "tempo"}
     ],
     4: [
       // pen
@@ -556,25 +556,25 @@
         "--",
       ]},
       "doAsk",
-      "answer",
+      {watcher: "answer"},
       "--",
       "keyPressed:",
       "mousePressed",
       "mouseX",
       "mouseY",
       "--",
-      "soundLevel",
+      {watcher: "soundLevel"},
       "--",
-      "senseVideoMotion",
+      {watcher: "senseVideoMotion"},
       "setVideoState",
       "setVideoTransparency",
       "--",
-      "timer",
+      {watcher: "timer"},
       "timerReset",
       "--",
       "getAttribute:of:",
       "--",
-      "timeAndDate",
+      {watcher: "timeAndDate"},
       "timestamp",
       "getUserName"
     ],
@@ -1750,6 +1750,21 @@
       div.textContent = vis.getText(t.text);
       return this.palette.add(vis.Palette.element(div));
     }
+    if (t.watcher) {
+      var b = t.watcher;
+      if (!b.pop) b = [b];
+      var button = el('button', 'check-box');
+      var checked = false;
+      button.addEventListener('click', function() {
+        if (checked = !checked) {
+          button.classList.add('checked');
+        } else {
+          button.classList.remove('checked');
+        }
+      });
+      this.palette.add(vis.Palette.inline(button));
+      return this.palette.add(new vis.Script().add(new vis.Block(b[0], b.slice(1))));
+    }
     if (t === '==') {
       return this.palette.add(vis.Palette.element(el('palette-separator')));
     }
@@ -1778,7 +1793,7 @@
 
   ScriptEditor.prototype.evalAll = function(all) {
     function getter(get) {
-      return function(name) {return [get, name]};
+      return function(name) {return {watcher: [get, name]}};
     }
 
     function collection(key, make) { // NS
@@ -2470,7 +2485,7 @@
     this._enabled = true;
     this.value = false;
     this.el = el('label', 'dialog-label dialog-check-box-label enabled');
-    this.button = el('button', 'dialog-check-box');
+    this.button = el('button', 'check-box');
     this.button.addEventListener('click', this.click.bind(this));
     this.el.appendChild(this.button);
     this.el.appendChild(document.createTextNode(label));
