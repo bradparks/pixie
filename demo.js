@@ -777,6 +777,10 @@
     return o.name;
   }
 
+  function copy(o) {
+    return o.copy();
+  }
+
   function resize(o) {
     if (o.resize) o.resize();
   }
@@ -849,6 +853,17 @@
     return this;
   };
 
+  ScratchObj.prototype.copy = function() {
+    var o = new this.constructor(this.name);
+    o.scripts = this.scripts.map(copy);
+    o.costumes = this.costumes.map(copy);
+    o.costume = this.costume;
+    o.sounds = this.sounds.map(copy);
+    o.variables = this.variables.map(copy);
+    o.lists = this.lists.map(copy);
+    return o;
+  };
+
 
   function Costume(name, canvas, cx, cy) {
     if (typeof canvas === 'string') {
@@ -872,17 +887,29 @@
     this.cy = cy || 0;
   }
 
+  Costume.prototype.copy = function() {
+    return new Costume(this.name, this.canvas, this.cx, this.cy);
+  };
 
-  function Variable(name) {
+
+  function Variable(name, value) {
     this.name = name;
-    this.value = 0;
+    this.value = value == null ? 0 : value;
   }
+
+  Variable.prototype.copy = function() {
+    return new Variable(this.name, this.value);
+  };
 
 
   function List(name, contents) {
     this.name = name;
     this.contents = contents || [];
   }
+
+  List.prototype.copy = function() {
+    return new List(this.name, this.contents);
+  };
 
 
   function Sprite(name) {
@@ -914,6 +941,17 @@
       context.drawImage(costume.canvas, -costume.cx, -costume.cy);
       context.restore();
     }
+  };
+
+  Sprite.prototype.copy = function() {
+    var o = ScratchObj.prototype.copy.call(this);
+    this.rotationStyle = 'normal';
+    o.x = this.x;
+    o.y = this.y;
+    o.direction = this.direction;
+    o.scale = this.scale;
+    o.visible = this.visible;
+    return o;
   };
 
 
@@ -2168,13 +2206,19 @@
 
   def(SpriteIcon.prototype, 'contextMenu', {get: function() {
     return !this.sprite.isStage && new vis.Menu(
-      'duplicate',
+      ['duplicate', this.duplicateSprite],
       vis.Menu.line,
       this.sprite.visible ? ['hide', this.hideSprite] : ['show', this.showSprite],
       ['delete', this.deleteSprite],
       vis.Menu.line,
       'save to local file').withContext(this).translate();
   }});
+
+  SpriteIcon.prototype.duplicateSprite = function() {
+    var sprite = this.sprite.copy();
+    this.editor.stage.add(sprite);
+    this.panel.select(this.panel.addIcon(sprite));
+  };
 
   SpriteIcon.prototype.hideSprite = function() {
     if (this.sprite.isSprite) {
