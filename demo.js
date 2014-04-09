@@ -1448,6 +1448,21 @@
     table['*'] = function(b) {return interp.narg(b, 0) * interp.narg(b, 1)};
     table['/'] = function(b) {return interp.narg(b, 0) / interp.narg(b, 1)};
 
+    table['randomFrom:to:'] = function(b) {
+      var a = interp.narg(b, 0);
+      var b = interp.narg(b, 1);
+      if (a === b) return a;
+      if (b < a) {
+        var t = a;
+        a = b;
+        b = t;
+      }
+      if ((a | 0) === a && (b | 0) === b) {
+        return a + Math.random() * (b - a + a) | 0;
+      }
+      return a + Math.random() * (b - a);
+    };
+
     table['&'] = function(b) {return interp.barg(b, 0) && interp.barg(b, 1)};
     table['|'] = function(b) {return interp.barg(b, 0) || interp.barg(b, 1)};
     table['not'] = function(b) {return !interp.barg(b, 0)};
@@ -1465,6 +1480,28 @@
     };
 
     table['rounded'] = function(b) {return Math.round(interp.narg(b, 0))};
+
+    table['computeFunction:of:'] = function(b) {
+      var x = interp.narg(b, 1);
+      switch (interp.arg(b, 0)) {
+        case 'abs': return Math.abs(x);
+        case 'floor': return Math.floor(x);
+        case 'ceiling': return Math.ceil(x);
+        case 'int': return x - x % 1;
+        case 'sqrt': return Math.sqrt(x);
+        case 'sin': return Math.sin(Math.PI / 180 * x);
+        case 'cos': return Math.cos(Math.PI / 180 * x);
+        case 'tan': return Math.tan(Math.PI / 180 * x);
+        case 'asin': return 180 / Math.PI * Math.asin(x);
+        case 'acos': return 180 / Math.PI * Math.acos(x);
+        case 'atan': return 180 / Math.PI * Math.atan(x);
+        case 'ln': return Math.log(x);
+        case 'log': return Math.log(x) / Math.LN10;
+        case 'e ^': return Math.exp(x);
+        case '10 ^': return Math.exp(x * Math.LN10);
+      }
+      return 0;
+    };
   };
 
   Interpreter.prototype.primNoop = function() {};
