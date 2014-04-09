@@ -1697,18 +1697,18 @@
 
   Editor.prototype.bubbleRange = 25;
   Editor.prototype.bubbleMinWidth = 12;
-  Editor.prototype.bubbleFont = '14px Arial, Verdana, DejaVu Sans, sans-serif';
+  Editor.prototype.bubbleFont = '12px Arial, Verdana, DejaVu Sans, sans-serif';
   Editor.prototype.bubbleHeight = 18;
   Editor.prototype.bubbleColor = '#fff';
   Editor.prototype.bubbleBorderColor = 'rgba(0, 0, 0, .3)';
   Editor.prototype.bubbleTextColor = '#5c5d5f';
   Editor.prototype.bubblePadding = 4;
   Editor.prototype.bubbleRadius = 5;
-  Editor.prototype.bubblePaddingX = 4;
-  Editor.prototype.bubblePaddingY = 1;
+  Editor.prototype.bubblePaddingX = 8;
+  Editor.prototype.bubblePaddingY = 2;
   Editor.prototype.bubblePointerX = 2;
-  Editor.prototype.bubblePointerY = 4;
-  Editor.prototype.bubblePointerWidth = 8;
+  Editor.prototype.bubblePointerY = 5;
+  Editor.prototype.bubblePointerWidth = 10;
   Editor.prototype.bubbleShadowColor = 'rgba(0, 0, 0, .2)';
   Editor.prototype.bubbleShadowBlur = 8;
   Editor.prototype.bubbleShadowX = 3;
@@ -1756,7 +1756,7 @@
     ct.arc(i + r, r, r, Math.PI, Math.PI*3/2, false);
     ct.arc(w - r, r, r, Math.PI*3/2, 0, false);
     ct.arc(w - r, h - iy - r, r, 0, Math.PI/2, false);
-    ct.lineTo(i + ix + iw, h - iy);
+    ct.lineTo(i + px - ix + iw, h - iy);
     ct.closePath();
     ct.strokeStyle = this.bubbleBorderColor;
     ct.lineWidth = 2;
@@ -1774,6 +1774,7 @@
     ct.fillStyle = this.bubbleTextColor;
     ct.textBaseline = 'middle';
     ct.textAlign = 'center';
+    ct.font = this.bubbleFont;
     ct.fillText(text, i + w/2, (h - iy)/2);
 
     this.bubble = canvas;
