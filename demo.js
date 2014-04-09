@@ -1925,8 +1925,8 @@
     var stage = this.editor.stage;
     var sprite = this.editor.selectedSprite;
     switch (condition) {
-      case 'variables': return stage.variables.length || sprite.variables.length; // TODO
-      case 'lists': return stage.lists.length || sprite.lists.length; // TODO
+      case 'variables': return stage.variables.length || sprite.variables.length;
+      case 'lists': return stage.lists.length || sprite.lists.length;
       case 'stage': return sprite.isStage;
       case 'sprite': return sprite.isSprite;
     }
