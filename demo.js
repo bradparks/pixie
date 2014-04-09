@@ -1902,7 +1902,7 @@
         }
       });
       this.palette.add(vis.Palette.inline(button));
-      return this.palette.add(new vis.Script().add(new vis.Block(b[0], b.slice(1))));
+      return this.eval(b);
     }
     if (t === '==') {
       return this.palette.add(vis.Palette.element(el('palette-separator')));
@@ -1916,7 +1916,9 @@
     if (!t.pop) {
       t = [t];
     }
-    this.palette.add(new vis.Script().add(new vis.Block(t[0], t.slice(1))));
+    var script = new vis.Script().add(new vis.Block(t[0], t.slice(1)));
+    if (!this.editor.exec.table[t[0]]) script.addEffect(script.outline.bind(script, 2, '#faa'));
+    this.palette.add(script);
   };
 
   ScriptEditor.prototype.evalCondition = function(condition) {
