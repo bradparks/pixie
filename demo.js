@@ -1452,6 +1452,8 @@
     table['|'] = function(b) {return interp.barg(b, 0) || interp.barg(b, 1)};
     table['not'] = function(b) {return !interp.barg(b, 0)};
 
+    table['concatenate:with:'] = function(b) {return ''+interp.arg(b, 0)+interp.arg(b, 1)};
+
     table['\\\\'] =
     table['%'] = function(b) {
       var m = interp.narg(b, 1);
@@ -1459,6 +1461,8 @@
       if (x / m < 0) x += m;
       return x;
     };
+
+    table['rounded'] = function(b) {return Math.round(interp.narg(b, 0))};
   };
 
   Interpreter.prototype.primNoop = function() {};
