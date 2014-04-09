@@ -364,7 +364,11 @@
         return spriteMenu(arg, '_stage_');
       },
       attribute: function(arg) {
-        return arg.parent.args[1].value === '_stage_' ? new vis.Menu('backdrop #', 'backdrop name', 'volume').translate() : new vis.Menu('x position', 'y position', 'direction', 'costume #', 'costume name', 'size', 'volume').translate(); // TODO variables
+        var stage = arg.app.editor.stage;
+        var name = arg.parent.args[1].value;
+        if (name === '_stage_') return new vis.Menu('backdrop #', 'backdrop name', 'volume').translate().addLine().addAll(stage.variables.map(getName));
+        var sprite = stage.findChild(name);
+        return sprite && new vis.Menu('x position', 'y position', 'direction', 'costume #', 'costume name', 'size', 'volume').translate().addLine().addAll(sprite.variables.map(getName));
       },
       timeAndDate: function() {
         return new vis.Menu('year', 'month', 'date', 'day of week', 'hour', 'minute', 'second').translate();
@@ -1031,6 +1035,14 @@
       if (l) return l;
     }
     return null;
+  };
+
+  Stage.prototype.findChild = function(name) {
+    var children = this.children;
+    for (var i = 0, l = children.length; i < l; i++) {
+      if (children[i].name === name) return children[i];
+    }
+    return this.name === name ? this : null;
   };
 
 
