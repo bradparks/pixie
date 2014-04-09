@@ -1696,7 +1696,7 @@
   Editor.prototype.bubblePointerWidth = 8;
   Editor.prototype.bubbleShadowColor = 'rgba(0, 0, 0, .2)';
   Editor.prototype.bubbleShadowBlur = 8;
-  Editor.prototype.bubbleShadowX = 0;
+  Editor.prototype.bubbleShadowX = 3;
   Editor.prototype.bubbleShadowY = 3;
 
   Editor.prototype.mouseMove = function(e) {
