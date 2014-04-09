@@ -676,3 +676,7 @@ button::-moz-focus-inner {
   border-bottom: 1px solid #909090;
   margin: -3px 0 10px;
 }
+.bubble {
+  position: fixed;
+  z-index: 3;
+}

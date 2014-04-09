@@ -1081,7 +1081,8 @@
 
   Interpreter.prototype.toggleThread = function(script, target) {
     if (script.isReporter) {
-      // TODO
+      var pos = script.blocks[0].worldPosition;
+      this.editor.showBubble(this.evalBlock(script.blocks[0]), pos.x + script.width, pos.y);
       return;
     }
     if (script.thread) {
@@ -1215,10 +1216,10 @@
     return Number(x) || 0;
   };
 
-  Interpreter.prototype.barg = function() {
+  Interpreter.prototype.barg = function(b, i) {
     var a = b.args[i];
     var x = a.isArg ? a.value : this.evalBlock(a);
-    return x && x !== '0' && x !== 'false';
+    return !!x && x !== '0' && x !== 'false';
   };
 
   Interpreter.prototype.startTimed = function(duration) {
@@ -1564,6 +1565,9 @@
     this.tabPanel.scriptEditor.category = 1;
 
     window.addEventListener('resize', this.resize.bind(this));
+    document.addEventListener('mousemove', this.mouseMove.bind(this));
+    document.addEventListener('mousedown', this.hideBubble.bind(this));
+    document.addEventListener('wheel', this.hideBubble.bind(this));
   }
 
   Editor.prototype.start = function() {
@@ -1675,6 +1679,103 @@
     this.tabPanel.scriptEditor.palette.scripts.forEach(add.bind(null, null));
     return Object.keys(names);
   }});
+
+  Editor.prototype.bubbleRange = 25;
+  Editor.prototype.bubbleMinWidth = 12;
+  Editor.prototype.bubbleFont = '14px Arial, Verdana, DejaVu Sans, sans-serif';
+  Editor.prototype.bubbleHeight = 18;
+  Editor.prototype.bubbleColor = '#fff';
+  Editor.prototype.bubbleBorderColor = 'rgba(0, 0, 0, .3)';
+  Editor.prototype.bubbleTextColor = '#5c5d5f';
+  Editor.prototype.bubblePadding = 4;
+  Editor.prototype.bubbleRadius = 5;
+  Editor.prototype.bubblePaddingX = 4;
+  Editor.prototype.bubblePaddingY = 1;
+  Editor.prototype.bubblePointerX = 2;
+  Editor.prototype.bubblePointerY = 4;
+  Editor.prototype.bubblePointerWidth = 8;
+  Editor.prototype.bubbleShadowColor = 'rgba(0, 0, 0, .2)';
+  Editor.prototype.bubbleShadowBlur = 8;
+  Editor.prototype.bubbleShadowX = 0;
+  Editor.prototype.bubbleShadowY = 3;
+
+  Editor.prototype.mouseMove = function(e) {
+    if (this.bubble) {
+      var dx = e.clientX - this.bubbleX;
+      var dy = e.clientY - this.bubbleY;
+      if (dx * dx + dy * dy >= this.bubbleRange * this.bubbleRange) {
+        this.hideBubble();
+      }
+    }
+  };
+
+  Editor.prototype.showBubble = function(text, x, y) {
+    this.hideBubble();
+
+    if (x == null) x = this.app.mouseX;
+    if (y == null) y = this.app.mouseY;
+
+    var p = this.bubblePadding;
+    var px = this.bubblePaddingX;
+    var py = this.bubblePaddingY;
+    var ix = this.bubblePointerX;
+    var iy = this.bubblePointerY;
+    var iw = this.bubblePointerWidth;
+    var sx = this.bubbleShadowX;
+    var sy = this.bubbleShadowY;
+    var sc = this.bubbleShadowColor;
+    var sb = this.bubbleShadowBlur;
+    var r = this.bubbleRadius;
+    var canvas = el('canvas', 'Visual-absolute bubble');
+    var ct = canvas.getContext('2d');
+    ct.font = this.bubbleFont;
+    var w = Math.max(ct.measureText(text).width, this.bubbleMinWidth) + px + Math.max(px, ix);
+    var i = Math.max(0, ix - px);
+    var h = this.bubbleHeight + py * 2 + iy;
+    canvas.width = w + sx + sb * 2;
+    canvas.height = h + sy + sb * 2;
+    ct.translate(sb, sb);
+    ct.moveTo(i + px - ix, h);
+    ct.lineTo(i + px, h - iy);
+    ct.arc(i + r, h - iy - r, r, Math.PI/2, Math.PI, false);
+    ct.arc(i + r, r, r, Math.PI, Math.PI*3/2, false);
+    ct.arc(w - r, r, r, Math.PI*3/2, 0, false);
+    ct.arc(w - r, h - iy - r, r, 0, Math.PI/2, false);
+    ct.lineTo(i + ix + iw, h - iy);
+    ct.closePath();
+    ct.strokeStyle = this.bubbleBorderColor;
+    ct.lineWidth = 2;
+    ct.stroke();
+    ct.fillStyle = this.bubbleColor;
+    ct.shadowColor = sc;
+    ct.shadowOffsetX = sx;
+    ct.shadowOffsetY = sy;
+    ct.shadowBlur = sb;
+    ct.fill();
+    ct.shadowColor = 'transparent';
+    ct.shadowBlur = 0;
+    ct.shadowOffsetX = 0;
+    ct.shadowOffsetY = 0;
+    ct.fillStyle = this.bubbleTextColor;
+    ct.textBaseline = 'middle';
+    ct.textAlign = 'center';
+    ct.fillText(text, i + w/2, (h - iy)/2);
+
+    this.bubble = canvas;
+    this.bubbleX = this.app.mouseX;
+    this.bubbleY = this.app.mouseY;
+    x = Math.max(p, Math.min(window.innerWidth - w - p, x));
+    y = Math.max(p, Math.min(window.innerHeight - h - p, y));
+    vis.util.setTransform(this.bubble, 'translate('+(x + i - sb)+'px,'+(y - sb - h)+'px)');
+    document.body.appendChild(this.bubble);
+  };
+
+  Editor.prototype.hideBubble = function() {
+    if (this.bubble) {
+      document.body.removeChild(this.bubble);
+      this.bubble = null;
+    }
+  };
 
 
   function ScriptEditor(editor) {
