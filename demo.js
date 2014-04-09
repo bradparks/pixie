@@ -1213,7 +1213,7 @@
   Interpreter.prototype.narg = function(b, i) {
     var a = b.args[i];
     var x = a.isArg ? a.value : this.evalBlock(a);
-    return Number(x) || 0;
+    return typeof x === 'number' ? x : Number(x) || 0;
   };
 
   Interpreter.prototype.barg = function(b, i) {
