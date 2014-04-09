@@ -964,6 +964,7 @@
 
     this.mouseX = 0;
     this.mouseY = 0;
+    this.mouseDown = false;
     this.children = [];
 
     this.canvas = document.createElement('canvas');
@@ -1271,15 +1272,6 @@
       if (sprite.visible) interp.redraw = true;
     }
 
-    function spriteNamed(name) {
-      var children = interp.stage.children;
-      for (var i = 0, l = children.length; i < l; i++) {
-        if (children[i].name === name) return children[i];
-      }
-      if (interp.stage.name === name) return interp.stage;
-      return null;
-    }
-
     function pointSpriteTowards(sprite, x, y) {
       turnSprite(sprite, 90 - Math.atan2(y - sprite.y, x - sprite.x) * 180 / Math.PI);
     }
@@ -1318,7 +1310,7 @@
       if (name === '_mouse_') {
         pointSpriteTowards(sprite, interp.stage.mouseX, interp.stage.mouseY);
       } else {
-        var other = spriteNamed(name);
+        var other = interp.stage.findChild(name);
         if (other) pointSpriteTowards(sprite, other.x, other.y);
       }
     };
@@ -1336,7 +1328,7 @@
       if (name === '_mouse_') {
         moveSpriteTo(sprite, interp.stage.mouseX, interp.stage.mouseY);
       } else {
-        var other = spriteNamed(name);
+        var other = interp.stage.findChild(name);
         if (other) moveSpriteTo(sprite, other.x, other.y);
       }
     };
@@ -1443,6 +1435,12 @@
     };
     table['doForever'] = function(b) {interp.startScript(b.args[0].script, true)};
 
+    // Sensing
+
+    table['mousePressed'] = function() {return interp.stage.mouseDown};
+    table['mouseX'] = function() {return interp.stage.mouseX};
+    table['mouseY'] = function() {return interp.stage.mouseY};
+
     // Operators
 
     table['+'] = function(b) {return interp.narg(b, 0) + interp.narg(b, 1)};
@@ -1452,6 +1450,7 @@
 
     table['&'] = function(b) {return interp.barg(b, 0) && interp.barg(b, 1)};
     table['|'] = function(b) {return interp.barg(b, 0) || interp.barg(b, 1)};
+    table['not'] = function(b) {return !interp.barg(b, 0)};
 
     table['\\\\'] =
     table['%'] = function(b) {
@@ -2141,7 +2140,9 @@
     this.elMouseXLabel.textContent = 'y:';
     this.elMouseCoords.appendChild(this.elMouseY = el('mouse-coord x-axis'));
 
+    document.addEventListener('mousedown', this.mouseDown.bind(this));
     document.addEventListener('mousemove', this.updateMouse.bind(this));
+    document.addEventListener('mouseup', this.mouseUp.bind(this));
   }
 
   StagePanel.prototype.addButton = function(className, fn) {
@@ -2162,6 +2163,16 @@
     this.stage.mouseY = Math.max(-180, Math.min(180, this.stageCenterY - e.clientY));
     this.elMouseX.textContent = this.stage.mouseX;
     this.elMouseY.textContent = this.stage.mouseY;
+  };
+
+  StagePanel.prototype.mouseDown = function(e) {
+    this.updateMouse(e);
+    this.stage.mouseDown = true;
+  };
+
+  StagePanel.prototype.mouseUp = function(e) {
+    this.updateMouse(e);
+    this.stage.mouseDown = false;
   };
 
   def(StagePanel.prototype, 'showMouseCoords', {
