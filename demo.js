@@ -1618,7 +1618,7 @@
 
     this.tabPanel.scriptEditor.category = 1;
 
-    window.addEventListener('resize', this.resize.bind(this));
+    window.addEventListener('resize', this.app.resize.bind(this.app));
     document.addEventListener('mousemove', this.mouseMove.bind(this));
     document.addEventListener('mousedown', this.hideBubble.bind(this));
     document.addEventListener('wheel', this.hideBubble.bind(this));
@@ -1633,12 +1633,7 @@
   };
 
   Editor.prototype.resize = function() {
-    resize(this.exec);
-    resize(this.topBar);
-    resize(this.tabPanel);
-    resize(this.stagePanel);
-    resize(this.spritePanel);
-    resize(this.backpackPanel);
+    this.app.resize();
   };
 
   Editor.prototype.step = function() {
