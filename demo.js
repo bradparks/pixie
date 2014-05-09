@@ -26,7 +26,7 @@
       10: ["More Blocks", '#632d99'], // #531e99
       11: ["Parameter", '#5947b1'],
       12: ["List", '#cc5b22'], // Scratch 1.4: #d94d11
-      20: ["Exension", '#4b4a60'] // #72228c / #672d79
+      20: ["Extension", '#4b4a60'] // #72228c / #672d79
     },
     blocks: {
       // motion
@@ -641,7 +641,8 @@
       ]}
     ],
     10: [
-      {text: "Make a Block", action: "newBlock"}
+      {text: "Make a Block", action: "newBlock"},
+      {text: "Add an Extension", action: "addExtension"},
     ]
   };
 
@@ -1066,11 +1067,13 @@
     this.waiting = false;
     this.redraw = false;
 
+    this.resetTimer();
     this.addPrimitives(this.table = {});
   }
 
   Interpreter.prototype.triggerGreenFlag = function() {
     this.stopAll();
+    this.resetTimer();
     this.trigger('whenGreenFlag');
   };
 
@@ -1095,6 +1098,7 @@
   Interpreter.prototype.toggleThread = function(script, target) {
     if (script.isReporter) {
       var pos = script.blocks[0].worldPosition;
+      this.activeThread = new Thread(this, script, target);
       this.editor.showBubble(this.evalBlock(script.blocks[0]), pos.x + script.width, pos.y);
       return;
     }
@@ -1235,6 +1239,10 @@
     return !!x && x !== '0' && x !== 'false';
   };
 
+  Interpreter.prototype.resetTimer = function() {
+    this.timerStart = Date.now();
+  };
+
   Interpreter.prototype.startTimed = function(duration) {
     var thread = this.activeThread;
     thread.tmp = this.time + Math.max(duration * 1000, 0);
@@ -1274,6 +1282,19 @@
 
     function pointSpriteTowards(sprite, x, y) {
       turnSprite(sprite, 90 - Math.atan2(y - sprite.y, x - sprite.x) * 180 / Math.PI);
+    }
+
+    function asNumber(x) {
+      return typeof x !== 'string' ? Number(x) : /\d/.test(x) ? Number(x) : NaN;
+    }
+
+    function compare(x, y) {
+      var a = asNumber(x);
+      var b = asNumber(y);
+      if (a !== a || b !== b) {
+        return x.toLowerCase().localeCompare(y.toLowerCase());
+      }
+      return a < b ? -1 : a === b ? 0 : 1;
     }
 
     // Motion
@@ -1385,10 +1406,28 @@
       'all around': 'normal',
       'left-right': 'leftRight',
       "don't rotate": 'none'
-    }
+    };
     table['setRotationStyle'] = function(b) {
       var sprite = interp.activeThread.target;
-      if (sprite.isSprite) sprite.rotationStyle = ROTATION_STYLES[interp.arg(b, 0)] || 'normal';
+      if (sprite.isSprite) {
+        sprite.rotationStyle = ROTATION_STYLES[interp.arg(b, 0)] || 'normal';
+        if (sprite.visible) interp.redraw = true;
+      }
+    };
+
+    table['xpos'] = function() {
+      var sprite = interp.activeThread.target;
+      return sprite.isSprite ? sprite.x : 0;
+    };
+
+    table['ypos'] = function() {
+      var sprite = interp.activeThread.target;
+      return sprite.isSprite ? sprite.y : 0;
+    };
+
+    table['heading'] = function() {
+      var sprite = interp.activeThread.target;
+      return sprite.isSprite ? sprite.direction : 0;
     };
 
     // Looks
@@ -1441,6 +1480,37 @@
     table['mouseX'] = function() {return interp.stage.mouseX};
     table['mouseY'] = function() {return interp.stage.mouseY};
 
+    table['timer'] = function() {
+      return (Date.now() - interp.timerStart) / 1000;
+    };
+    table['timerReset'] = function() {
+      interp.resetTimer();
+    };
+
+    table['timeAndDate'] = function(b) {
+      var d = new Date();
+      switch (interp.arg(b, 0)) {
+        case 'year': return d.getFullYear();
+        case 'month': return d.getMonth() + 1;
+        case 'date': return d.getDate();
+        case 'day of week': return d.getDay() + 1;
+        case 'hour': return d.getHours();
+        case 'minute': return d.getMinutes();
+        case 'second': return d.getSeconds();
+      }
+      return 0;
+    };
+
+    var epoch = new Date(2000, 0, 1);
+    var epochMS = epoch.getTime();
+    var epochTimezone = epoch.getTimezoneOffset();
+    table['timestamp'] = function() {
+      var d = new Date;
+      return (d.getTime() - epochMS + epochTimezone * 60 * 1000) / (24 * 60 * 60 * 1000);
+    };
+
+    table['getUserName'] = function() {return ''};
+
     // Operators
 
     table['+'] = function(b) {return interp.narg(b, 0) + interp.narg(b, 1)};
@@ -1463,13 +1533,23 @@
       return a + Math.random() * (b - a);
     };
 
+    table['<'] = function(b) {
+      return compare(interp.arg(b, 0), interp.arg(b, 1)) === -1;
+    };
+    table['='] = function(b) {
+      return compare(interp.arg(b, 0), interp.arg(b, 1)) === 0;
+    };
+    table['>'] = function(b) {
+      return compare(interp.arg(b, 0), interp.arg(b, 1)) === 1;
+    };
+
     table['&'] = function(b) {return interp.barg(b, 0) && interp.barg(b, 1)};
     table['|'] = function(b) {return interp.barg(b, 0) || interp.barg(b, 1)};
     table['not'] = function(b) {return !interp.barg(b, 0)};
 
     table['concatenate:with:'] = function(b) {return ''+interp.arg(b, 0)+interp.arg(b, 1)};
     table['letter:of:'] = function(b) {return ('' + interp.arg(b, 1)).charAt(interp.narg(b, 0) - 1 | 0) || ''};
-    table['stringLength:'] = function(b) {return ('' + interp.arg(b, 0)).length}
+    table['stringLength:'] = function(b) {return ('' + interp.arg(b, 0)).length};
 
     table['\\\\'] =
     table['%'] = function(b) {
