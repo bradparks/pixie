@@ -2008,6 +2008,10 @@
   def(ScriptEditor.prototype, 'category', {
     get: function() {return this._category},
     set: function(value) {
+      if (this._category === value) {
+        this.refreshPalette();
+        return;
+      }
       value = Number(value);
       this._category = value;
 
@@ -2017,11 +2021,19 @@
       this.categoryButton = this.buttons[value];
       this.categoryButton.className = 'palette-button selected';
 
-      this.refreshPalette();
+      this.refreshPalette(true);
     }
   });
 
-  ScriptEditor.prototype.refreshPalette = function() {
+  ScriptEditor.prototype.refreshPalette = function(resetScroll) {
+    if (resetScroll) {
+      this.palette.el.scrollLeft =
+      this.palette.el.scrollTop = 0;
+    } else {
+      var sl = this.palette.el.scrollLeft;
+      var st = this.palette.el.scrollTop;
+    }
+
     var scripts = this.palette.scripts;
     for (var i = scripts.length; i--;) {
       this.editor.exec.stopThread(scripts[i].thread);
@@ -2029,6 +2041,11 @@
 
     this.palette.clear();
     (palettes[this._category] || []).forEach(this.eval, this);
+
+    if (!resetScroll) {
+      this.palette.el.scrollLeft = sl;
+      this.palette.el.scrollTop = st;
+    }
   };
 
   ScriptEditor.prototype.eval = function(t) {
