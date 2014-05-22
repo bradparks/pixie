@@ -878,11 +878,11 @@
     }
     if (canvas.tagName === 'IMG') {
       var img = canvas;
-      canvas = document.createElement('canvas');
+      // canvas = document.createElement('canvas');
       img.onload = function() {
-        canvas.width = img.width;
-        canvas.height = img.height;
-        canvas.getContext('2d').drawImage(img, 0, 0);
+        // canvas.width = img.width;
+        // canvas.height = img.height;
+        // canvas.getContext('2d').drawImage(img, 0, 0);
         this.owner.redraw();
       }.bind(this);
     }
@@ -929,6 +929,13 @@
   inherits(Sprite, ScratchObj);
 
   Sprite.prototype.isSprite = true;
+
+  Sprite.prototype.setScale = function(s) {
+    var costume = this.costumes[this.costume];
+    var w = costume.canvas.width;
+    var h = costume.canvas.height;
+    this.scale = Math.max(Math.min(1, Math.max(5 / w, 5 / h)), Math.min(1.5 * 480 / w, 1.5 * 360 / h, s));
+  };
 
   Sprite.prototype.drawOn = function(context) {
     if (!this.visible) return;
@@ -1448,6 +1455,28 @@
         sprite.visible = false;
         interp.redraw = true;
       }
+    };
+
+    table['changeSizeBy:'] = function(b) {
+      var sprite = interp.activeThread.target;
+      if (sprite.isSprite) {
+        var scale = sprite.scale;
+        sprite.setScale(scale + interp.narg(b, 0) / 100);
+        if (sprite.visible && sprite.scale !== scale) interp.redraw = true;
+      }
+    };
+
+    table['setSizeTo:'] = function(b) {
+      var sprite = interp.activeThread.target;
+      if (sprite.isSprite) {
+        sprite.setScale(interp.narg(b, 0) / 100);
+        if (sprite.visible) interp.redraw = true;
+      }
+    };
+
+    table['scale'] = function() {
+      var sprite = interp.activeThread.target;
+      return sprite.isSprite ? sprite.scale * 100 : 0;
     };
 
     // Events
