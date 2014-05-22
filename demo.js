@@ -1514,6 +1514,16 @@
         interp.startScript(b.args[2].script);
       }
     };
+    table['doWaitUntil'] = function(b) {
+      if (!interp.barg(b, 0)) {
+        interp.activeThread.pc--;
+      }
+    };
+    table['doUntil'] = function(b) {
+      if (interp.barg(b, 0)) {
+        interp.startScript(b.args[1].script, true);
+      }
+    };
 
     // Sensing
 
