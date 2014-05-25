@@ -1024,23 +1024,23 @@
   };
 
   Stage.prototype.findNestedLocal = function(name) {
-    var l = this.findLocal(name);
-    if (l) return l;
+    var local = this.findLocal(name);
+    if (local) return local;
     var children = this.children;
     for (var i = 0, l = children.length; i < l; i++) {
-      var l = children[i].findLocal(name);
-      if (l) return l;
+      local = children[i].findLocal(name);
+      if (local) return local;
     }
     return null;
   };
 
   Stage.prototype.findNestedLocalList = function(name) {
-    var l = this.findLocalList(name);
-    if (l) return l;
+    var local = this.findLocalList(name);
+    if (local) return local;
     var children = this.children;
     for (var i = 0, l = children.length; i < l; i++) {
-      var l = children[i].findLocalList(name);
-      if (l) return l;
+      local = children[i].findLocalList(name);
+      if (local) return local;
     }
     return null;
   };
@@ -1569,18 +1569,18 @@
     table['/'] = function(b) {return interp.narg(b, 0) / interp.narg(b, 1)};
 
     table['randomFrom:to:'] = function(b) {
-      var a = interp.narg(b, 0);
-      var b = interp.narg(b, 1);
-      if (a === b) return a;
-      if (b < a) {
-        var t = a;
-        a = b;
-        b = t;
+      var x = interp.narg(b, 0);
+      var y = interp.narg(b, 1);
+      if (x === y) return x;
+      if (y < x) {
+        var t = x;
+        x = y;
+        y = t;
       }
-      if ((a | 0) === a && (b | 0) === b) {
-        return a + Math.random() * (b - a + a) | 0;
+      if ((x | 0) === x && (y | 0) === y) {
+        return x + Math.random() * (y - x + x) | 0;
       }
-      return a + Math.random() * (b - a);
+      return x + Math.random() * (y - x);
     };
 
     table['<'] = function(b) {
@@ -1971,7 +1971,7 @@
     this.workspace = new vis.Workspace(this.elWorkspace);
 
     this.workspace.on('change', this.save, this);
-  };
+  }
 
   ScriptEditor.prototype.save = function() {
     if (this.sprite) this.sprite.scripts = this.workspace.scripts.slice(0);
@@ -2582,7 +2582,7 @@
     var scale = Math.min((w - 4) / cw, (h - 4) / ch);
     var aw = scale * cw;
     var ah = scale * ch;
-    var x = (w - aw)/2
+    var x = (w - aw)/2;
     var y = (h - ah)/2;
 
     this.tmpContext.width = this.tmpContext.width;
