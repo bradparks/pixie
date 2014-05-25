@@ -282,7 +282,7 @@
           if (editor.stage.variables.length) {
             m.add(vis.Menu.line);
           }
-          m.addAll(editor.selectedSprite.variables.map(getName))
+          m.addAll(editor.selectedSprite.variables.map(getName));
         }
         return m;
       },
@@ -294,7 +294,7 @@
           if (editor.stage.lists.length) {
             m.add(vis.Menu.line);
           }
-          m.addAll(editor.selectedSprite.lists.map(getName))
+          m.addAll(editor.selectedSprite.lists.map(getName));
         }
         return m;
       },
@@ -378,7 +378,6 @@
       },
       drum: function() {
         return new vis.Menu().addAll(['Snare Drum', 'Bass Drum', 'Side Stick', 'Crash Cymbal', 'Open Hi-Hat', 'Closed Hi-Hat', 'Tambourine', 'Hand Clap', 'Claves', 'Wood Block', 'Cowbell', 'Triangle', 'Bongo', 'Conga', 'Cabassa', 'Guiro', 'Vibraslap', 'Open Culca'].map(function(x, i) {return ['('+(i + 1)+') ' + vis.getText(x), i + 1]}));
-        return m;
       },
       instrument: function() {
         return new vis.Menu().addAll(['Piano', 'Electric Piano', 'Organ', 'Guitar', 'Electric Guitar', 'Bass', 'Pizzicato', 'Cello', 'Trombone', 'Clarinet', 'Saxophone', 'Flute', 'Wooden Flute', 'Bassoon', 'Choir', 'Vibraphone', 'Music Box', 'Steel Drum', 'Marimba', 'Synth Lead', 'Synth Pad'].map(function(x, i) {return ['('+(i + 1)+') ' + vis.getText(x), i + 1]}));
@@ -998,7 +997,7 @@
     if (i !== -1) this.children.splice(i, 1);
     child.stage = null;
     return this;
-  }
+  };
 
   Stage.prototype.redraw = function() {
     this.canvas.width = this.canvas.width;
