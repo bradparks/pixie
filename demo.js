@@ -1489,6 +1489,14 @@
 
     // Control
 
+    table['wait:elapsed:from:'] = function(b) {
+      if (interp.activeThread.tmp === null) {
+        interp.startTimed(interp.arg(b, 0));
+      } else {
+        interp.stepTimed();
+      }
+    };
+
     table['doRepeat'] = function(b) {
       if (interp.activeThread.tmp === null) {
         interp.activeThread.tmp = Math.max(0, interp.arg(b, 0));
