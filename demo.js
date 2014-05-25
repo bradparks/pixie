@@ -1508,12 +1508,15 @@
         interp.activeThread.tmp = null;
       }
     };
+
     table['doForever'] = function(b) {interp.startScript(b.args[0].script, true)};
+
     table['doIf'] = function(b) {
       if (interp.barg(b, 0)) {
         interp.startScript(b.args[1].script);
       }
     };
+
     table['doIfElse'] = function(b) {
       if (interp.barg(b, 0)) {
         interp.startScript(b.args[1].script);
