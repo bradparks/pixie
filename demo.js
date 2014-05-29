@@ -832,6 +832,20 @@
     sub.prototype.constructor = sub;
   }
 
+  var KEY_NAMES = {
+    13: 'return',
+    32: 'space',
+    37: 'left arrow',
+    38: 'up arrow',
+    39: 'right arrow',
+    40: 'down arrow',
+    190: '.'
+  };
+  function getKeyName(code) {
+    return code >= 65 && code <= 90 ? String.fromCharCode(code + 32) :
+      code >= 48 && code <= 57 ? String.fromCharCode(code) : KEY_NAMES[code];
+  }
+
   function makePrimitive(value) {
     return typeof value === 'string' ||
       typeof value === 'number' ||
@@ -1129,6 +1143,7 @@
     this.mouseX = 0;
     this.mouseY = 0;
     this.mouseDown = false;
+    this.keys = {};
     this.children = [];
 
     this.canvas = document.createElement('canvas');
@@ -1964,7 +1979,7 @@
 
     this.topBar = new TopBar(this);
     this.tabPanel = new TabPanel(this);
-    this.stagePanel = new StagePanel(this.stage);
+    this.stagePanel = new StagePanel(this);
     this.backpackPanel = new BackpackPanel(this);
     this.spritePanel = new SpritePanel(this);
 
@@ -2547,8 +2562,9 @@
   };
 
 
-  function StagePanel(stage) {
-    this.stage = stage;
+  function StagePanel(editor) {
+    this.editor = editor;
+    this.stage = editor.stage;
     this._running = false;
 
     this.el = el('stage-panel stopped');
@@ -2571,7 +2587,7 @@
     this.elTitleBar.appendChild(this.elAuthor = el('project-author'));
     this.elAuthor.textContent = 'by nXIII (unshared)';
 
-    this.el.appendChild(this.elStage = stage.canvas);
+    this.el.appendChild(this.elStage = this.stage.canvas);
     this.elStage.classList.add('stage');
 
     this._showMouseCoords = true;
@@ -2586,7 +2602,24 @@
     document.addEventListener('mousedown', this.mouseDown.bind(this));
     document.addEventListener('mousemove', this.updateMouse.bind(this));
     document.addEventListener('mouseup', this.mouseUp.bind(this));
+    document.addEventListener('keydown', this.keyDown.bind(this));
+    document.addEventListener('keyup', this.keyUp.bind(this));
   }
+
+  StagePanel.prototype.keyDown = function(e) {
+    var name = getKeyName(e.keyCode);
+    if (name) {
+      this.stage.keys[name] = true;
+      this.editor.exec.triggerKey(getKeyName(name));
+    }
+  };
+
+  StagePanel.prototype.keyUp = function(e) {
+    var name = getKeyName(e.keyCode);
+    if (name) {
+      this.stage.keys[name] = false;
+    }
+  };
 
   StagePanel.prototype.addButton = function(className, fn) {
     var button = el('button', 'title-button ' + className);
@@ -3190,48 +3223,48 @@
   editor.start();
   window.editor = editor;
 
-  var player = document.querySelector('.player');
-  var stagePanel = new StagePanel(new Stage());
-  stagePanel.showMouseCoords = false;
-  player.appendChild(stagePanel.el);
+  // var player = document.querySelector('.player');
+  // var stagePanel = new StagePanel(new Stage());
+  // stagePanel.showMouseCoords = false;
+  // player.appendChild(stagePanel.el);
 
-  var flip = editor.elFlipButton;
-  var flipBack = document.querySelector('.flip-back');
+  // var flip = editor.elFlipButton;
+  // var flipBack = document.querySelector('.flip-back');
 
-  var flipped = false;
-  function doFlip() {
-    var time = 1;
-    editor.el.style.WebkitTransition =
-    player.style.WebkitTransition = 'none';
-    editor.el.style.WebkitTransform =
-    player.style.WebkitTransform = 'none';
-    var ebb = editor.el.getBoundingClientRect();
-    var pbb = player.getBoundingClientRect();
-    var dx = ((pbb.right + pbb.left) - (ebb.right + ebb.left)) / 2;
-    var dy = ((pbb.bottom + pbb.top) - (ebb.bottom + ebb.top)) / 2;
-    var sx = pbb.width / ebb.width;
-    var sy = pbb.height / ebb.height;
-    if (flipped) {
-      editor.el.style.WebkitTransform = 'translate('+dx+'px,'+dy+'px) rotateY(180deg) scale('+sx+','+sy+')';
-      editor.el.offsetHeight;
-      player.offsetHeight;
-      editor.el.style.WebkitTransition =
-      player.style.WebkitTransition = '-webkit-transform '+time+'s, z-index '+time+'s';
-      editor.el.style.WebkitTransform = 'none';
-      player.style.WebkitTransform = 'translate('+(-dx)+'px,'+(-dy)+'px) rotateY(-180deg) scale('+(1/sx)+','+(1/sy)+')';
-    } else {
-      player.style.WebkitTransform = 'translate('+(-dx)+'px,'+(-dy)+'px) rotateY(-180deg) scale('+(1/sx)+','+(1/sy)+')';
-      editor.el.offsetHeight;
-      player.offsetHeight;
-      editor.el.style.WebkitTransition =
-      player.style.WebkitTransition = '-webkit-transform '+time+'s, z-index '+time+'s';
-      editor.el.style.WebkitTransform = 'translate('+dx+'px,'+dy+'px) rotateY(180deg) scale('+sx+','+sy+')';
-      player.style.WebkitTransform = 'none';
-    }
-    flipped = !flipped;
-  }
+  // var flipped = false;
+  // function doFlip() {
+  //   var time = 1;
+  //   editor.el.style.WebkitTransition =
+  //   player.style.WebkitTransition = 'none';
+  //   editor.el.style.WebkitTransform =
+  //   player.style.WebkitTransform = 'none';
+  //   var ebb = editor.el.getBoundingClientRect();
+  //   var pbb = player.getBoundingClientRect();
+  //   var dx = ((pbb.right + pbb.left) - (ebb.right + ebb.left)) / 2;
+  //   var dy = ((pbb.bottom + pbb.top) - (ebb.bottom + ebb.top)) / 2;
+  //   var sx = pbb.width / ebb.width;
+  //   var sy = pbb.height / ebb.height;
+  //   if (flipped) {
+  //     editor.el.style.WebkitTransform = 'translate('+dx+'px,'+dy+'px) rotateY(180deg) scale('+sx+','+sy+')';
+  //     editor.el.offsetHeight;
+  //     player.offsetHeight;
+  //     editor.el.style.WebkitTransition =
+  //     player.style.WebkitTransition = '-webkit-transform '+time+'s, z-index '+time+'s';
+  //     editor.el.style.WebkitTransform = 'none';
+  //     player.style.WebkitTransform = 'translate('+(-dx)+'px,'+(-dy)+'px) rotateY(-180deg) scale('+(1/sx)+','+(1/sy)+')';
+  //   } else {
+  //     player.style.WebkitTransform = 'translate('+(-dx)+'px,'+(-dy)+'px) rotateY(-180deg) scale('+(1/sx)+','+(1/sy)+')';
+  //     editor.el.offsetHeight;
+  //     player.offsetHeight;
+  //     editor.el.style.WebkitTransition =
+  //     player.style.WebkitTransition = '-webkit-transform '+time+'s, z-index '+time+'s';
+  //     editor.el.style.WebkitTransform = 'translate('+dx+'px,'+dy+'px) rotateY(180deg) scale('+sx+','+sy+')';
+  //     player.style.WebkitTransform = 'none';
+  //   }
+  //   flipped = !flipped;
+  // }
 
-  flip.addEventListener('click', doFlip);
-  flipBack.addEventListener('click', doFlip);
+  // flip.addEventListener('click', doFlip);
+  // flipBack.addEventListener('click', doFlip);
 
 }());
