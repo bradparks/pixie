@@ -2608,6 +2608,16 @@
 
   StagePanel.prototype.keyDown = function(e) {
     var name = getKeyName(e.keyCode);
+    if (e.metaKey || e.ctrlKey) {
+      switch (name) {
+        case '.':
+          this.editor.exec.stopAll();
+          break;
+        case 'return':
+          this.editor.exec.triggerGreenFlag();
+          break;
+      }
+    }
     if (name) {
       this.stage.keys[name] = true;
       this.editor.exec.triggerKey(getKeyName(name));
