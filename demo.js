@@ -739,6 +739,40 @@
     return e;
   }
 
+  var Server = {
+    getProjectURL: function(id) {
+      return 'http://projects.scratch.mit.edu/internalapi/project/' + id + '/get/';
+    },
+    getAssetURL: function(md5) {
+      return 'http://cdn.scratch.mit.edu/internalapi/asset/' + md5 + '/get/';
+    },
+    getImageAsset: function(md5, cb) {
+      var img = document.createElement('img');
+      img.crossOrigin = "anonymous";
+      img.src = Server.getAssetURL(md5);
+      if (cb) {
+        img.onload = function() {cb(null, img)};
+        img.onerror = function() {cb(new Error)};
+      }
+      return img;
+    },
+    getAsset: function(md5, cb) {
+      var xhr = new XMLHttpRequest;
+      xhr.open('get', getAssetURL(md5), true);
+      xhr.send();
+      if (cb) {
+        xhr.onload = function() {
+          if (xhr.statusCode == 200) {
+            cb(null, xhr.responseText);
+          } else {
+            cb(new Error('HTTP ' + xhr.statusCode));
+          }
+        };
+        xhr.onerror = function() {cb(new Error)};
+      }
+    }
+  };
+
   var assets = document.createElement('img');
   var assetsLoaded = false;
   assets.src = 'assets.png';
@@ -798,6 +832,33 @@
     sub.prototype.constructor = sub;
   }
 
+  function makePrimitive(value) {
+    return typeof value === 'string' ||
+      typeof value === 'number' ||
+      typeof value === 'boolean' ? value : 0;
+  }
+
+  function notNull(value) {
+    return value != null;
+  }
+
+  function deserializeScript(json) {
+    // TODO not very defensive
+    return deserializeStack(json[2]).moveTo(json[0], json[1]);
+  }
+
+  function deserializeStack(json) {
+    return new vis.Script(json.map(deserializeBlock));
+  }
+
+  function deserializeBlock(json) {
+    return new vis.Block(json[0], json.slice(1).map(deserializeArg));
+  }
+
+  function deserializeArg(json) {
+    return Array.isArray(json) ? (typeof json[0] === 'string' ? deserializeBlock(json) : deserializeStack(json)) : json;
+  }
+
 
   function ScratchObj(name) {
     this.name = name;
@@ -808,6 +869,31 @@
     this.variables = [];
     this.lists = [];
   }
+
+  ScratchObj.prototype.toJSON = function() {
+    return {
+      objName: this.name,
+      variables: this.variables.length ? this.variables : undefined,
+      lists: this.lists.length ? this.lists : undefined,
+      scripts: this.scripts.length ? this.scripts : undefined,
+      scriptComments: undefined, // TODO
+      sounds: this.sounds.length ? this.sounds : undefined,
+      costumes: this.costumes.length ? this.costumes : undefined,
+      currentCostumeIndex: this.costume
+    };
+  };
+
+  ScratchObj.prototype.fromJSON = function(json) {
+    this.name = ''+json.objName;
+    this.variables = Array.isArray(json.variables) ? json.variables.map(Variable.deserialize) : [];
+    this.lists = Array.isArray(json.lists) ? json.lists.map(List.deserialize) : [];
+    this.scripts = Array.isArray(json.scripts) ? json.scripts.map(deserializeScript) : [];
+    // this.scriptComments = Array.isArray(json.scriptComments) ? json.scriptComments.map(...) : []; // TODO
+    // this.sounds = Array.isArray(json.sounds) ? json.sounds.map(...) : []; // TODO
+    if (Array.isArray(json.costumes)) json.costumes.map(Costume.deserialize).forEach(this.addCostume, this);
+    this.costume = (Math.round(Number(json.currentCostumeIndex)) % this.costumes.length + this.costumes.length) % this.costumes.length || 0;
+    return this;
+  };
 
   ScratchObj.prototype.addCostume = function(costume) {
     if (this.costumes.indexOf(costume) === -1) {
@@ -869,27 +955,41 @@
   };
 
 
-  function Costume(name, canvas, cx, cy) {
-    if (typeof canvas === 'string') {
-      var img = document.createElement('img');
-      img.src = canvas;
-      canvas = img;
+  function Costume(name, canvas, cx, cy, pixelRatio) {
+    this.baseLayerMD5 = null;
+    if (typeof canvas === 'string') { // MD5
+      this.baseLayerMD5 = canvas;
+      canvas = Server.getImageAsset(canvas);
     }
     if (canvas.tagName === 'IMG') {
-      var img = canvas;
-      // canvas = document.createElement('canvas');
-      img.onload = function() {
-        // canvas.width = img.width;
-        // canvas.height = img.height;
-        // canvas.getContext('2d').drawImage(img, 0, 0);
-        this.owner.redraw();
+      canvas.onload = function() {
+        if (this.owner) this.owner.redraw();
       }.bind(this);
     }
     this.name = name;
     this.canvas = canvas;
     this.cx = cx || 0;
     this.cy = cy || 0;
+    this.pixelRatio = pixelRatio || 1;
   }
+
+  Costume.prototype.toJSON = function() {
+    return {
+      costumeName: this.name,
+      baseLayerID: -1,
+      baseLayerMD5: this.baseLayerMD5, // TODO
+      bitmapResolution: this.pixelRatio,
+      rotationCenterX: this.cx,
+      rotationCenterY: this.cy
+    };
+  };
+
+  Costume.deserialize = function(json) {
+    var cx = Math.max(-1e6, Math.min(1e6, Number(json.rotationCenterX)));
+    var cy = Math.max(-1e6, Math.min(1e6, Number(json.rotationCenterY)));
+    var pr = Math.max(1, Math.min(16, Number(json.bitmapResolution) || 0));
+    return new Costume(''+json.costumeName, ''+json.baseLayerMD5, cx, cy, pr);
+  };
 
   Costume.prototype.copy = function() {
     return new Costume(this.name, this.canvas, this.cx, this.cy);
@@ -901,6 +1001,18 @@
     this.value = value == null ? 0 : value;
   }
 
+  Variable.prototype.toJSON = function() {
+    return {
+      name: this.name,
+      value: this.value,
+      isPersistent: false // TODO
+    };
+  };
+
+  Variable.deserialize = function(json) {
+    return new Variable(''+json.name, makePrimitive(json.value));
+  };
+
   Variable.prototype.copy = function() {
     return new Variable(this.name, this.value);
   };
@@ -910,6 +1022,18 @@
     this.name = name;
     this.contents = contents || [];
   }
+
+  List.prototype.toJSON = function() {
+    return {
+      listName: this.listName,
+      contents: this.contents,
+      isPersistent: false // TODO
+    };
+  };
+
+  List.deserialize = function(json) {
+    return new List(''+json.listName, Array.isArray(json.contents) ? json.contents.map(makePrimitive) : []);
+  };
 
   List.prototype.copy = function() {
     return new List(this.name, this.contents);
@@ -924,10 +1048,41 @@
     this.direction = 90;
     this.scale = 1;
     this.visible = true;
+    this.isDraggable = false;
   }
   inherits(Sprite, ScratchObj);
 
   Sprite.prototype.isSprite = true;
+
+  Sprite.prototype.toJSON = function() {
+    var json = ScratchObj.prototype.toJSON.call(this);
+    json.scratchX = this.x;
+    json.scratchY = this.y;
+    json.scale = this.scale;
+    json.direction = this.direction;
+    json.rotationStyle = this.rotationStyle;
+    json.isDraggable = this.isDraggable;
+    json.indexInLibrary = 0; // TODO
+    json.visible = this.visible;
+    json.spriteInfo = {};
+    return json;
+  };
+
+  Sprite.deserialize = function(json) {return new Sprite().fromJSON(json)};
+
+  Sprite.prototype.fromJSON = function(json) {
+    ScratchObj.prototype.fromJSON.call(this, json);
+    this.rotationStyle =
+      json.rotationStyle === 'leftRight' ||
+      json.rotationStyle === 'none' ? json.rotationStyle : 'normal';
+    this.x = Math.max(-1e6, Math.min(1e6, Number(json.scratchX) || 0));
+    this.y = Math.max(-1e6, Math.min(1e6, Number(json.scratchY) || 0));
+    this.direction = json.direction == null ? 90 : 180 - (180 - (Number(json.direction) || 0) % 360) % 360 || 0;
+    this.scale = json.scale == null ? 1 : Math.max(0, Math.min(1000, Number(json.scale) || 0));
+    this.visible = json.visible == null ? true : !!json.visible;
+    this.isDraggable = !!json.isDraggable;
+    return this;
+  };
 
   Sprite.prototype.setScale = function(s) {
     var costume = this.costumes[this.costume];
@@ -982,6 +1137,22 @@
   inherits(Stage, ScratchObj);
 
   Stage.prototype.isStage = true;
+
+  Stage.prototype.toJSON = function() {
+    var json = ScratchObj.prototype.toJSON.call(this, json);
+    json.children = this.children;
+    return json;
+  };
+
+  Stage.deserialize = function(json) {return new Stage().fromJSON(json)};
+
+  Stage.prototype.fromJSON = function(json) {
+    ScratchObj.prototype.fromJSON.call(this, json);
+    if (Array.isArray(json.children)) json.children.map(function(child) {
+      return child.objName ? new Sprite().fromJSON(child) : null;
+    }).filter(notNull).forEach(this.add, this);
+    return this;
+  };
 
   Stage.prototype.add = function(child) {
     if (this.children.indexOf(child) === -1) {
@@ -1723,10 +1894,18 @@
 
 
   function Editor() {
-    this.stage = new Stage();
+    this.stage = new Stage()
+      .addCostume(new Costume('backdrop1', '739b5e2a2435f6e1ec2993791b423146.png', 240, 180));
     this.stage.add(new Sprite('Sprite1')
-      .addCostume(new Costume('costume1', 'costume1.svg', 47, 55))
-      .addCostume(new Costume('costume2', 'costume2.png', 57, 41)));
+      .addCostume(new Costume('costume1', 'f9a1c175dbe2e5dee472858dd30d16bb.svg', 47, 55))
+      .addCostume(new Costume('costume2', 'c68e7b211672862001dd4fce12129813.png', 57, 41)));
+
+    try {
+      this.stage = Stage.deserialize(JSON.parse(localStorage.getItem('visual demo project')));
+    } catch (e) {
+      console.warn(e.stack);
+    }
+
     this.backpack = new LocalBackpack();
 
     this.exec = new Interpreter(this.stage, this);
@@ -1767,7 +1946,18 @@
     document.addEventListener('mousemove', this.mouseMove.bind(this));
     document.addEventListener('mousedown', this.hideBubble.bind(this));
     document.addEventListener('wheel', this.hideBubble.bind(this));
+
+    this.save = this.save.bind(this);
   }
+
+  Editor.prototype.changed = function() {
+    clearTimeout(this.saveTimeout);
+    this.saveTimeout = setTimeout(this.save, 100);
+  };
+
+  Editor.prototype.save = function() {
+    localStorage.setItem('visual demo project', JSON.stringify(this.stage));
+  };
 
   Editor.prototype.start = function() {
     this.interval = setInterval(this.step.bind(this), 1000 / 60);
