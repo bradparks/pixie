@@ -1095,8 +1095,10 @@
   Interpreter.prototype.stopAll = function() {
     var threads = this.threads;
     for (var i = threads.length; i--;) {
-      threads[i].topScript.removeRunningEffect();
-      threads[i].topScript.thread = null;
+      var t = threads[i];
+      t.topScript.removeRunningEffect();
+      t.topScript.thread = null;
+      t.done = true;
     }
     this.threads = [];
   };
