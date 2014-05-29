@@ -1834,8 +1834,8 @@
     table['not'] = function(b) {return !interp.barg(b, 0)};
 
     table['concatenate:with:'] = function(b) {return ''+interp.arg(b, 0)+interp.arg(b, 1)};
-    table['letter:of:'] = function(b) {return ('' + interp.arg(b, 1)).charAt(interp.narg(b, 0) - 1 | 0) || ''};
-    table['stringLength:'] = function(b) {return ('' + interp.arg(b, 0)).length};
+    table['letter:of:'] = function(b) {return (''+interp.arg(b, 1)).charAt(interp.narg(b, 0) - 1 | 0) || ''};
+    table['stringLength:'] = function(b) {return (''+interp.arg(b, 0)).length};
 
     table['\\\\'] =
     table['%'] = function(b) {
