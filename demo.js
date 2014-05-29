@@ -934,9 +934,11 @@
   ScratchObj.prototype.forEachScript = function(fn, context) {
     var s = this.scripts;
     for (var i = 0, l = s.length; i < l; i++) {
-      fn.call(context, this, s[i]);
+      if (s[i].blocks.length) fn.call(context, s[i], this);
     }
   };
+
+  ScratchObj.prototype.forEachLocalScript = ScratchObj.prototype.forEachScript;
 
   ScratchObj.prototype.destroy = function() {
     if (this.stage) this.stage.remove(this);
@@ -1251,25 +1253,55 @@
   Interpreter.prototype.triggerGreenFlag = function() {
     this.stopAll();
     this.resetTimer();
-    this.trigger('whenGreenFlag');
+    return this.trigger('whenGreenFlag');
   };
 
-  Interpreter.prototype.trigger = function(event, arg) {
+  Interpreter.prototype.triggerBroadcast = function(event) {
+    return this.trigger('whenIReceive', event, true);
+  };
+
+  Interpreter.prototype.triggerKey = function(key) {
+    return this.trigger('whenKeyPressed', key);
+  };
+
+  Interpreter.prototype.triggerClick = function(target) {
+    return this.triggerFor(target, 'whenClicked', undefined, true);
+  };
+
+  Interpreter.prototype.trigger = function(event, arg, restart) {
+    var threads = [];
     if (arg !== undefined) arg = (''+arg).toLowerCase();
-    this.stage.forEachScript(function(sprite, script) {
-      if (!script.isEmpty && script.blocks[0].name === event && (arg === undefined || (''+script.blocks[0].args[0].value).toLowerCase() === arg)) {
-        this.toggleThread(script, sprite);
+    this.stage.forEachScript(function(script, target) {
+      if (script.blocks[0].name === event && (arg === undefined || (''+script.blocks[0].args[0].value).toLowerCase() === arg)) {
+        if (restart) {
+          threads.push(this.restartThread(script, target));
+        } else {
+          threads.push(script.thread || this.toggleThread(script, target));
+        }
       }
     }, this);
+    return threads;
+  };
+
+  Interpreter.prototype.triggerFor = function(target, event, arg, restart) {
+    var threads = [];
+    if (arg !== undefined) arg = (''+arg).toLowerCase();
+    target.forEachLocalScript(function(script, target) {
+      if (script.blocks[0].name === event && (arg === undefined || (''+script.blocks[0].args[0].value).toLowerCase() === arg)) {
+        if (restart) {
+          threads.push(this.restartThread(script, target));
+        } else {
+          threads.push(script.thread || this.toggleThread(script, target));
+        }
+      }
+    }, this);
+    return threads;
   };
 
   Interpreter.prototype.stopAll = function() {
     var threads = this.threads;
     for (var i = threads.length; i--;) {
-      var t = threads[i];
-      t.topScript.removeRunningEffect();
-      t.topScript.thread = null;
-      t.done = true;
+      this.stopThread(threads[i]);
     }
     this.threads = [];
   };
@@ -1283,27 +1315,30 @@
     }
     if (script.thread) {
       this.stopThread(script.thread);
-      return;
+    } else {
+      script.addRunningEffect();
+      this.threads.push(script.thread = new Thread(this, script, target));
+    }
+    return script.thread;
+  };
+
+  Interpreter.prototype.restartThread = function(script, target) {
+    if (script.thread) {
+      this.stopThread(script.thread);
     }
     script.addRunningEffect();
     this.threads.push(script.thread = new Thread(this, script, target));
-  };
-
-  Interpreter.prototype.findThread = function(script, target) {
-    var threads = this.threads;
-    for (var i = threads.length; i--;) {
-      var t = threads[i];
-      if (t.topScript === script && t.target === target) return t;
-    }
-    return null;
+    return script.thread;
   };
 
   Interpreter.prototype.stopThread = function(thread) {
     if (thread) {
-      var i = this.threads.indexOf(thread);
-      if (i !== -1) this.threads.splice(i, 1);
-      thread.topScript.removeRunningEffect();
-      thread.topScript.thread = null;
+      if (thread.topScript) {
+        thread.topScript.removeRunningEffect();
+        thread.topScript.thread = null;
+      }
+      thread.topScript = null;
+      thread.done = true;
     }
   };
 
@@ -1334,12 +1369,11 @@
       var threads = this.threads;
       for (var i = 0, l = threads.length; i < l; i++) {
         this.activeThread = threads[i];
-        this.stepActiveThread();
+        if (!this.activeThread.done) this.stepActiveThread();
 
         if (!this.waiting) canRun = true;
         if (this.activeThread.done) {
-          this.activeThread.topScript.thread = null;
-          this.activeThread.topScript.removeRunningEffect();
+          this.stopThread(this.activeThread);
           threads.splice(i, 1);
           i--;
           l--;
@@ -1654,11 +1688,27 @@
     // Events
 
     table['whenGreenFlag'] = this.primNoop;
-    table['whenKeyPressed'] = this.primNoop;
-    table['whenClicked'] = this.primNoop;
-    table['whenSceneStarts'] = this.primNoop;
-    table['whenSensorGreaterThan'] = this.primNoop;
+    // table['whenKeyPressed'] = this.primNoop;
+    // table['whenClicked'] = this.primNoop;
+    // table['whenSceneStarts'] = this.primNoop;
+    // table['whenSensorGreaterThan'] = this.primNoop;
     table['whenIReceive'] = this.primNoop;
+
+    table['broadcast:'] = function(b) {
+      interp.triggerBroadcast(interp.arg(b, 0));
+    };
+
+    table['doBroadcastAndWait'] = function(b) {
+      if (interp.activeThread.extra === null) {
+        interp.activeThread.extra = interp.triggerBroadcast(interp.arg(b, 0));
+      } else {
+        if (interp.activeThread.extra.every(function(t) {return t.done})) {
+          interp.activeThread.extra = null;
+        } else {
+          interp.activeThread.pc--;
+        }
+      }
+    };
 
     // Control
 
@@ -2044,7 +2094,7 @@
   };
 
   def(Editor.prototype, 'broadcastNames', {get: function() {
-    function add(sprite, script) {
+    function add(script) {
       if (!script || !script.isScript) return;
       var b = script.blocks;
       for (var i = b.length; i--;) {
