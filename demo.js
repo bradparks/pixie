@@ -1780,6 +1780,10 @@
 
     // Sensing
 
+    table['keyPressed:'] = function(b) {
+      return !!interp.stage.keys[interp.arg(b, 0)];
+    };
+
     table['mousePressed'] = function() {return interp.stage.mouseDown};
     table['mouseX'] = function() {return interp.stage.mouseX};
     table['mouseY'] = function() {return interp.stage.mouseY};
