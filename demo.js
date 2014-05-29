@@ -1364,14 +1364,14 @@
     do {
       if (this.warpThread && this.warpThread.done) this.warpThread = null;
 
-      var canRun = false;
+      var canRun = true;
 
       var threads = this.threads;
       for (var i = 0, l = threads.length; i < l; i++) {
         this.activeThread = threads[i];
         if (!this.activeThread.done) this.stepActiveThread();
 
-        if (!this.waiting) canRun = true;
+        if (this.waiting) canRun = false;
         if (this.activeThread.done) {
           this.stopThread(this.activeThread);
           threads.splice(i, 1);
@@ -1461,6 +1461,7 @@
     thread.tmp = this.time + Math.max(duration * 1000, 0);
     thread.pc--;
     this.yield = true;
+    this.waiting = true;
   };
 
   Interpreter.prototype.stepTimed = function() {
@@ -1472,6 +1473,7 @@
     } else {
       thread.pc--;
       this.yield = true;
+      this.waiting = true;
       return false;
     }
   };
@@ -1688,7 +1690,7 @@
     // Events
 
     table['whenGreenFlag'] = this.primNoop;
-    // table['whenKeyPressed'] = this.primNoop;
+    table['whenKeyPressed'] = this.primNoop;
     // table['whenClicked'] = this.primNoop;
     // table['whenSceneStarts'] = this.primNoop;
     // table['whenSensorGreaterThan'] = this.primNoop;
@@ -1701,12 +1703,13 @@
     table['doBroadcastAndWait'] = function(b) {
       if (interp.activeThread.extra === null) {
         interp.activeThread.extra = interp.triggerBroadcast(interp.arg(b, 0));
+      }
+      if (interp.activeThread.extra.every(function(t) {return t.done})) {
+        interp.activeThread.extra = null;
       } else {
-        if (interp.activeThread.extra.every(function(t) {return t.done})) {
-          interp.activeThread.extra = null;
-        } else {
-          interp.activeThread.pc--;
-        }
+        interp.activeThread.pc--;
+        interp.yield = true;
+        interp.waiting = true;
       }
     };
 
@@ -1895,7 +1898,6 @@
     this.args = [];
 
     this.done = false;
-    this.yield = false;
   }
 
   Thread.prototype.pushStack = function(script) {
