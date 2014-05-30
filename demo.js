@@ -757,15 +757,21 @@
       return img;
     },
     getAsset: function(md5, cb) {
+      Server.get(Server.getAssetURL(md5), cb);
+    },
+    getProject: function(id, cb) {
+      Server.get(Server.getProjectURL(id), cb);
+    },
+    get: function(url, cb) {
       var xhr = new XMLHttpRequest;
-      xhr.open('get', getAssetURL(md5), true);
+      xhr.open('get', url, true);
       xhr.send();
       if (cb) {
         xhr.onload = function() {
-          if (xhr.statusCode == 200) {
+          if (xhr.status == 200) {
             cb(null, xhr.responseText);
           } else {
-            cb(new Error('HTTP ' + xhr.statusCode));
+            cb(new Error('HTTP ' + xhr.status));
           }
         };
         xhr.onerror = function() {cb(new Error)};
