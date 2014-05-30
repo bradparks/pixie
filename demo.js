@@ -866,7 +866,11 @@
   }
 
   function deserializeBlock(json) {
-    return new vis.Block(json[0], json.slice(1).map(deserializeArg));
+    var b = new vis.Block(json[0], json.slice(1).map(deserializeArg));
+    if (b.name === 'stopScripts' && ['other scripts in sprite', 'other scripts in stage'].indexOf(b.args[0].value) !== -1) {
+      b.type = 'c';
+    }
+    return b;
   }
 
   function deserializeArg(json) {
