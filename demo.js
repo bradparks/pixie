@@ -2265,6 +2265,33 @@
     }
   };
 
+  Editor.prototype.languageMenu = function() {
+    return new vis.Menu(
+      'English').withContext(this);
+  };
+
+  Editor.prototype.fileMenu = function() {
+    return new vis.Menu(
+      'New',
+      vis.Menu.line,
+      ['Save now', this.save],
+      'Save as a copy',
+      'Go to my stuff',
+      vis.Menu.line,
+      'Upload from your computer',
+      'Download to your computer',
+      vis.Menu.line,
+      'Revert').translate().withContext(this);
+  };
+
+  Editor.prototype.editMenu = function() {
+    return new vis.Menu(
+      'Undelete',
+      vis.Menu.line,
+      'Small stage layout',
+      'Turbo mode').translate().withContext(this);
+  };
+
 
   function ScriptEditor(editor) {
     this.editor = editor;
@@ -2562,31 +2589,17 @@
   };
 
   TopBar.prototype.languageMenu = function() {
-    this.showMenu(this.languageButton, new vis.Menu(
-      'English').withContext('this'));
+    this.showMenu(this.languageButton, this.editor.languageMenu());
   };
 
   TopBar.prototype.fileMenu = function() {
-    this.showMenu(this.fileButton, new vis.Menu(
-      'New',
-      vis.Menu.line,
-      'Save now',
-      'Save as a copy',
-      'Go to my stuff',
-      vis.Menu.line,
-      'Upload from your computer',
-      'Download to your computer',
-      vis.Menu.line,
-      'Revert').withContext('this'));
+    this.showMenu(this.fileButton, this.editor.fileMenu());
   };
 
   TopBar.prototype.editMenu = function() {
-    this.showMenu(this.editButton, new vis.Menu(
-      'Undelete',
-      vis.Menu.line,
-      'Small stage layout',
-      'Turbo mode').withContext('this'));
+    this.showMenu(this.editButton, this.editor.editMenu());
   };
+
   TopBar.prototype.showTips = function() {};
   TopBar.prototype.showAbout = function() {};
 
