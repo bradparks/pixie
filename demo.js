@@ -2665,13 +2665,19 @@
     var name = getKeyName(e.keyCode);
     if (e.metaKey || e.ctrlKey) {
       switch (name) {
+        case 's':
+          this.editor.save();
+          break;
         case '.':
           this.editor.exec.stopAll();
           break;
         case 'return':
           this.editor.exec.triggerGreenFlag();
           break;
+        default:
+          return;
       }
+      e.preventDefault();
     }
     if (name) {
       this.stage.keys[name] = true;
