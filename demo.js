@@ -613,10 +613,10 @@
       {if: "variables", then: [
         {all: "variables"},
         "--",
-        "setVar:to:",
-        "changeVar:by:",
-        "showVariable:",
-        "hideVariable:",
+        ["setVar:to:", {first: 'var'}, '0'],
+        ["changeVar:by:", {first: 'var'}, 1],
+        ["showVariable:", {first: 'var'}],
+        ["hideVariable:", {first: 'var'}],
         "--"
       ]},
 
@@ -625,18 +625,18 @@
       {if: "lists", then: [
         {all: "lists"},
         "--",
-        "append:toList:",
+        ["append:toList:", "thing", {first: 'list'}],
         "--",
-        "deleteLine:ofList:",
-        "insert:at:ofList:",
-        "setLine:ofList:to:",
+        ["deleteLine:ofList:", 1, {first: 'list'}],
+        ["insert:at:ofList:", "thing", 1, {first: 'list'}],
+        ["setLine:ofList:to:", 1, {first: 'list'}, "thing"],
         "--",
-        "getLine:ofList:",
-        "lineCountOfList:",
-        "list:contains:",
+        ["getLine:ofList:", 1, {first: 'list'}],
+        ["lineCountOfList:", {first: 'list'}],
+        ["list:contains:", {first: 'list'}, "thing"],
         "--",
-        "showList:",
-        "hideList:"
+        ["showList:", {first: 'list'}],
+        ["hideList:", {first: 'list'}]
       ]}
     ],
     10: [
@@ -2451,12 +2451,21 @@
     if (t.all) {
       return (this.evalAll(t.all) || []).forEach(this.eval, this);
     }
-    if (!t.pop) {
+    if (!Array.isArray(t)) {
       t = [t];
     }
-    var script = new vis.Script().add(new vis.Block(t[0], t.slice(1)));
+    var script = new vis.Script().add(new vis.Block(t[0], t.slice(1).map(this.evalArg, this)));
     if (!this.editor.exec.table[t[0]]) script.addEffect(script.outline.bind(script, 2, '#faa'));
     this.palette.add(script);
+  };
+
+  ScriptEditor.prototype.evalArg = function(arg) {
+    if (typeof arg !== 'object') return arg;
+    if (arg.first) {
+      var key = arg.first === 'var' ? 'variables' : arg.first === 'list' ? 'lists' : '';
+      if (key) return this.editor.stage[key].concat(this.editor.selectedSprite[key]).map(getName).sort()[0];
+    }
+    return '';
   };
 
   ScriptEditor.prototype.evalCondition = function(condition) {
