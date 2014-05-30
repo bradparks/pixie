@@ -939,8 +939,22 @@
     return null;
   };
 
+  ScratchObj.prototype.createLocal = function(name, value) {
+    var v = new Variable(name, value == null ? 0 : value);
+    this.variables.push(v);
+    return v;
+  };
+
+  ScratchObj.prototype.findOrCreateLocal = function(name) {
+    return this.findLocal(name) || this.stage.createLocal(name);
+  };
+
   ScratchObj.prototype.findVariable = function(name) {
     return this.findLocal(name) || this.stage && this.stage.findLocal(name);
+  };
+
+  ScratchObj.prototype.findOrCreateVariable = function(name) {
+    return this.findLocal(name) || this.stage && this.stage.findOrCreateLocal(name);
   };
 
   ScratchObj.prototype.findLocalList = function(name) {
@@ -951,8 +965,22 @@
     return null;
   };
 
+  ScratchObj.prototype.createLocalList = function(name, contents) {
+    var l = new List(name, contents || []);
+    this.lists.push(l);
+    return l;
+  };
+
+  ScratchObj.prototype.findOrCreateLocalList = function(name) {
+    return this.findLocalList(name) || this.createLocalList(name);
+  };
+
   ScratchObj.prototype.findList = function(name) {
     return this.findLocalList(name) || this.stage && this.stage.findLocalList(name);
+  };
+
+  ScratchObj.prototype.findOrCreateList = function(name) {
+    return this.findLocalList(name) || this.stage && this.stage.findOrCreateLocalList(name);
   };
 
   ScratchObj.prototype.forEachScript = function(fn, context) {
@@ -1928,6 +1956,84 @@
       }
       return 0;
     };
+
+    // Lists
+
+    function getListIndex(n, end) {
+      if (!end) return -1;
+      if (n === 'last') {
+        return end - 1;
+      }
+      if (n === 'any' || n === 'random') {
+        return Math.floor(Math.random() * end);
+      }
+      var i = Number(n);
+      return i >= 1 && i <= end ? i - 1 : -1;
+    }
+
+    table['contentsOfList:'] = function(b) {
+      var contents = interp.activeThread.target.findOrCreateList(interp.arg(b, 0)).contents;
+      var i = contents.length;
+      while (i--) {
+        if (typeof contents[i] !== 'string' || contents[i].length !== 1) {
+          return contents.join(' ');
+        }
+      }
+      return contents.join('');
+    };
+
+    table['append:toList:'] = function(b) {
+      var list = interp.activeThread.target.findOrCreateList(interp.arg(b, 1));
+      list.contents.push(interp.arg(b, 0));
+    };
+
+    table['deleteLine:ofList:'] = function(b) {
+      var list = interp.activeThread.target.findOrCreateList(interp.arg(b, 1));
+      var index = interp.arg(b, 0);
+      if (index === 'all') {
+        list.contents = [];
+        return;
+      }
+      var i = getListIndex(index, list.contents.length);
+      if (i === -1) return;
+      list.contents.splice(i, 1);
+    };
+
+    table['insert:at:ofList:'] = function(b) {
+      var list = interp.activeThread.target.findOrCreateList(interp.arg(b, 2));
+      var i = getListIndex(interp.arg(b, 1), list.contents.length + 1);
+      if (i === -1) return;
+      list.contents.splice(i, 0, interp.arg(b, 0));
+    };
+
+    table['setLine:ofList:to:'] = function(b) {
+      var list = interp.activeThread.target.findOrCreateList(interp.arg(b, 1));
+      var i = getListIndex(interp.arg(b, 0), list.contents.length);
+      if (i === -1) return;
+      list.contents[i] = interp.arg(b, 2);
+    };
+
+    table['getLine:ofList:'] = function(b) {
+      var list = interp.activeThread.target.findOrCreateList(interp.arg(b, 1));
+      var i = getListIndex(interp.arg(b, 0), list.contents.length);
+      if (i === -1) return '';
+      return list.contents[i];
+    };
+
+    table['lineCountOfList:'] = function(b) {
+      var list = interp.activeThread.target.findOrCreateList(interp.arg(b, 0));
+      return list.contents.length;
+    };
+
+    table['list:contains:'] = function(b) {
+      var contents = interp.activeThread.target.findOrCreateList(interp.arg(b, 0)).contents;
+      var i = contents.length;
+      var x = interp.arg(b, 1);
+      while (i--) {
+        if (compare(contents[i], x) === 0) return true;
+      }
+      return false;
+    };
   };
 
   Interpreter.prototype.primNoop = function() {};
@@ -2096,7 +2202,7 @@
       Dialog.alert(vis.getText('New Variable'), vis.getText('A variable with that name already exists.')).show(this); // NS
       return;
     }
-    (local ? this.selectedSprite : this.stage).variables.push(new Variable(name));
+    (local ? this.selectedSprite : this.stage).createLocal(name);
     this.tabPanel.scriptEditor.refreshPalette();
   };
 
