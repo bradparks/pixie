@@ -1697,6 +1697,11 @@
       }
     };
 
+    table['sceneName'] = function() {
+      var costume = interp.stage.costumes[interp.stage.costume];
+      return costume ? costume.name : '';
+    };
+
     table['scale'] = function() {
       var sprite = interp.activeThread.target;
       return sprite.isSprite ? sprite.scale * 100 : 0;
