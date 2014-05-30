@@ -1051,7 +1051,7 @@
 
   List.prototype.toJSON = function() {
     return {
-      listName: this.listName,
+      listName: this.name,
       contents: this.contents,
       isPersistent: false // TODO
     };
