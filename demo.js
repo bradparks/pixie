@@ -2721,7 +2721,8 @@
 
   SpritePanel.prototype.newFromLibrary = function() {
     var sprite = new Sprite('Sprite'+(this.editor.stage.children.length + 1))
-      .addCostume(new Costume('costume1', 'costume1.svg', 47, 55));
+      .addCostume(new Costume('costume1', 'f9a1c175dbe2e5dee472858dd30d16bb.svg', 47, 55))
+      .addCostume(new Costume('costume2', 'c68e7b211672862001dd4fce12129813.png', 57, 41));
     this.editor.stage.add(sprite);
     this.select(this.addIcon(sprite));
   };
