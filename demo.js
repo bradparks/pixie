@@ -1787,6 +1787,29 @@
       }
     };
 
+    table['stopScripts'] = function(b) {
+      switch (interp.arg(b, 0)) {
+        case 'all':
+          interp.stopAll();
+          /* falls through */
+        case 'this script':
+          interp.yield = true;
+          interp.activeThread.pc--;
+          interp.activeThread.done = true;
+          break;
+        case 'other scripts in sprite':
+        case 'other scripts in stage':
+          var threads = interp.threads;
+          var i = threads.length;
+          while (i--) {
+            if (threads[i] !== interp.activeThread) {
+              threads[i].done = true;
+            }
+          }
+          break;
+      }
+    };
+
     // Sensing
 
     table['keyPressed:'] = function(b) {
