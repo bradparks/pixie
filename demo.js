@@ -1839,9 +1839,12 @@
         case 'other scripts in stage':
           var threads = interp.threads;
           var i = threads.length;
+          var activeThread = interp.activeThread;
+          var target = activeThread.target;
           while (i--) {
-            if (threads[i] !== interp.activeThread) {
-              threads[i].done = true;
+            var t = threads[i];
+            if (t !== activeThread && t.target === target) {
+              t.done = true;
             }
           }
           break;
