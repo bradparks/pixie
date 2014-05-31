@@ -1046,7 +1046,9 @@
   };
 
   Costume.prototype.copy = function() {
-    return new Costume(this.name, this.canvas, this.cx, this.cy);
+    var c = new Costume(this.name, this.canvas, this.cx, this.cy);
+    c.baseLayerMD5 = this.baseLayerMD5;
+    return c;
   };
 
 
