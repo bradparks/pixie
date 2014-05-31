@@ -2462,8 +2462,10 @@
       sprite.scripts.forEach(function(script) {
         this.workspace.add(script);
       }, this);
+      this.workspace.scrollTo(0, 0);
       this.sprite = sprite;
     }
+    this.refreshPalette();
   };
 
   ScriptEditor.prototype.createButtons = function() {
@@ -2938,9 +2940,7 @@
     if (t < tbb.top) this.elSpriteSection.scrollTop += t - tbb.top;
     else if (b > tbb.bottom) this.elSpriteSection.scrollTop += b - tbb.bottom;
     this.editor.selectedSprite = icon.sprite;
-    var tabPanel = this.editor.tabPanel;
-    tabPanel.showSprite(icon.sprite);
-    tabPanel.scriptEditor.refreshPalette();
+    this.editor.tabPanel.showSprite(icon.sprite);
     return this;
   };
 
