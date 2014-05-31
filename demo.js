@@ -895,16 +895,24 @@
     return new vis.Script(json.map(deserializeBlock));
   }
 
-  function deserializeBlock(json) {
-    var b = new vis.Block(json[0], json.slice(1).map(deserializeArg));
+  function deserializeBlock(json, typeHint) {
+    var info = vis.getBlock(json[0], {
+      type: typeHint || 'c',
+      argTypes: json.slice(1).map(guessArgType)
+    });
+    var b = new vis.Block(info, json.slice(1).map(deserializeArg));
     if (b.name === 'stopScripts' && ['other scripts in sprite', 'other scripts in stage'].indexOf(b.args[0].value) !== -1) {
       b.type = 'c';
     }
     return b;
   }
 
+  function guessArgType(json) {
+    return Array.isArray(json) && typeof json[0] !== 'string' ? 't' : 's';
+  }
+
   function deserializeArg(json) {
-    return Array.isArray(json) ? (typeof json[0] === 'string' ? deserializeBlock(json) : deserializeStack(json)) : json;
+    return Array.isArray(json) ? (typeof json[0] === 'string' ? deserializeBlock(json, 'r') : deserializeStack(json)) : json;
   }
 
 
