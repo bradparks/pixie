@@ -1987,6 +1987,25 @@
       return 0;
     };
 
+    // Variables
+
+    function getVar(name) {
+      return interp.activeThread.target.findOrCreateVariable(name);
+    }
+
+    table['readVariable'] = function(b) {
+      return getVar(interp.arg(b, 0)).value;
+    };
+
+    table['setVar:to:'] = function(b) {
+      getVar(interp.arg(b, 0)).value = interp.arg(b, 1);
+    };
+
+    table['changeVar:by:'] = function(b) {
+      var v = getVar(interp.arg(b, 0));
+      v.value = Number(v.value) + interp.narg(b, 1);
+    };
+
     // Lists
 
     function getListIndex(n, end) {
