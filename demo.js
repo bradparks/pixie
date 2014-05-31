@@ -1735,6 +1735,10 @@
       }
     };
 
+    table['costumeIndex'] = function() {
+      return interp.activeThread.target.costume + 1;
+    };
+
     table['sceneName'] = function() {
       var costume = interp.stage.costumes[interp.stage.costume];
       return costume ? costume.name : '';
