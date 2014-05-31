@@ -1281,6 +1281,27 @@
     return this.name === name ? this : null;
   };
 
+  Stage.prototype.uniqueName = function(base) {
+    var x = /\d+$/.exec(base);
+    var i = 2;
+    if (x) {
+      base = base.slice(0, -x[0].length);
+      i = Number(x[0]) + 1;
+    }
+    var sprites = this.children;
+    search: for (;;) {
+      var name = base + i;
+      var j = sprites.length;
+      while (j--) {
+        if (sprites[j].name === name) {
+          i++;
+          continue search;
+        }
+      }
+      return name;
+    }
+  };
+
 
   function LocalBackpack() {}
 
@@ -3014,6 +3035,7 @@
 
   SpriteIcon.prototype.duplicateSprite = function() {
     var sprite = this.sprite.copy();
+    sprite.name = this.editor.stage.uniqueName(sprite.name);
     this.editor.stage.add(sprite);
     this.panel.select(this.panel.addIcon(sprite));
   };
