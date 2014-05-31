@@ -209,14 +209,14 @@
       "computeFunction:of:": ["r", "%m.mathOp of %n", 8, "sqrt", 9],
 
       // variables
-      "readVariable": ["r", "%l.var", 9, 'variable'],
+      "readVariable": ["r", "%l", 9, 'variable'],
       "setVar:to:": ["c", "set %m.var to %s", 9, 'variable', 0],
       "changeVar:by:": ["c", "change %m.var by %n", 9, 'variable', 1],
       "showVariable:": ["c", "show variable %m.var", 9, 'variable'],
       "hideVariable:": ["c", "hide variable %m.var", 9, 'variable'],
 
       // lists
-      "contentsOfList:": ["r", "%l.list", 12, 'list'],
+      "contentsOfList:": ["r", "%l", 12, 'list'],
       "append:toList:": ["c", "add %s to %m.list", 12, 'thing', 'list'],
 
       "deleteLine:ofList:": ["c", "delete %d.listDeleteItem of %m.list", 12, '1', 'list'],
@@ -666,6 +666,30 @@
       app.exec.toggleThread(this.topScript, app.editor.selectedSprite);
     }
   };
+
+  vis.Block.prototype.defaultContextMenu = Object.getOwnPropertyDescriptor(vis.Block.prototype, 'contextMenu').get;
+  Object.defineProperty(vis.Block.prototype, 'contextMenu', {get: function() {
+    var m = this.defaultContextMenu();
+    if (this.name === 'readVariable' || this.name === 'contentsOfList:') {
+      if (this.workspace.isPalette) {
+        // TODO
+      } else {
+        m.action = function(value) {
+          this.args[0].value = value;
+        }.bind(this);
+        m.addLine();
+        var editor = this.app.editor;
+        var globals = this.name === 'readVariable' ? editor.stage.variables : editor.stage.lists;
+        var locals = this.name === 'readVariable' ? editor.selectedSprite.variables : editor.selectedSprite.lists;
+        m.addAll(globals.map(getName));
+        if (editor.selectedSprite.isSprite && locals.length) {
+          if (globals.length) m.addLine();
+          m.addAll(locals.map(getName));
+        }
+      }
+    }
+    return m;
+  }});
 
   vis.Block.prototype.help = function() {
     // TODO
