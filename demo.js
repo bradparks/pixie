@@ -13,7 +13,7 @@
     //   return 'TR: ' + (vis.options.strings[key] || key);
     // },
     categories: {
-      0: ["undefined", '#d42828'],
+      undefined: ["Undefined", '#d42828'],
       1: ["Motion", '#4a6cd4'],
       2: ["Looks", '#8a55d7'],
       3: ["Sound", '#bb42c3'],
