@@ -1615,7 +1615,7 @@
       var a = asNumber(x);
       var b = asNumber(y);
       if (a !== a || b !== b) {
-        return x.toLowerCase().localeCompare(y.toLowerCase());
+        return (''+x).toLowerCase().localeCompare((''+y).toLowerCase());
       }
       return a < b ? -1 : a === b ? 0 : 1;
     }
