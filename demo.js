@@ -321,7 +321,7 @@
         return new Menu().addAll(arg.app.editor.stage.costumes.map(getName));
       },
       sound: function(arg) {
-        return new Menu().addAll(arg.app.editor.selectedSprite.sounds.map(getName)).add(Menu.line).add(['record...', function() {
+        return new Menu().addAll(arg.app.editor.selectedSprite.sounds.map(getName)).add(Menu.line).add([T('record...'), function() {
           // TODO record a sound
         }]);
       },
@@ -714,7 +714,7 @@
 
   Block.prototype.help = function() {
     // TODO
-    Dialog.alert('Help', 'Help is not available yet.').show(this.app.editor);
+    Dialog.alert(T('Help'), T('Help is not available yet.')).show(this.app.editor);
   };
 
   Arg.prototype.menuTranslations = {
@@ -724,10 +724,12 @@
     'list': ['delete list', 'rename list'],
     'sound': ['record...'],
     'var': ['delete variable', 'rename variable'],
-    'costume': []
+    'costume': [],
+    'key': ['up arrow', 'down arrow', 'left arrow', 'right arrow', 'space']
   };
 
   Arg.prototype.shouldTranslate = function(value) {
+    if (this.type === 'l') return false;
     if (['spriteOnly', 'spriteOrMouse', 'spriteOrStage', 'touching'].indexOf(this.menu) !== -1) {
       return ['_myself_', '_mouse_', '_edge_', '_stage_'].indexOf(value) !== -1;
     }
@@ -2369,9 +2371,9 @@
 
     this.el.appendChild(this.elTopButtons = el('project-buttons'));
     this.elTopButtons.appendChild(this.elShareButton = el('button', 'project-button'));
-    this.elShareButton.innerHTML = 'Share';
+    this.elShareButton.innerHTML = T('Share');
     this.elTopButtons.appendChild(this.elFlipButton = el('button', 'project-button flip'));
-    this.elFlipButton.innerHTML = '<i></i>See project page';
+    this.elFlipButton.innerHTML = '<i></i>'+T('See project page');
 
     this.el.appendChild(this.topBar.el);
     this.el.appendChild(this.tabPanel.el);
@@ -2732,7 +2734,7 @@
       var b = el('button', 'palette-button');
       b.value = id;
       b.style.color = cat[2];
-      b.innerHTML = '<div><strong>' + cat[1] + '</strong></div>';
+      b.innerHTML = '<div><strong>' + T(cat[1]) + '</strong></div>';
       b.addEventListener('click', buttonClick);
 
       this.buttons[cat[0]] = b;
@@ -2807,7 +2809,7 @@
     if (t.action) {
       var editor = this.editor;
       var button = el('button', 'ui-button');
-      button.textContent = t.text;
+      button.textContent = T(t.text);
       if (editor[t.action]) button.addEventListener('click', editor[t.action].bind(editor));
       return this.palette.add(Palette.element(button));
     }
@@ -2913,7 +2915,7 @@
 
   TabPanel.prototype.makeTab = function(text) {
     var tab = el('button', 'tab');
-    tab.textContent = text;
+    tab.textContent = T(text);
     tab.dataset.index = this.tabs.length;
     tab.addEventListener('click', this.tabClick);
     this.tabs.push(tab);
@@ -2964,10 +2966,10 @@
     this.el = el('top-bar');
     this.languageButton = this.addButton('Language', this.languageMenu);
     this.languageButton.classList.add('first');
-    this.fileButton = this.addButton('File', this.fileMenu, true);
-    this.editButton = this.addButton('Edit', this.editMenu, true);
-    this.tipsButton = this.addButton('Tips', this.showTips);
-    this.aboutButton = this.addButton('About', this.showAbout);
+    this.fileButton = this.addButton(T('File'), this.fileMenu, true);
+    this.editButton = this.addButton(T('Edit'), this.editMenu, true);
+    this.tipsButton = this.addButton(T('Tips'), this.showTips);
+    this.aboutButton = this.addButton(T('About'), this.showAbout);
   }
 
   TopBar.prototype.addButton = function(text, action, arrow) {
@@ -3173,10 +3175,10 @@
 
     this.el.appendChild(this.elTitleBar = el('title-bar'));
     this.elTitleBar.appendChild(this.elLabel = el('title-label'));
-    this.elLabel.textContent = 'Sprites';
+    this.elLabel.textContent = T('Sprites');
 
     this.elTitleBar.appendChild(this.elNewGroup = el('new-group'));
-    this.elNewGroup.textContent = 'New sprite:';
+    this.elNewGroup.textContent = T('New sprite:');
     this.addNewButton('new-library', this.newFromLibrary);
     this.addNewButton('new-paint');
     this.addNewButton('new-import');
@@ -3185,7 +3187,7 @@
     this.el.appendChild(this.elStageSection = el('stage-section'));
     this.elStageSection.appendChild(this.stageIcon.el);
     this.elStageSection.appendChild(this.elNewBackdrop = el('new-backdrop'));
-    this.elNewBackdrop.textContent = 'New backdrop:';
+    this.elNewBackdrop.textContent = T('New backdrop:');
 
     this.el.appendChild(this.elSpriteSection = el('sprite-section'));
 
@@ -3298,7 +3300,7 @@
     if (sprite.isStage) {
       this.el.className += ' for-stage';
       this.el.appendChild(this.elInfo = el('sprite-icon-info'));
-      this.elInfo.textContent = '1 backdrop';
+      this.updateInfo();
     } else {
       this.el.appendChild(this.elButton = el('button', 'sprite-icon-button'));
     }
@@ -3364,6 +3366,7 @@
   };
 
   SpriteIcon.prototype.update = function() {
+    if (this.sprite.isStage) this.updateInfo();
     var costume = this.sprite.costumes[this.sprite.costume];
     if (costume === this.costume) return;
     this.costume = costume.loaded && costume;
@@ -3396,6 +3399,11 @@
       }
     }
     this.context.drawImage(this.elTmp, 0, 0);
+  };
+
+  SpriteIcon.prototype.updateInfo = function() {
+    var len = this.sprite.costumes.length;
+    this.elInfo.textContent = T(len === 1 ? '{count} backdrop' : '{count} backdrops', {count: len});
   };
 
 
