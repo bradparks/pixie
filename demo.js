@@ -2418,7 +2418,7 @@
       return;
     }
     (local ? this.selectedSprite : this.stage).createLocal(name);
-    this.tabPanel.scriptEditor.refreshPalette();
+    this.refreshPalette();
   };
 
   Editor.prototype.removeVariable = function(name) {
@@ -2445,6 +2445,10 @@
       return;
     }
     (local ? this.selectedSprite : this.stage).lists.push(new List(name));
+    this.refreshPalette();
+  };
+
+  Editor.prototype.refreshPalette = function() {
     this.tabPanel.scriptEditor.refreshPalette();
   };
 
