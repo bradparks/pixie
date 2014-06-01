@@ -2389,7 +2389,7 @@
     this.app.add(this.spritePanel);
     this.app.add(this.backpackPanel);
 
-    this.el = el('editor');
+    this.el = el('editor Visual-no-select');
 
     this.el.appendChild(this.elTopButtons = el('project-buttons'));
     this.elTopButtons.appendChild(this.elShareButton = el('button', 'project-button'));
