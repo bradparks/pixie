@@ -681,20 +681,27 @@
   Block.prototype.defaultContextMenu = Object.getOwnPropertyDescriptor(Block.prototype, 'contextMenu').get;
   Object.defineProperty(Block.prototype, 'contextMenu', {get: function() {
     var m = this.defaultContextMenu();
+    var editor = this.app.editor;
     if (this.name === 'readVariable' || this.name === 'contentsOfList:') {
+      var isVar = this.name === 'readVariable';
       if (this.workspace.isPalette) {
         m.insertAllTranslated(0, [
-          'rename variable',
-          'delete variable',
-          vis.Menu.line]);
+          isVar ? 'rename variable' : 'rename list',
+          [isVar ? 'delete variable' : 'delete list', function() {
+            if (isVar) {
+              editor.removeVariable(this.args[0].value);
+            } else {
+              editor.removeList(this.args[0].value);
+            }
+          }.bind(this)],
+          Menu.line]);
       } else {
         m.action = function(value) {
           this.args[0].value = value;
         }.bind(this);
         m.addLine();
-        var editor = this.app.editor;
-        var globals = this.name === 'readVariable' ? editor.stage.variables : editor.stage.lists;
-        var locals = this.name === 'readVariable' ? editor.selectedSprite.variables : editor.selectedSprite.lists;
+        var globals = isVar ? editor.stage.variables : editor.stage.lists;
+        var locals = isVar ? editor.selectedSprite.variables : editor.selectedSprite.lists;
         m.addAll(globals.map(getName));
         if (editor.selectedSprite.isSprite && locals.length) {
           if (globals.length) m.addLine();
@@ -1031,6 +1038,21 @@
     return this.findLocal(name) || this.stage && this.stage.findOrCreateLocal(name);
   };
 
+  ScratchObj.prototype.deleteLocal = function(name) {
+    var vars = this.variables;
+    for (var i = vars.length; i--;) {
+      if (vars[i].name === name) {
+        vars.splice(i, 1);
+        return true;
+      }
+    }
+    return false;
+  };
+
+  ScratchObj.prototype.deleteVariable = function(name) {
+    return this.deleteLocal(name) || this.stage && this.stage.deleteLocal(name);
+  };
+
   ScratchObj.prototype.findLocalList = function(name) {
     var lists = this.lists;
     for (var i = lists.length; i--;) {
@@ -1055,6 +1077,21 @@
 
   ScratchObj.prototype.findOrCreateList = function(name) {
     return this.findLocalList(name) || this.stage && this.stage.findOrCreateLocalList(name);
+  };
+
+  ScratchObj.prototype.deleteLocalList = function(name) {
+    var lists = this.lists;
+    for (var i = lists.length; i--;) {
+      if (lists[i].name === name) {
+        lists.splice(i, 1);
+        return true;
+      }
+    }
+    return false;
+  };
+
+  ScratchObj.prototype.deleteList = function(name) {
+    return this.deleteLocalList(name) || this.stage && this.stage.deleteLocalList(name);
   };
 
   ScratchObj.prototype.forEachScript = function(fn, context) {
@@ -2382,6 +2419,22 @@
     }
     (local ? this.selectedSprite : this.stage).createLocal(name);
     this.tabPanel.scriptEditor.refreshPalette();
+  };
+
+  Editor.prototype.removeVariable = function(name) {
+    Dialog.confirm(T('Delete Variable'), T('Are you sure you want to delete {name}?', {name: name}), function(allow) { // NS
+      if (allow && this.selectedSprite.deleteVariable(name)) {
+        this.refreshPalette();
+      }
+    }.bind(this)).show(this);
+  };
+
+  Editor.prototype.removeList = function(name) {
+    Dialog.confirm(T('Delete List'), T('Are you sure you want to delete {name}?', {name: name}), function(allow) { // NS
+      if (allow && this.selectedSprite.deleteList(name)) {
+        this.refreshPalette();
+      }
+    }.bind(this)).show(this);
   };
 
   Editor.prototype.addList = function(name, local, cloud) {
