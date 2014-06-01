@@ -1403,6 +1403,11 @@
     this.addPrimitives(this.table = {});
   }
 
+  Interpreter.prototype.installProject = function(stage) {
+    this.stopAll();
+    this.stage = stage;
+  };
+
   Interpreter.prototype.triggerGreenFlag = function() {
     this.stopAll();
     this.resetTimer();
@@ -2324,8 +2329,10 @@
   };
 
   Editor.prototype.installProject = function(stage) {
+    this.exec.installProject(stage);
     this.spritePanel.installProject(stage);
     this.stagePanel.installProject(stage);
+    this.stage = stage;
   };
 
   Editor.prototype.start = function() {
@@ -2913,6 +2920,7 @@
     this.elTitleBar.appendChild(this.elAuthor = el('project-author'));
     this.elAuthor.textContent = 'by nXIII (unshared)';
 
+    this.stage.redraw();
     this.el.appendChild(this.elStage = this.stage.canvas);
     this.elStage.classList.add('stage');
 
@@ -2939,6 +2947,7 @@
     for (var k in this.stage.keys) {
       if (this.stage.keys[k]) stage.keys[k] = true;
     }
+    stage.redraw();
 
     stage.canvas.classList.add('stage');
     this.el.replaceChild(stage.canvas, this.elStage);
