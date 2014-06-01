@@ -3187,6 +3187,7 @@
       this.panel.select(this);
     }.bind(this));
 
+    this.update();
     setInterval(this.update.bind(this), 200);
   }
   inherits(SpriteIcon, vis.Target);
