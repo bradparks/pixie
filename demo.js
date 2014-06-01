@@ -3330,7 +3330,7 @@
 
     var cw = costume.canvas.width;
     var ch = costume.canvas.height;
-    var scale = Math.min((w - 4) / cw, (h - 4) / ch);
+    var scale = Math.min(1, (w - 4) / cw, (h - 4) / ch);
     var aw = scale * cw;
     var ah = scale * ch;
     var x = (w - aw)/2;
