@@ -1074,21 +1074,34 @@
 
   function Costume(name, canvas, cx, cy, pixelRatio) {
     this.baseLayerMD5 = null;
+    this.loaded = true;
     if (typeof canvas === 'string') { // MD5
       this.baseLayerMD5 = canvas;
       canvas = Server.getImageAsset(canvas);
     }
     if (canvas.tagName === 'IMG') {
-      canvas.onload = function() {
-        if (this.owner) this.owner.redraw();
-      }.bind(this);
+      if (!canvas.width) {
+        this.loaded = false;
+        canvas.addEventListener('load', function() {
+          this.loaded = true;
+          this.updateSize();
+          if (this.owner) this.owner.redraw();
+        }.bind(this));
+      }
     }
     this.name = name;
     this.canvas = canvas;
     this.cx = cx || 0;
     this.cy = cy || 0;
     this.pixelRatio = pixelRatio || 1;
+    this.scale = 1 / this.pixelRatio;
+    this.updateSize();
   }
+
+  Costume.prototype.updateSize = function() {
+    this.width = this.canvas.width * this.scale;
+    this.height = this.canvas.height * this.scale;
+  };
 
   Costume.prototype.toJSON = function() {
     return {
@@ -1205,8 +1218,8 @@
 
   Sprite.prototype.setScale = function(s) {
     var costume = this.costumes[this.costume];
-    var w = costume.canvas.width;
-    var h = costume.canvas.height;
+    var w = costume.width;
+    var h = costume.height;
     this.scale = Math.max(Math.min(1, Math.max(5 / w, 5 / h)), Math.min(1.5 * 480 / w, 1.5 * 360 / h, s));
   };
 
@@ -1222,6 +1235,7 @@
         context.scale(-1, 1);
       }
       context.scale(this.scale, this.scale);
+      context.scale(costume.scale, costume.scale);
 
       context.drawImage(costume.canvas, -costume.cx, -costume.cy);
       context.restore();
@@ -3218,7 +3232,7 @@
   SpriteIcon.prototype.update = function() {
     var costume = this.sprite.costumes[this.sprite.costume];
     if (costume === this.costume) return;
-    this.costume = costume.canvas && costume;
+    this.costume = costume.loaded && costume;
 
     var w = this.elThumbnail.width;
     var h = this.elThumbnail.height;
