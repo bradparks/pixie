@@ -941,7 +941,11 @@
   }
 
   function deserializeStack(json) {
-    return new vis.Script(json.map(deserializeBlock));
+    return new vis.Script(json.map(deserializeCommand));
+  }
+
+  function deserializeCommand(json) {
+    return deserializeBlock(json, 'c');
   }
 
   function deserializeBlock(json, typeHint) {
