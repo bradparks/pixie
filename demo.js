@@ -3328,7 +3328,7 @@
     var w = this.elThumbnail.width;
     var h = this.elThumbnail.height;
     this.context.clearRect(0, 0, w, h);
-    if (!costume.canvas) return;
+    if (!costume.loaded) return;
 
     var cw = costume.canvas.width;
     var ch = costume.canvas.height;
