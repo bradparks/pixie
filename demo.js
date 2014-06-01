@@ -773,13 +773,41 @@
     getAssetURL: function(md5) {
       return 'http://cdn.scratch.mit.edu/internalapi/asset/' + md5 + '/get/';
     },
+    imageAssetCache: {},
+    imageAssetStatus: {},
     getImageAsset: function(md5, cb) {
-      var img = document.createElement('img');
+      var img = Server.imageAssetCache[md5];
+      if (img) {
+        if (cb) {
+          switch (Server.imageAssetStatus[md5]) {
+            case 'loading':
+              img.addEventListener('load', function() {cb(null, img)});
+              img.addEventListener('error', function() {cb(new Error)});
+              break;
+            case 'error':
+              cb(new Error);
+              break;
+            case 'done':
+              cb(null, img);
+              break;
+          }
+        }
+        return img;
+      }
+      img = document.createElement('img');
+      Server.imageAssetCache[md5] = img;
+      Server.imageAssetStatus[md5] = 'loading';
       img.crossOrigin = "anonymous";
       img.src = Server.getAssetURL(md5);
       if (cb) {
-        img.onload = function() {cb(null, img)};
-        img.onerror = function() {cb(new Error)};
+        img.addEventListener('load', function() {
+          Server.imageAssetStatus[md5] = 'done';
+          cb(null, img);
+        });
+        img.addEventListener('error', function() {
+          Server.imageAssetStatus[md5] = 'error';
+          cb(new Error);
+        });
       }
       return img;
     },
