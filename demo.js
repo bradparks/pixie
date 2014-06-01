@@ -1363,7 +1363,7 @@
     var i = 2;
     if (x) {
       base = base.slice(0, -x[0].length);
-      i = Number(x[0]) + 1;
+      i = Number(x[0]);
     }
     var sprites = this.children;
     search: for (;;) {
