@@ -2190,16 +2190,26 @@
 
 
   function Editor() {
-    this.stage = new Stage()
-      .addCostume(new Costume('backdrop1', '739b5e2a2435f6e1ec2993791b423146.png', 240, 180));
-    this.stage.add(new Sprite('Sprite1')
-      .addCostume(new Costume('costume1', 'f9a1c175dbe2e5dee472858dd30d16bb.svg', 47, 55))
-      .addCostume(new Costume('costume2', 'c68e7b211672862001dd4fce12129813.png', 57, 41)));
+    this.stage = this.getDefaultProject();
 
-    try {
-      this.stage = Stage.deserialize(JSON.parse(localStorage.getItem('visual demo project')));
-    } catch (e) {
-      console.warn(e.stack);
+    if (location.hash.length > 1) {
+      Server.getProject(location.hash.slice(1), function(err, data) {
+        if (err) {
+          Dialog.alert(vis.getText('Error'), vis.getText('Could not fetch project from scratch.mit.edu.')).show(this);
+          return;
+        }
+        try {
+          this.installProject(Stage.deserialize(JSON.parse(data)));
+        } catch (e) {
+          console.warn(e.stack);
+        }
+      }.bind(this));
+    } else {
+      try {
+        this.stage = Stage.deserialize(JSON.parse(localStorage.getItem('visual demo project')));
+      } catch (e) {
+        console.warn(e.stack);
+      }
     }
 
     this.backpack = new LocalBackpack();
@@ -2253,6 +2263,24 @@
 
   Editor.prototype.save = function() {
     localStorage.setItem('visual demo project', JSON.stringify(this.stage));
+  };
+
+  Editor.prototype.newProject = function() {
+    this.installProject(this.getDefaultProject());
+  };
+
+  Editor.prototype.getDefaultProject = function() {
+    var stage = new Stage()
+      .addCostume(new Costume('backdrop1', '739b5e2a2435f6e1ec2993791b423146.png', 240, 180));
+    stage.add(new Sprite('Sprite1')
+      .addCostume(new Costume('costume1', 'f9a1c175dbe2e5dee472858dd30d16bb.svg', 47, 55))
+      .addCostume(new Costume('costume2', 'c68e7b211672862001dd4fce12129813.png', 57, 41)));
+    return stage;
+  };
+
+  Editor.prototype.installProject = function(stage) {
+    this.spritePanel.installProject(stage);
+    this.stagePanel.installProject(stage);
   };
 
   Editor.prototype.start = function() {
@@ -2465,7 +2493,7 @@
 
   Editor.prototype.fileMenu = function() {
     return new vis.Menu(
-      'New',
+      ['New', this.newProject],
       vis.Menu.line,
       ['Save now', this.save],
       'Save as a copy',
@@ -2859,6 +2887,22 @@
     document.addEventListener('keyup', this.keyUp.bind(this));
   }
 
+  StagePanel.prototype.installProject = function(stage) {
+    stage.mouseX = this.stage.mouseX;
+    stage.mouseY = this.stage.mouseY;
+    stage.keys = {};
+    for (var k in this.stage.keys) {
+      if (this.stage.keys[k]) stage.keys[k] = true;
+    }
+
+    stage.canvas.classList.add('stage');
+    this.el.replaceChild(stage.canvas, this.elStage);
+    this.elStage.classList.remove('stage');
+
+    this.elStage = stage.canvas;
+    this.stage = stage;
+  };
+
   StagePanel.prototype.keyDown = function(e) {
     var name = getKeyName(e.keyCode);
     if (e.metaKey || e.ctrlKey) {
@@ -2969,6 +3013,12 @@
     this.select(this.icons[0] || this.stageIcon);
   }
 
+  SpritePanel.prototype.installProject = function(stage) {
+    this.removeAllIcons();
+    stage.children.forEach(this.addIcon, this);
+    this.select(this.icons[0] || this.stageIcon);
+  };
+
   SpritePanel.prototype.newFromLibrary = function() {
     var sprite = new Sprite('Sprite'+(this.editor.stage.children.length + 1))
       .addCostume(new Costume('costume1', 'f9a1c175dbe2e5dee472858dd30d16bb.svg', 47, 55))
@@ -3014,6 +3064,14 @@
       this.parent.remove(icon);
     }
     this.select(this.icons[i] || this.icons[i - 1] || this.stageIcon);
+  };
+
+  SpritePanel.prototype.removeAllIcons = function() {
+    this.icons.forEach(function(icon) {
+      this.elSpriteSection.removeChild(icon.el);
+      if (this.parent) this.parent.remove(icon);
+    }, this);
+    this.icons = [];
   };
 
   SpritePanel.prototype.addNewButton = function(name, fn) {
