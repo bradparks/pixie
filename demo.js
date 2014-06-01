@@ -790,6 +790,9 @@
     getProjectURL: function(id) {
       return 'http://projects.scratch.mit.edu/internalapi/project/' + id + '/get/';
     },
+    getProjectMetadataURL: function(id) {
+      return 'http://scratch.mit.edu/api/v1/project/' + id + '/';
+    },
     getAssetURL: function(md5) {
       return 'http://cdn.scratch.mit.edu/internalapi/asset/' + md5 + '/get/';
     },
@@ -836,6 +839,16 @@
     },
     getProject: function(id, cb) {
       Server.get(Server.getProjectURL(id), cb);
+    },
+    getProjectMetadata: function(id, cb) {
+      Server.get(Server.getProjectMetadataURL(id), cb && function(err, text) {
+        if (err) return cb(err);
+        try {
+          cb(null, JSON.parse(text));
+        } catch (e) {
+          cb(e);
+        }
+      });
     },
     get: function(url, cb) {
       var xhr = new XMLHttpRequest;
@@ -911,6 +924,10 @@
   function inherits(sub, sup) {
     sub.prototype = Object.create(sup.prototype);
     sub.prototype.constructor = sub;
+  }
+
+  function stripExtension(filename) {
+    return filename.replace(/(.)\.[^.]+$/, '$1');
   }
 
   var KEY_NAMES = {
@@ -1344,12 +1361,17 @@
   function Stage() {
     ScratchObj.call(this, 'Stage');
 
+    this.tempo = 60;
+    this.children = [];
+
     this.mouseX = 0;
     this.mouseY = 0;
     this.mouseDown = false;
-    this.tempo = 60;
     this.keys = {};
-    this.children = [];
+
+    this.title = '';
+    this.author = '';
+    this.isPublic = true;
 
     this.el = el('stage');
 
@@ -2351,15 +2373,26 @@
 
 
   function Editor() {
-    this.stage = this.getDefaultProject();
+    this.stage = this.getEmptyProject();
 
     if (location.hash.length > 1) {
-      Server.getProject(location.hash.slice(1), function(err, data) {
+      var id = location.hash.slice(1);
+      Server.getProject(id, function(err, data) {
         if (err) {
           Dialog.alert(T('Error'), T('Could not fetch project from scratch.mit.edu.')).show(this);
           return;
         }
         this.installProject(Stage.deserialize(JSON.parse(data)));
+        Server.getProjectMetadata(id, function(err, data) {
+          if (data) {
+            this.setTitle(data.title);
+            this.stage.author = data.creator.username;
+            this.stage.isPublic = true;
+          } else {
+            this.stage.isPublic = false;
+          }
+          this.stagePanel.updateAuthor();
+        }.bind(this));
       }.bind(this));
     } else {
       try {
@@ -2430,7 +2463,9 @@
     var reader = new FileReader;
     reader.onloadend = function(e) {
       var zip = new JSZip(reader.result);
-      this.installProject(Stage.deserialize(JSON.parse(zip.file('project.json').asText())));
+      var stage = Stage.deserialize(JSON.parse(zip.file('project.json').asText()));
+      stage.title = stripExtension(file.name);
+      this.installProject(stage);
     }.bind(this);
     reader.readAsArrayBuffer(file);
   };
@@ -2439,12 +2474,17 @@
     return chooseFile('.sb2', this.openProjectFile.bind(this));
   };
 
+  Editor.prototype.getEmptyProject = function() {
+    return new Stage();
+  };
+
   Editor.prototype.getDefaultProject = function() {
     var stage = new Stage()
       .addCostume(new Costume('backdrop1', '739b5e2a2435f6e1ec2993791b423146.png', 240, 180));
     stage.add(new Sprite('Sprite1')
       .addCostume(new Costume('costume1', 'f9a1c175dbe2e5dee472858dd30d16bb.svg', 47, 55))
       .addCostume(new Costume('costume2', 'c68e7b211672862001dd4fce12129813.png', 57, 41)));
+    stage.title = T('Untitled');
     return stage;
   };
 
@@ -2474,6 +2514,11 @@
     step(this.stagePanel);
     step(this.spritePanel);
     step(this.backpackPanel);
+  };
+
+  Editor.prototype.setTitle = function(name) {
+    this.stage.title = name;
+    this.stagePanel.updateTitle();
   };
 
   Editor.prototype.addSprite = function(sprite) {
@@ -3072,11 +3117,12 @@
     this.elTitleBar.appendChild(this.elVersion = el('version'));
     this.elVersion.textContent = 'js001';
 
-    this.elTitleBar.appendChild(this.elName = el('input', 'project-name'));
-    this.elName.value = 'Untitled';
+    this.elTitleBar.appendChild(this.elTitle = el('input', 'project-name'));
+    this.elTitle.addEventListener('input', this.titleChanged.bind(this));
+    this.updateTitle();
 
     this.elTitleBar.appendChild(this.elAuthor = el('project-author'));
-    this.elAuthor.textContent = 'by nXIII (unshared)';
+    this.updateAuthor();
 
     this.stage.redraw();
     this.el.appendChild(this.elStage = this.stage.el);
@@ -3110,6 +3156,20 @@
 
     this.elStage = stage.el;
     this.stage = stage;
+    this.updateTitle();
+    this.updateAuthor();
+  };
+
+  StagePanel.prototype.titleChanged = function() {
+    this.stage.title = this.elTitle.value;
+  };
+
+  StagePanel.prototype.updateTitle = function() {
+    this.elTitle.value = this.stage.title;
+  };
+
+  StagePanel.prototype.updateAuthor = function() {
+    this.elAuthor.textContent = this.stage.author ? T(this.stage.isPublic ? 'by {author}' : 'by {author} (unshared)', {author: this.stage.author}) : '';
   };
 
   StagePanel.prototype.keyDown = function(e) {
