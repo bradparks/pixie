@@ -265,41 +265,41 @@
     },
     menus: {
       direction: function() {
-        var m = new vis.Menu;
+        var m = new Menu;
         [[90, 'right'],
          [-90, 'left'],
          [0, 'up'],
          [180, 'down']].forEach(function(item) {
-          m.add(['('+item[0]+') '+vis.getText(item[1]), item[0]]);
+          m.add(['('+item[0]+') '+T(item[1]), item[0]]);
         });
         return m;
       },
       var: function(arg) {
-        var m = new vis.Menu;
+        var m = new Menu;
         var editor = arg.app.editor;
         m.addAll(editor.stage.variables.map(getName));
         if (editor.selectedSprite.isSprite && editor.selectedSprite.variables.length) {
           if (editor.stage.variables.length) {
-            m.add(vis.Menu.line);
+            m.add(Menu.line);
           }
           m.addAll(editor.selectedSprite.variables.map(getName));
         }
         return m;
       },
       list: function(arg) {
-        var m = new vis.Menu;
+        var m = new Menu;
         var editor = arg.app.editor;
         m.addAll(editor.stage.lists.map(getName));
         if (editor.selectedSprite.isSprite && editor.selectedSprite.lists.length) {
           if (editor.stage.lists.length) {
-            m.add(vis.Menu.line);
+            m.add(Menu.line);
           }
           m.addAll(editor.selectedSprite.lists.map(getName));
         }
         return m;
       },
       key: function() {
-        var m = new vis.Menu('up arrow', 'down arrow', 'left arrow', 'right arrow', 'space').translate().addAll('abcdefghijklmnopqrstuvwxyz0123456789'.split(''));
+        var m = new Menu('up arrow', 'down arrow', 'left arrow', 'right arrow', 'space').translate().addAll('abcdefghijklmnopqrstuvwxyz0123456789'.split(''));
         return m;
       },
       spriteOrMouse: function(arg) {
@@ -309,41 +309,41 @@
         return spriteMenu(arg, '_mouse_', '_edge_');
       },
       rotationStyle: function() {
-        return new vis.Menu('left-right', 'all around', "don't rotate").translate();
+        return new Menu('left-right', 'all around', "don't rotate").translate();
       },
       effect: function() {
-        return new vis.Menu('color', 'fisheye', 'whirl', 'pixelate', 'mosaic', 'brightness', 'ghost').translate();
+        return new Menu('color', 'fisheye', 'whirl', 'pixelate', 'mosaic', 'brightness', 'ghost').translate();
       },
       costume: function(arg) {
-        return new vis.Menu().addAll(arg.app.editor.selectedSprite.costumes.map(getName));
+        return new Menu().addAll(arg.app.editor.selectedSprite.costumes.map(getName));
       },
       backdrop: function(arg) {
-        return new vis.Menu().addAll(arg.app.editor.stage.costumes.map(getName));
+        return new Menu().addAll(arg.app.editor.stage.costumes.map(getName));
       },
       sound: function(arg) {
-        return new vis.Menu().addAll(arg.app.editor.selectedSprite.sounds.map(getName)).add(vis.Menu.line).add(['record...', function() {
+        return new Menu().addAll(arg.app.editor.selectedSprite.sounds.map(getName)).add(Menu.line).add(['record...', function() {
           // TODO record a sound
         }]);
       },
       broadcast: function(arg) {
-        return new vis.Menu().addAll(arg.app.editor.broadcastNames).add(vis.Menu.line).add([vis.getText('new message...'), function() {
+        return new Menu().addAll(arg.app.editor.broadcastNames).add(Menu.line).add([T('new message...'), function() {
             var arg = this;
-            Dialog.prompt(vis.getText('New Message'), vis.getText('Message name'), function(value) { // NS
+            Dialog.prompt(T('New Message'), T('Message name'), function(value) { // NS
               if (value) arg.value = value;
             }).show(arg.app.editor);
           }]);
       },
       triggerSensor: function() {
-        return new vis.Menu('loudness', 'timer', 'video motion').translate();
+        return new Menu('loudness', 'timer', 'video motion').translate();
       },
       stop: function(arg) {
         function item(value, type) {
-          return [vis.getText(value), function() {
+          return [T(value), function() {
             arg.value = value;
             if (arg.parent) arg.parent.type = type;
           }];
         }
-        return new vis.Menu(
+        return new Menu(
           item('all', 'f'),
           item('this script', 'f'),
           item('other scripts in sprite', 'c'));
@@ -352,13 +352,13 @@
         return spriteMenu(arg, '_myself_');
       },
       videoMotionType: function() {
-        return new vis.Menu('motion', 'direction').translate();
+        return new Menu('motion', 'direction').translate();
       },
       stageOrThis: function() {
-        return new vis.Menu('Stage', 'this sprite').translate();
+        return new Menu('Stage', 'this sprite').translate();
       },
       videoState: function() {
-        return new vis.Menu('off', 'on', 'on-flipped').translate();
+        return new Menu('off', 'on', 'on-flipped').translate();
       },
       spriteOrStage: function(arg) {
         return spriteMenu(arg, '_stage_');
@@ -366,24 +366,24 @@
       attribute: function(arg) {
         var stage = arg.app.editor.stage;
         var name = arg.parent.args[1].value;
-        if (name === '_stage_') return new vis.Menu('backdrop #', 'backdrop name', 'volume').translate().addLine().addAll(stage.variables.map(getName));
+        if (name === '_stage_') return new Menu('backdrop #', 'backdrop name', 'volume').translate().addLine().addAll(stage.variables.map(getName));
         var sprite = stage.findChild(name);
-        return sprite && new vis.Menu('x position', 'y position', 'direction', 'costume #', 'costume name', 'size', 'volume').translate().addLine().addAll(sprite.variables.map(getName));
+        return sprite && new Menu('x position', 'y position', 'direction', 'costume #', 'costume name', 'size', 'volume').translate().addLine().addAll(sprite.variables.map(getName));
       },
       timeAndDate: function() {
-        return new vis.Menu('year', 'month', 'date', 'day of week', 'hour', 'minute', 'second').translate();
+        return new Menu('year', 'month', 'date', 'day of week', 'hour', 'minute', 'second').translate();
       },
       mathOp: function() {
-        return new vis.Menu('abs', 'floor', 'ceiling', 'sqrt', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'ln', 'log', 'e ^', '10 ^').translate();
+        return new Menu('abs', 'floor', 'ceiling', 'sqrt', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'ln', 'log', 'e ^', '10 ^').translate();
       },
       drum: function() {
-        return new vis.Menu().addAll(['Snare Drum', 'Bass Drum', 'Side Stick', 'Crash Cymbal', 'Open Hi-Hat', 'Closed Hi-Hat', 'Tambourine', 'Hand Clap', 'Claves', 'Wood Block', 'Cowbell', 'Triangle', 'Bongo', 'Conga', 'Cabassa', 'Guiro', 'Vibraslap', 'Open Culca'].map(function(x, i) {return ['('+(i + 1)+') ' + vis.getText(x), i + 1]}));
+        return new Menu().addAll(['Snare Drum', 'Bass Drum', 'Side Stick', 'Crash Cymbal', 'Open Hi-Hat', 'Closed Hi-Hat', 'Tambourine', 'Hand Clap', 'Claves', 'Wood Block', 'Cowbell', 'Triangle', 'Bongo', 'Conga', 'Cabassa', 'Guiro', 'Vibraslap', 'Open Culca'].map(function(x, i) {return ['('+(i + 1)+') ' + T(x), i + 1]}));
       },
       instrument: function() {
-        return new vis.Menu().addAll(['Piano', 'Electric Piano', 'Organ', 'Guitar', 'Electric Guitar', 'Bass', 'Pizzicato', 'Cello', 'Trombone', 'Clarinet', 'Saxophone', 'Flute', 'Wooden Flute', 'Bassoon', 'Choir', 'Vibraphone', 'Music Box', 'Steel Drum', 'Marimba', 'Synth Lead', 'Synth Pad'].map(function(x, i) {return ['('+(i + 1)+') ' + vis.getText(x), i + 1]}));
+        return new Menu().addAll(['Piano', 'Electric Piano', 'Organ', 'Guitar', 'Electric Guitar', 'Bass', 'Pizzicato', 'Cello', 'Trombone', 'Clarinet', 'Saxophone', 'Flute', 'Wooden Flute', 'Bassoon', 'Choir', 'Vibraphone', 'Music Box', 'Steel Drum', 'Marimba', 'Synth Lead', 'Synth Pad'].map(function(x, i) {return ['('+(i + 1)+') ' + T(x), i + 1]}));
       },
       note: function() {
-        return new vis.Menu().addAll([
+        return new Menu().addAll([
           [48, 'Low C'],
           [50, 'D'],
           [52, 'E'],
@@ -398,13 +398,13 @@
           [67, 'G'],
           [69, 'A'],
           [71, 'B'],
-          [72, 'High C']].map(function(i) {return ['('+i[0]+') '+vis.getText(i[1]), i[0]]}));
+          [72, 'High C']].map(function(i) {return ['('+i[0]+') '+T(i[1]), i[0]]}));
       },
       listItem: function() {
-        return new vis.Menu(1).addTranslated('last').addTranslated('random');
+        return new Menu(1).addTranslated('last').addTranslated('random');
       },
       listDeleteItem: function() {
-        return new vis.Menu(1).addTranslated('last').add(vis.Menu.line).addTranslated('all');
+        return new Menu(1).addTranslated('last').add(Menu.line).addTranslated('all');
       }
     }
   });
@@ -645,30 +645,41 @@
     ]
   };
 
+  var Workspace = vis.Workspace;
+  var Palette = vis.Palette;
+  var Block = vis.Block;
+  var Arg = vis.Arg;
+  var Menu = vis.Menu;
+
+  function T(key, values) {
+    var text = vis.getText(key);
+    return values ? vis.util.format(text, values) : text;
+  };
+
   var menusThatAcceptReporters = ['broadcast', 'costume', 'backdrop', 'scene', 'sound', 'spriteOnly', 'spriteOrMouse', 'spriteOrStage', 'touching'];
-  vis.Arg.prototype.acceptsDropOf = function(b) {
+  Arg.prototype.acceptsDropOf = function(b) {
     return this.type !== 't' && this.type !== 'l' && (this.type !== 'b' || b.isBoolean) && (this.type !== 'm' || menusThatAcceptReporters.indexOf(this.menu) !== -1);
   };
 
-  vis.Workspace.prototype.paddingX = 10;
-  vis.Workspace.prototype.paddingY = 10;
-  vis.Workspace.prototype.spacing = 10;
+  Workspace.prototype.paddingX = 10;
+  Workspace.prototype.paddingY = 10;
+  Workspace.prototype.spacing = 10;
 
-  vis.Palette.prototype.paddingX = 6;
-  vis.Palette.prototype.paddingY = 7;
-  vis.Palette.prototype.spacing = 5;
-  vis.Palette.prototype.extraSpace = 6;
-  vis.Palette.prototype.spaceSize = 15;
+  Palette.prototype.paddingX = 6;
+  Palette.prototype.paddingY = 7;
+  Palette.prototype.spacing = 5;
+  Palette.prototype.extraSpace = 6;
+  Palette.prototype.spaceSize = 15;
 
-  vis.Block.prototype.click = function() {
+  Block.prototype.click = function() {
     var app = this.app;
     if (app && app.exec) {
       app.exec.toggleThread(this.topScript, app.editor.selectedSprite);
     }
   };
 
-  vis.Block.prototype.defaultContextMenu = Object.getOwnPropertyDescriptor(vis.Block.prototype, 'contextMenu').get;
-  Object.defineProperty(vis.Block.prototype, 'contextMenu', {get: function() {
+  Block.prototype.defaultContextMenu = Object.getOwnPropertyDescriptor(Block.prototype, 'contextMenu').get;
+  Object.defineProperty(Block.prototype, 'contextMenu', {get: function() {
     var m = this.defaultContextMenu();
     if (this.name === 'readVariable' || this.name === 'contentsOfList:') {
       if (this.workspace.isPalette) {
@@ -694,12 +705,12 @@
     return m;
   }});
 
-  vis.Block.prototype.help = function() {
+  Block.prototype.help = function() {
     // TODO
     Dialog.alert('Help', 'Help is not available yet.').show(this.app.editor);
   };
 
-  vis.Arg.prototype.menuTranslations = {
+  Arg.prototype.menuTranslations = {
     'attribute': ['x position', 'y position', 'direction', 'costume #', 'costume name', 'size', 'volume', 'backdrop #', 'backdrop name', 'volume'],
     'backdrop': ['next backdrop', 'previous backdrop'],
     'broadcast': ['new message...'],
@@ -709,7 +720,7 @@
     'costume': []
   };
 
-  vis.Arg.prototype.shouldTranslate = function(value) {
+  Arg.prototype.shouldTranslate = function(value) {
     if (['spriteOnly', 'spriteOrMouse', 'spriteOrStage', 'touching'].indexOf(this.menu) !== -1) {
       return ['_myself_', '_mouse_', '_edge_', '_stage_'].indexOf(value) !== -1;
     }
@@ -860,12 +871,12 @@
   var slice = [].slice;
 
   function spriteMenu(arg) { // TODO include/exclude self
-    var m = new vis.Menu;
+    var m = new Menu;
     var a = slice.call(arguments, 1);
     for (var i = 0, l = a.length; i < l; i++) {
       m.add(a[i]);
     }
-    m.translate().add(vis.Menu.line);
+    m.translate().add(Menu.line);
     arg.app.editor.stage.children.forEach(function(sprite) {
       m.add(sprite.name);
     });
@@ -931,7 +942,7 @@
       type: typeHint || 'c',
       argTypes: json.slice(1).map(guessArgType)
     });
-    var b = new vis.Block(info, json.slice(1).map(deserializeArg));
+    var b = new Block(info, json.slice(1).map(deserializeArg));
     if (b.name === 'stopScripts' && ['other scripts in sprite', 'other scripts in stage'].indexOf(b.args[0].value) !== -1) {
       b.type = 'c';
     }
@@ -2245,7 +2256,7 @@
     if (location.hash.length > 1) {
       Server.getProject(location.hash.slice(1), function(err, data) {
         if (err) {
-          Dialog.alert(vis.getText('Error'), vis.getText('Could not fetch project from scratch.mit.edu.')).show(this);
+          Dialog.alert(T('Error'), T('Could not fetch project from scratch.mit.edu.')).show(this);
           return;
         }
         try {
@@ -2366,7 +2377,7 @@
     name = name.trim();
     if (!name) return;
     if (local && this.selectedSprite.isSprite ? this.selectedSprite.findVariable(name) : this.stage.findNestedLocal(name)) {
-      Dialog.alert(vis.getText('New Variable'), vis.getText('A variable with that name already exists.')).show(this); // NS
+      Dialog.alert(T('New Variable'), T('A variable with that name already exists.')).show(this); // NS
       return;
     }
     (local ? this.selectedSprite : this.stage).createLocal(name);
@@ -2377,7 +2388,7 @@
     name = name.trim();
     if (!name) return;
     if (local && this.selectedSprite.isSprite ? this.selectedSprite.findList(name) : this.stage.findNestedLocalList(name)) {
-      Dialog.alert(vis.getText('New List'), vis.getText('A list with that name already exists.')).show(this); // NS
+      Dialog.alert(T('New List'), T('A list with that name already exists.')).show(this); // NS
       return;
     }
     (local ? this.selectedSprite : this.stage).lists.push(new List(name));
@@ -2393,11 +2404,11 @@
   };
 
   Editor.prototype.newDialog = function(list) {
-    var name = new Dialog.Field(vis.getText(list ? 'List name' : 'Variable name'));
+    var name = new Dialog.Field(T(list ? 'List name' : 'Variable name'));
     var local = new Dialog.Radio(
-      [vis.getText('For all sprites'), false],
-      [vis.getText('For this sprite only'), true]);
-    var cloud = new Dialog.CheckBox(vis.getText(list ? 'Cloud list (stored on server)' : 'Cloud variable (stored on server)'));
+      [T('For all sprites'), false],
+      [T('For this sprite only'), true]);
+    var cloud = new Dialog.CheckBox(T(list ? 'Cloud list (stored on server)' : 'Cloud variable (stored on server)'));
     local.setEnabled(1, this.selectedSprite.isSprite); // NS
     cloud.enabled = !list; // NS
     local.onchange = function() {
@@ -2406,14 +2417,14 @@
     cloud.onchange = function() {
       local.setEnabled(1, this.selectedSprite.isSprite && !cloud.value);
     }.bind(this);
-    var d = new Dialog(vis.getText(list ? 'New List' : 'New Variable'), Dialog.content(
+    var d = new Dialog(T(list ? 'New List' : 'New Variable'), Dialog.content(
       name.el,
       local.el,
       Dialog.line(),
       cloud.el,
       Dialog.buttons(
-        [vis.getText('OK'), function() {d.commit()}],
-        [vis.getText('Cancel'), function() {d.hide()}])));
+        [T('OK'), function() {d.commit()}],
+        [T('Cancel'), function() {d.hide()}])));
 
     d.oncommit = function() {
       if (list) {
@@ -2545,28 +2556,28 @@
   };
 
   Editor.prototype.languageMenu = function() {
-    return new vis.Menu(
+    return new Menu(
       'English').withContext(this);
   };
 
   Editor.prototype.fileMenu = function() {
-    return new vis.Menu(
+    return new Menu(
       ['New', this.newProject],
-      vis.Menu.line,
+      Menu.line,
       ['Save now', this.save],
       'Save as a copy',
       'Go to my stuff',
-      vis.Menu.line,
+      Menu.line,
       'Upload from your computer',
       'Download to your computer',
-      vis.Menu.line,
+      Menu.line,
       'Revert').translate().withContext(this);
   };
 
   Editor.prototype.editMenu = function() {
-    return new vis.Menu(
+    return new Menu(
       'Undelete',
-      vis.Menu.line,
+      Menu.line,
       'Small stage layout',
       'Turbo mode').translate().withContext(this);
   };
@@ -2581,8 +2592,8 @@
     this.el.appendChild(this.elWorkspace = el('editor-workspace'));
     this.createButtons();
 
-    this.palette = new vis.Palette(this.elPalette);
-    this.workspace = new vis.Workspace(this.elWorkspace);
+    this.palette = new Palette(this.elPalette);
+    this.workspace = new Workspace(this.elWorkspace);
 
     this.workspace.on('change', this.save, this);
   }
@@ -2695,12 +2706,12 @@
       var button = el('button', 'ui-button');
       button.textContent = t.text;
       if (editor[t.action]) button.addEventListener('click', editor[t.action].bind(editor));
-      return this.palette.add(vis.Palette.element(button));
+      return this.palette.add(Palette.element(button));
     }
     if (t.text) {
       var div = el('palette-label');
-      div.textContent = vis.getText(t.text);
-      return this.palette.add(vis.Palette.element(div));
+      div.textContent = T(t.text);
+      return this.palette.add(Palette.element(div));
     }
     if (t.watcher) {
       var b = t.watcher;
@@ -2714,14 +2725,14 @@
           button.classList.remove('checked');
         }
       });
-      this.palette.add(vis.Palette.inline(button));
+      this.palette.add(Palette.inline(button));
       return this.eval(b);
     }
     if (t === '==') {
-      return this.palette.add(vis.Palette.element(el('palette-separator')));
+      return this.palette.add(Palette.element(el('palette-separator')));
     }
     if (t === '--' || t === '---') {
-      return this.palette.add(vis.Palette.space(t.length * 10 - 5));
+      return this.palette.add(Palette.space(t.length * 10 - 5));
     }
     if (t.all) {
       return (this.evalAll(t.all) || []).forEach(this.eval, this);
@@ -2729,7 +2740,7 @@
     if (!Array.isArray(t)) {
       t = [t];
     }
-    var script = new vis.Script().add(new vis.Block(t[0], t.slice(1).map(this.evalArg, this)));
+    var script = new vis.Script().add(new Block(t[0], t.slice(1).map(this.evalArg, this)));
     if (!this.editor.exec.table[t[0]]) script.addEffect(script.outline.bind(script, 2, '#faa'));
     this.palette.add(script);
   };
@@ -3080,7 +3091,7 @@
   };
 
   SpritePanel.prototype.newFromLibrary = function() {
-    var sprite = new Sprite(this.editor.stage.uniqueName(vis.getText('Sprite1')))
+    var sprite = new Sprite(this.editor.stage.uniqueName(T('Sprite1')))
       .addCostume(new Costume('costume1', 'f9a1c175dbe2e5dee472858dd30d16bb.svg', 47, 55))
       .addCostume(new Costume('costume2', 'c68e7b211672862001dd4fce12129813.png', 57, 41));
     this.editor.addSprite(sprite);
@@ -3193,12 +3204,12 @@
   inherits(SpriteIcon, vis.Target);
 
   def(SpriteIcon.prototype, 'contextMenu', {get: function() {
-    return !this.sprite.isStage && new vis.Menu(
+    return !this.sprite.isStage && new Menu(
       ['duplicate', this.duplicateSprite],
-      vis.Menu.line,
+      Menu.line,
       this.sprite.visible ? ['hide', this.hideSprite] : ['show', this.showSprite],
       ['delete', this.deleteSprite],
-      vis.Menu.line,
+      Menu.line,
       'save to local file').withContext(this).translate();
   }});
 
@@ -3236,8 +3247,8 @@
 
   SpriteIcon.prototype.drop = function(script) {
     var pos = this.parent.dragPos || {
-      x: vis.Workspace.prototype.paddingX,
-      y: vis.Workspace.prototype.paddingY
+      x: Workspace.prototype.paddingX,
+      y: Workspace.prototype.paddingY
     };
     this.sprite.scripts.push(script.copy().moveTo(pos.x, pos.y));
     return false;
@@ -3375,7 +3386,7 @@
     if (typeof button === 'function' || button == null) {
       context = fn;
       fn = button;
-      button = vis.getText('OK');
+      button = T('OK');
     }
 
     var d = new Dialog(title, Dialog.content(
@@ -3391,13 +3402,13 @@
     if (typeof yes === 'function' || yes == null) {
       context = no;
       fn = yes;
-      no = vis.getText('Cancel');
-      yes = vis.getText('OK');
+      no = T('Cancel');
+      yes = T('OK');
     }
     if (typeof no === 'function' || no == null) {
       context = fn;
       fn = no;
-      no = vis.getText('Cancel');
+      no = T('Cancel');
     }
 
     var d = new Dialog(title, Dialog.content(
@@ -3417,13 +3428,13 @@
     if (typeof yes === 'function' || yes == null) {
       context = no;
       fn = yes;
-      no = vis.getText('Cancel');
-      yes = vis.getText('OK');
+      no = T('Cancel');
+      yes = T('OK');
     }
     if (typeof no === 'function' || no == null) {
       context = fn;
       fn = no;
-      no = vis.getText('Cancel');
+      no = T('Cancel');
     }
 
     var field = new Dialog.Field(label);
