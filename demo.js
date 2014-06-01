@@ -1278,7 +1278,7 @@
   Sprite.prototype.drawOn = function(context) {
     if (!this.visible) return;
     var costume = this.costumes[this.costume];
-    if (costume) {
+    if (costume && costume.loaded) {
       context.save();
       context.translate(240 + this.x, 180 - this.y);
       if (this.rotationStyle === 'normal') {
@@ -1363,7 +1363,7 @@
 
   Stage.prototype.drawOn = function(context) {
     var costume = this.costumes[this.costume];
-    if (costume) {
+    if (costume && costume.loaded) {
       context.drawImage(costume.canvas, 0, 0);
     }
     var children = this.children;
