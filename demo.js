@@ -2560,7 +2560,7 @@
     }
     var names = {};
     this.stage.forEachScript(add);
-    this.tabPanel.scriptEditor.palette.scripts.forEach(add.bind(null, null));
+    this.tabPanel.scriptEditor.palette.scripts.forEach(add.bind(null));
     return Object.keys(names);
   }});
 
