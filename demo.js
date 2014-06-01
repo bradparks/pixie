@@ -949,6 +949,11 @@
   }
 
   function deserializeBlock(json, typeHint) {
+    switch (json[0]) {
+      case '\\\\':
+        json[0] = '%';
+        break;
+    }
     var info = vis.getBlock(json[0], {
       type: typeHint || 'c',
       argTypes: json.slice(1).map(guessArgType)
@@ -2089,7 +2094,6 @@
     table['letter:of:'] = function(b) {return (''+interp.arg(b, 1)).charAt(interp.narg(b, 0) - 1 | 0) || ''};
     table['stringLength:'] = function(b) {return (''+interp.arg(b, 0)).length};
 
-    table['\\\\'] =
     table['%'] = function(b) {
       var m = interp.narg(b, 1);
       var x = interp.narg(b, 0) % m;
