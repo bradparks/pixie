@@ -3049,7 +3049,7 @@
     if (!this.parent) return;
     var bb = button.getBoundingClientRect();
     var bb2 = this.el.getBoundingClientRect();
-    menu.showAt(bb.left, bb2.bottom, this.parent);
+    menu.showAt(Math.floor(bb.left), Math.floor(bb2.bottom), this.parent);
   };
 
 
