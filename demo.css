@@ -282,7 +282,8 @@ button::-moz-focus-inner {
   margin: 0;
   padding: 0;
   position: relative;
-  top: 2px;
+  top: 3px;
+  vertical-align: top;
   background: url(assets.png);
 }
 .new-library {
@@ -294,7 +295,7 @@ button::-moz-focus-inner {
 }
 .new-paint {
   background-position: -134px 0;
-  top: 3px;
+  top: 4px;
   margin-left: 3px;
 }
 .new-paint:hover {
@@ -309,7 +310,7 @@ button::-moz-focus-inner {
 }
 .new-camera {
   background-position: -172px 0;
-  top: 4px;
+  top: 5px;
   margin-left: 8px;
 }
 .new-camera:hover {
