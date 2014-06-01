@@ -2307,7 +2307,11 @@
         this.installProject(Stage.deserialize(JSON.parse(data)));
       }.bind(this));
     } else {
-      this.stage = Stage.deserialize(JSON.parse(localStorage.getItem('visual demo project')));
+      try {
+        this.stage = Stage.deserialize(JSON.parse(localStorage.getItem('visual demo project')));
+      } catch (e) {
+        console.warn(e);
+      }
     }
 
     this.backpack = new LocalBackpack();
