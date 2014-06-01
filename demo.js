@@ -2914,6 +2914,20 @@
   };
 
 
+  function CostumeEditor() {
+    this.el = el('costume-editor');
+  }
+
+  CostumeEditor.prototype.showSprite = function(sprite) {};
+
+
+  function SoundEditor() {
+    this.el = el('sound-editor');
+  }
+
+  SoundEditor.prototype.showSprite = function(sprite) {};
+
+
   function TabPanel(editor) {
     this.editor = editor;
 
@@ -2922,8 +2936,8 @@
 
     this.tabPanels = [
       this.scriptEditor = new ScriptEditor(editor),
-      null,
-      null];
+      this.costumeEditor = new CostumeEditor(editor),
+      this.soundEditor = new SoundEditor(editor)];
     this.tabs = [];
 
     var self = this;

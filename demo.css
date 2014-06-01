@@ -441,7 +441,9 @@ button::-moz-focus-inner {
   border: 1px solid #d0d1d2;
   background: #e6e8e8;
 }
-.script-editor {
+.script-editor,
+.costume-editor,
+.sound-editor {
   position: absolute;
   top: 0;
   left: 0;
