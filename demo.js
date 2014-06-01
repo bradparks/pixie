@@ -2304,18 +2304,10 @@
           Dialog.alert(T('Error'), T('Could not fetch project from scratch.mit.edu.')).show(this);
           return;
         }
-        try {
-          this.installProject(Stage.deserialize(JSON.parse(data)));
-        } catch (e) {
-          console.warn(e.stack);
-        }
+        this.installProject(Stage.deserialize(JSON.parse(data)));
       }.bind(this));
     } else {
-      try {
-        this.stage = Stage.deserialize(JSON.parse(localStorage.getItem('visual demo project')));
-      } catch (e) {
-        console.warn(e.stack);
-      }
+      this.stage = Stage.deserialize(JSON.parse(localStorage.getItem('visual demo project')));
     }
 
     this.backpack = new LocalBackpack();
