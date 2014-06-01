@@ -2356,6 +2356,12 @@
     step(this.backpackPanel);
   };
 
+  Editor.prototype.addSprite = function(sprite) {
+    this.stage.add(sprite);
+    this.stage.redraw();
+    this.spritePanel.select(this.spritePanel.addIcon(sprite));
+  };
+
   Editor.prototype.addVariable = function(name, local, cloud) {
     name = name.trim();
     if (!name) return;
@@ -3074,11 +3080,10 @@
   };
 
   SpritePanel.prototype.newFromLibrary = function() {
-    var sprite = new Sprite('Sprite'+(this.editor.stage.children.length + 1))
+    var sprite = new Sprite(this.editor.stage.uniqueName(vis.getText('Sprite1')))
       .addCostume(new Costume('costume1', 'f9a1c175dbe2e5dee472858dd30d16bb.svg', 47, 55))
       .addCostume(new Costume('costume2', 'c68e7b211672862001dd4fce12129813.png', 57, 41));
-    this.editor.stage.add(sprite);
-    this.select(this.addIcon(sprite));
+    this.editor.addSprite(sprite);
   };
 
   SpritePanel.prototype.select = function(icon) {
@@ -3199,8 +3204,7 @@
   SpriteIcon.prototype.duplicateSprite = function() {
     var sprite = this.sprite.copy();
     sprite.name = this.editor.stage.uniqueName(sprite.name);
-    this.editor.stage.add(sprite);
-    this.panel.select(this.panel.addIcon(sprite));
+    this.editor.addSprite(sprite);
   };
 
   SpriteIcon.prototype.hideSprite = function() {
