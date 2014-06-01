@@ -973,6 +973,34 @@
     return Array.isArray(json) ? (typeof json[0] === 'string' ? deserializeBlock(json, 'r') : deserializeStack(json)) : json;
   }
 
+  function chooseFile(filter, multiple, fn) {
+    if (typeof filter === 'function') {
+      fn = filter;
+      filter = null;
+      multiple = false;
+    }
+    if (typeof multiple === 'function') {
+      fn = multiple;
+      multiple = false;
+    }
+    var input = document.createElement('input');
+    input.type = 'file';
+    if (typeof filter === 'string') input.accept = filter;
+    if (multiple) input.multiple = true;
+    input.onchange = function() {
+      fn(multiple ? slice.call(input.files) : input.files[0]);
+    };
+    input.click();
+  }
+
+  function chooseFiles(filter, fn) {
+    if (typeof filter === 'function') {
+      fn = filter;
+      filter = null;
+    }
+    return chooseFile(filter, true, fn);
+  }
+
 
   function ScratchObj(name) {
     this.name = name;
@@ -2380,6 +2408,10 @@
     reader.readAsArrayBuffer(file);
   };
 
+  Editor.prototype.chooseProjectFile = function() {
+    return chooseFile('.sb2', this.openProjectFile.bind(this));
+  };
+
   Editor.prototype.getDefaultProject = function() {
     var stage = new Stage()
       .addCostume(new Costume('backdrop1', '739b5e2a2435f6e1ec2993791b423146.png', 240, 180));
@@ -3048,6 +3080,9 @@
       switch (name) {
         case 's':
           this.editor.save();
+          break;
+        case 'u':
+          this.editor.chooseProjectFile();
           break;
         case '.':
           this.editor.exec.stopAll();
