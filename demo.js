@@ -10,7 +10,7 @@
     },
     // for testing translation
     // getText: function(key) {
-    //   return 'TR: ' + (vis.options.strings[key] || key);
+    //   return '\u2023' + (vis.options.strings[key] || key);
     // },
     categories: {
       undefined: ["Undefined", '#d42828'],
