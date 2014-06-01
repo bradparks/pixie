@@ -1397,7 +1397,10 @@
   Stage.prototype.drawOn = function(context) {
     var costume = this.costumes[this.costume];
     if (costume && costume.loaded) {
+      context.save();
+      context.scale(costume.scale, costume.scale);
       context.drawImage(costume.canvas, 0, 0);
+      context.restore();
     }
     var children = this.children;
     for (var i = 0, length = children.length; i < length; i++) {
