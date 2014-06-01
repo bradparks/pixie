@@ -3081,6 +3081,9 @@
         case 's':
           this.editor.save();
           break;
+        case 'n':
+          this.editor.newProject();
+          break;
         case 'u':
           this.editor.chooseProjectFile();
           break;
