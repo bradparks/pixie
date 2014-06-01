@@ -2371,6 +2371,15 @@
     this.installProject(this.getDefaultProject());
   };
 
+  Editor.prototype.openProjectFile = function(file) {
+    var reader = new FileReader;
+    reader.onloadend = function(e) {
+      var zip = new JSZip(reader.result);
+      this.installProject(Stage.deserialize(JSON.parse(zip.file('project.json').asText())));
+    }.bind(this);
+    reader.readAsArrayBuffer(file);
+  };
+
   Editor.prototype.getDefaultProject = function() {
     var stage = new Stage()
       .addCostume(new Costume('backdrop1', '739b5e2a2435f6e1ec2993791b423146.png', 240, 180));
@@ -2629,7 +2638,7 @@
       'Save as a copy',
       'Go to my stuff',
       Menu.line,
-      'Upload from your computer',
+      ['Upload from your computer', this.openProjectFile, {file: '.sb2'}],
       'Download to your computer',
       Menu.line,
       'Revert').translate().withContext(this);
