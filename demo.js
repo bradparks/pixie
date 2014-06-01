@@ -1347,6 +1347,7 @@
     this.mouseX = 0;
     this.mouseY = 0;
     this.mouseDown = false;
+    this.tempo = 60;
     this.keys = {};
     this.children = [];
 
@@ -1361,6 +1362,7 @@
 
   Stage.prototype.toJSON = function() {
     var json = ScratchObj.prototype.toJSON.call(this, json);
+    json.tempoBPM = this.tempo;
     json.children = this.children;
     return json;
   };
@@ -1369,6 +1371,7 @@
 
   Stage.prototype.fromJSON = function(json) {
     ScratchObj.prototype.fromJSON.call(this, json);
+    this.tempo = json.tempoBPM == null ? 60 : Math.max(20, Math.min(500, Number(json.tempoBPM) || 0));
     if (Array.isArray(json.children)) json.children.map(function(child) {
       return child.objName ? new Sprite().fromJSON(child) : null;
     }).filter(notNull).forEach(this.add, this);
@@ -1943,6 +1946,22 @@
       var sprite = interp.activeThread.target;
       return sprite.isSprite ? sprite.scale * 100 : 0;
     };
+
+    // Sounds
+
+    function setTempo(bpm) {
+      interp.stage.tempo = Math.max(20, Math.min(500, bpm));
+    }
+
+    table['setTempoTo:'] = function(b) {
+      setTempo(interp.narg(b, 0));
+    };
+
+    table['changeTempoBy:'] = function(b) {
+      setTempo(interp.stage.tempo + interp.narg(b, 0));
+    };
+
+    table['tempo'] = function() {return interp.stage.tempo};
 
     // Events
 
