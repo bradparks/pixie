@@ -1351,10 +1351,13 @@
     this.keys = {};
     this.children = [];
 
-    this.canvas = document.createElement('canvas');
+    this.el = el('stage');
+
+    this.canvas = el('canvas', 'Visual-absolute');
     this.canvas.width = 480;
     this.canvas.height = 360;
     this.context = this.canvas.getContext('2d');
+    this.el.appendChild(this.canvas);
   }
   inherits(Stage, ScratchObj);
 
@@ -3062,8 +3065,7 @@
     this.elAuthor.textContent = 'by nXIII (unshared)';
 
     this.stage.redraw();
-    this.el.appendChild(this.elStage = this.stage.canvas);
-    this.elStage.classList.add('stage');
+    this.el.appendChild(this.elStage = this.stage.el);
 
     this._showMouseCoords = true;
     this.el.appendChild(this.elMouseCoords = el('mouse-coords'));
@@ -3088,13 +3090,11 @@
     for (var k in this.stage.keys) {
       if (this.stage.keys[k]) stage.keys[k] = true;
     }
+
     stage.redraw();
+    this.el.replaceChild(stage.el, this.elStage);
 
-    stage.canvas.classList.add('stage');
-    this.el.replaceChild(stage.canvas, this.elStage);
-    this.elStage.classList.remove('stage');
-
-    this.elStage = stage.canvas;
+    this.elStage = stage.el;
     this.stage = stage;
   };
 
