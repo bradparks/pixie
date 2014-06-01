@@ -3284,8 +3284,8 @@
     this.el = el('sprite-icon');
     this.el.appendChild(this.elThumbnail = el('canvas', 'sprite-thumbnail'));
     this.elTmp = el('canvas', '');
-    this.elThumbnail.width = this.elTmp.width = 68;
-    this.elThumbnail.height = this.elTmp.height = 51;
+    this.elThumbnail.width = this.elTmp.width = 68 + 4;
+    this.elThumbnail.height = this.elTmp.height = 51 + 4;
     this.context = this.elThumbnail.getContext('2d');
     this.tmpContext = this.elTmp.getContext('2d');
 
