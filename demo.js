@@ -672,7 +672,10 @@
     var m = this.defaultContextMenu();
     if (this.name === 'readVariable' || this.name === 'contentsOfList:') {
       if (this.workspace.isPalette) {
-        // TODO
+        m.insertAllTranslated(0, [
+          'rename variable',
+          'delete variable',
+          vis.Menu.line]);
       } else {
         m.action = function(value) {
           this.args[0].value = value;
