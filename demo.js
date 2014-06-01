@@ -2673,9 +2673,7 @@
     this.sprite = null;
     if (sprite) {
       this.workspace.clear();
-      sprite.scripts.forEach(function(script) {
-        this.workspace.add(script);
-      }, this);
+      this.workspace.addAll(sprite.scripts);
       this.workspace.scrollTo(0, 0);
       this.sprite = sprite;
     }
