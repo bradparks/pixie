@@ -2429,7 +2429,7 @@
       try {
         this.stage = Stage.deserialize(JSON.parse(localStorage.getItem('visual demo project')));
       } catch (e) {
-        console.warn(e);
+        console.warn(e.stack);
       }
     }
 
