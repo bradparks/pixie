@@ -2016,6 +2016,101 @@
 
     table['tempo'] = function() {return interp.stage.tempo};
 
+    // Data
+
+    function getVar(name) {
+      return interp.activeThread.target.findOrCreateVariable(name);
+    }
+
+    table['readVariable'] = function(b) {
+      return getVar(interp.arg(b, 0)).value;
+    };
+
+    table['setVar:to:'] = function(b) {
+      getVar(interp.arg(b, 0)).value = interp.arg(b, 1);
+    };
+
+    table['changeVar:by:'] = function(b) {
+      var v = getVar(interp.arg(b, 0));
+      v.value = Number(v.value) + interp.narg(b, 1);
+    };
+
+    function getListIndex(n, end) {
+      if (!end) return -1;
+      if (n === 'last') {
+        return end - 1;
+      }
+      if (n === 'any' || n === 'random') {
+        return Math.floor(Math.random() * end);
+      }
+      var i = Number(n);
+      return i >= 1 && i <= end ? i - 1 : -1;
+    }
+
+    table['contentsOfList:'] = function(b) {
+      var contents = interp.activeThread.target.findOrCreateList(interp.arg(b, 0)).contents;
+      var i = contents.length;
+      while (i--) {
+        if (typeof contents[i] !== 'string' || contents[i].length !== 1) {
+          return contents.join(' ');
+        }
+      }
+      return contents.join('');
+    };
+
+    table['append:toList:'] = function(b) {
+      var list = interp.activeThread.target.findOrCreateList(interp.arg(b, 1));
+      list.contents.push(interp.arg(b, 0));
+    };
+
+    table['deleteLine:ofList:'] = function(b) {
+      var list = interp.activeThread.target.findOrCreateList(interp.arg(b, 1));
+      var index = interp.arg(b, 0);
+      if (index === 'all') {
+        list.contents = [];
+        return;
+      }
+      var i = getListIndex(index, list.contents.length);
+      if (i === -1) return;
+      list.contents.splice(i, 1);
+    };
+
+    table['insert:at:ofList:'] = function(b) {
+      var list = interp.activeThread.target.findOrCreateList(interp.arg(b, 2));
+      var i = getListIndex(interp.arg(b, 1), list.contents.length + 1);
+      if (i === -1) return;
+      list.contents.splice(i, 0, interp.arg(b, 0));
+    };
+
+    table['setLine:ofList:to:'] = function(b) {
+      var list = interp.activeThread.target.findOrCreateList(interp.arg(b, 1));
+      var i = getListIndex(interp.arg(b, 0), list.contents.length);
+      if (i === -1) return;
+      list.contents[i] = interp.arg(b, 2);
+    };
+
+    table['getLine:ofList:'] = function(b) {
+      var list = interp.activeThread.target.findOrCreateList(interp.arg(b, 1));
+      var i = getListIndex(interp.arg(b, 0), list.contents.length);
+      if (i === -1) return '';
+      return list.contents[i];
+    };
+
+    table['lineCountOfList:'] = function(b) {
+      var list = interp.activeThread.target.findOrCreateList(interp.arg(b, 0));
+      return list.contents.length;
+    };
+
+    table['list:contains:'] = function(b) {
+      var contents = interp.activeThread.target.findOrCreateList(interp.arg(b, 0)).contents;
+      var i = contents.length;
+      var x = interp.arg(b, 1);
+      while (i--) {
+        if (compare(contents[i], x) === 0) return true;
+      }
+      return false;
+    };
+
     // Events
 
     table['whenGreenFlag'] = this.primNoop;
@@ -2228,103 +2323,6 @@
         case '10 ^': return Math.exp(x * Math.LN10);
       }
       return 0;
-    };
-
-    // Data
-
-    function getVar(name) {
-      return interp.activeThread.target.findOrCreateVariable(name);
-    }
-
-    table['readVariable'] = function(b) {
-      return getVar(interp.arg(b, 0)).value;
-    };
-
-    table['setVar:to:'] = function(b) {
-      getVar(interp.arg(b, 0)).value = interp.arg(b, 1);
-    };
-
-    table['changeVar:by:'] = function(b) {
-      var v = getVar(interp.arg(b, 0));
-      v.value = Number(v.value) + interp.narg(b, 1);
-    };
-
-    // Lists
-
-    function getListIndex(n, end) {
-      if (!end) return -1;
-      if (n === 'last') {
-        return end - 1;
-      }
-      if (n === 'any' || n === 'random') {
-        return Math.floor(Math.random() * end);
-      }
-      var i = Number(n);
-      return i >= 1 && i <= end ? i - 1 : -1;
-    }
-
-    table['contentsOfList:'] = function(b) {
-      var contents = interp.activeThread.target.findOrCreateList(interp.arg(b, 0)).contents;
-      var i = contents.length;
-      while (i--) {
-        if (typeof contents[i] !== 'string' || contents[i].length !== 1) {
-          return contents.join(' ');
-        }
-      }
-      return contents.join('');
-    };
-
-    table['append:toList:'] = function(b) {
-      var list = interp.activeThread.target.findOrCreateList(interp.arg(b, 1));
-      list.contents.push(interp.arg(b, 0));
-    };
-
-    table['deleteLine:ofList:'] = function(b) {
-      var list = interp.activeThread.target.findOrCreateList(interp.arg(b, 1));
-      var index = interp.arg(b, 0);
-      if (index === 'all') {
-        list.contents = [];
-        return;
-      }
-      var i = getListIndex(index, list.contents.length);
-      if (i === -1) return;
-      list.contents.splice(i, 1);
-    };
-
-    table['insert:at:ofList:'] = function(b) {
-      var list = interp.activeThread.target.findOrCreateList(interp.arg(b, 2));
-      var i = getListIndex(interp.arg(b, 1), list.contents.length + 1);
-      if (i === -1) return;
-      list.contents.splice(i, 0, interp.arg(b, 0));
-    };
-
-    table['setLine:ofList:to:'] = function(b) {
-      var list = interp.activeThread.target.findOrCreateList(interp.arg(b, 1));
-      var i = getListIndex(interp.arg(b, 0), list.contents.length);
-      if (i === -1) return;
-      list.contents[i] = interp.arg(b, 2);
-    };
-
-    table['getLine:ofList:'] = function(b) {
-      var list = interp.activeThread.target.findOrCreateList(interp.arg(b, 1));
-      var i = getListIndex(interp.arg(b, 0), list.contents.length);
-      if (i === -1) return '';
-      return list.contents[i];
-    };
-
-    table['lineCountOfList:'] = function(b) {
-      var list = interp.activeThread.target.findOrCreateList(interp.arg(b, 0));
-      return list.contents.length;
-    };
-
-    table['list:contains:'] = function(b) {
-      var contents = interp.activeThread.target.findOrCreateList(interp.arg(b, 0)).contents;
-      var i = contents.length;
-      var x = interp.arg(b, 1);
-      while (i--) {
-        if (compare(contents[i], x) === 0) return true;
-      }
-      return false;
     };
   };
 
