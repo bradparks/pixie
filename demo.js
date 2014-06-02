@@ -1389,6 +1389,11 @@
     this.canvas.height = this.height;
     this.context = this.canvas.getContext('2d');
     this.el.appendChild(this.canvas);
+
+    this.penCanvas = document.createElement('canvas');
+    this.penCanvas.width = this.width;
+    this.penCanvas.height = this.height;
+    this.penContext = this.penCanvas.getContext('2d');
   }
   inherits(Stage, ScratchObj);
 
@@ -1450,6 +1455,7 @@
       context.drawImage(costume.canvas, 0, 0);
       context.restore();
     }
+    context.drawImage(this.penCanvas, 0, 0);
     var children = this.children;
     for (var i = 0, length = children.length; i < length; i++) {
       children[i].drawOn(context);
@@ -2015,6 +2021,17 @@
     };
 
     table['tempo'] = function() {return interp.stage.tempo};
+
+    // Pen
+
+    table['clearPenTrails'] = function() {
+      interp.stage.penContext.clearRect(0, 0, interp.stage.width, interp.stage.height);
+    };
+
+    table['stampCostume'] = function() {
+      var sprite = interp.activeThread.target;
+      if (sprite.isSprite) sprite.drawOn(interp.stage.penContext);
+    };
 
     // Data
 
