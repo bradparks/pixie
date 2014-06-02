@@ -3030,7 +3030,9 @@
     this.tabClick = function() {
       self.panel = self.tabPanels[this.dataset.index];
     };
-    ['Scripts', 'Costumes', 'Sounds'].forEach(this.makeTab, this);
+    this.scriptsTab = this.makeTab(T('Scripts'));
+    this.costumesTab = this.makeTab(T('Costumes'));
+    this.soundsTab = this.makeTab(T('Sounds'));
 
     this.panel = this.scriptEditor;
   }
@@ -3042,6 +3044,7 @@
     tab.addEventListener('click', this.tabClick);
     this.tabs.push(tab);
     this.el.appendChild(tab);
+    return tab;
   };
 
   def(TabPanel.prototype, 'panel', {
@@ -3076,6 +3079,7 @@
   };
 
   TabPanel.prototype.showSprite = function(sprite) {
+    this.costumesTab.textContent = sprite.isStage ? T('Backdrops') : T('Costumes');
     this.tabPanels.forEach(function(panel) {
       if (panel) panel.showSprite(sprite);
     });
