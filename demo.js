@@ -3334,6 +3334,7 @@
   }
 
   SpritePanel.prototype.installProject = function(stage) {
+    this.stageIcon.sprite = stage;
     this.removeAllIcons();
     stage.children.forEach(this.addIcon, this);
     this.select(this.icons[0] || this.stageIcon);
@@ -3541,7 +3542,10 @@
 
   SpriteIcon.prototype.updateInfo = function() {
     var len = this.sprite.costumes.length;
-    this.elInfo.textContent = T(len === 1 ? '{count} backdrop' : '{count} backdrops', {count: len});
+    if (this.costumeCount !== len) {
+      this.costumeCount = len;
+      this.elInfo.textContent = T(len === 1 ? '{count} backdrop' : '{count} backdrops', {count: len});
+    }
   };
 
 
