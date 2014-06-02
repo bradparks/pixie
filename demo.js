@@ -926,6 +926,63 @@
     sub.prototype.constructor = sub;
   }
 
+  function rgbToHSV(rgb) {
+    var r = (rgb >> 16 & 0xff) / 0xff;
+    var g = (rgb >> 8 & 0xff) / 0xff;
+    var b = (rgb & 0xff) / 0xff;
+    var i = Math.min(r, g, b);
+    var v = Math.max(r, g, b);
+    if (i === v) return {h: 0, s: 0, v: v};
+    var d, j;
+    switch (i) {
+      case r: d = g - b; j = 3; break;
+      case g: d = b - r; j = 5; break;
+      case b: d = r - g; j = 7; break;
+    }
+    return {
+      h: ((j - d / (v - i)) * 60) % 360,
+      s: (v - i) / v,
+      v: v
+    };
+  }
+
+  function hsvToRGB(h, s, v) {
+    h = h % 360;
+    if (h < 0) h += 360;
+    if (s < 0) s = 0;
+    if (s > 1) s = 1;
+    if (v < 0) v = 0;
+    if (v > 1) v = 1;
+
+    var j = h / 60 | 0;
+    var r = h / 60 - j;
+    var p = v * (1 - s);
+    var q = v * (1 - s * r);
+    var t = v * (1 - s * (1 - r));
+
+    var r, g, b;
+    switch (j) {
+      case 0: r = v; g = t; b = p; break;
+      case 1: r = q; g = v; b = p; break;
+      case 2: r = p; g = v; b = t; break;
+      case 3: r = p; g = q; b = v; break;
+      case 4: r = t; g = p; b = v; break;
+      case 5: r = v; g = p; b = q; break;
+    }
+    return r * 255 << 16 | g * 255 << 8 | b * 255;
+  }
+
+  function mixRGB(c1, c2, f) {
+    var g = 1 - f;
+    var r1 = c1 >> 16 & 0xff;
+    var g1 = c1 >> 8 & 0xff;
+    var b1 = c1 & 0xff;
+    var r2 = c2 >> 16 & 0xff;
+    var g2 = c2 >> 8 & 0xff;
+    var b2 = c2 & 0xff;
+    return r2 * f + r1 * g << 16 | g2 * f + g1 * g << 8 | b2 * f + b1 * g;
+  }
+
   function stripExtension(filename) {
     return filename.replace(/(.)\.[^.]+$/, '$1');
   }
@@ -1285,6 +1342,7 @@
 
   function Sprite(name) {
     ScratchObj.call(this, name);
+
     this.rotationStyle = 'normal';
     this.x = 0;
     this.y = 0;
@@ -1292,6 +1350,12 @@
     this.scale = 1;
     this.visible = true;
     this.isDraggable = false;
+
+    this.isPenDown = false;
+    this.penSize = 1;
+    this.penHue = 120;
+    this.penShade = 50;
+    this.penColor = '#0000ff';
   }
   inherits(Sprite, ScratchObj);
 
@@ -1797,7 +1861,22 @@
   Interpreter.prototype.addPrimitives = function(table) {
     var interp = this;
 
+    function drawPen(sprite, x, y) {
+      var cx = interp.stage.penContext;
+      cx.strokeStyle = sprite.penColor;
+      cx.lineCap = 'round';
+      cx.lineWidth = sprite.penSize;
+      cx.beginPath();
+      cx.moveTo(240 + sprite.x, 180 - sprite.y);
+      cx.lineTo(240 + x, 180 - y);
+      cx.stroke();
+      interp.redraw = true;
+    }
+
     function moveSpriteTo(sprite, x, y) {
+      if (sprite.isPenDown) {
+        drawPen(sprite, x, y);
+      }
       sprite.x = x;
       sprite.y = y;
       if (sprite.visible) interp.redraw = true;
@@ -2032,11 +2111,94 @@
 
     table['clearPenTrails'] = function() {
       interp.stage.penContext.clearRect(0, 0, interp.stage.width, interp.stage.height);
+      interp.redraw = true;
     };
 
     table['stampCostume'] = function() {
       var sprite = interp.activeThread.target;
-      if (sprite.isSprite) sprite.drawOn(interp.stage.penContext);
+      if (sprite.isSprite) {
+        sprite.drawOn(interp.stage.penContext);
+        interp.redraw = true;
+      }
+    };
+
+    table['putPenDown'] = function() {
+      var sprite = interp.activeThread.target;
+      if (sprite.isSprite) {
+        sprite.isPenDown = true;
+        drawPen(sprite, sprite.x + 0.2, sprite.y + 0.2);
+      }
+    };
+
+    table['putPenUp'] = function() {
+      var sprite = interp.activeThread.target;
+      if (sprite.isSprite) sprite.isPenDown = false;
+    };
+
+    table['penColor:'] = function(b) {
+      var sprite = interp.activeThread.target;
+      if (sprite.isSprite) {
+        var col = interp.narg(b, 0);
+        var hsv = rgbToHSV(col);
+        sprite.penHue = hsv.h * 200 / 360;
+        sprite.penShade = hsv.v * 50;
+        sprite.penColor = vis.util.numberToColor(col);
+      }
+    };
+
+    function updatePenColor(sprite) {
+      var rgb = hsvToRGB(sprite.penHue * 360 / 200, 1, 1);
+      var s = sprite.penShade;
+      if (s > 100) s = 200 - s;
+      sprite.penColor = vis.util.numberToColor(s < 50 ? mixRGB(0, rgb, (10 + s) / 60) : mixRGB(rgb, 0xffffff, (s - 50) / 60));
+    }
+
+    function setPenHue(sprite, hue) {
+      hue = hue % 200;
+      if (hue < 0) hue += 200;
+      sprite.penHue = hue;
+      updatePenColor(sprite);
+    }
+
+    function setPenShade(sprite, shade) {
+      shade = shade % 200;
+      if (shade < 0) shade += 200;
+      sprite.penShade = shade;
+      updatePenColor(sprite);
+    }
+
+    function setPenSize(sprite, size) {
+      sprite.penSize = Math.max(1, Math.min(255, Math.round(size)));
+    }
+
+    table['changePenHueBy:'] = function(b) {
+      var sprite = interp.activeThread.target;
+      if (sprite.isSprite) setPenHue(sprite, sprite.penHue + interp.narg(b, 0));
+    };
+
+    table['setPenHueTo:'] = function(b) {
+      var sprite = interp.activeThread.target;
+      if (sprite.isSprite) setPenHue(sprite, interp.narg(b, 0));
+    };
+
+    table['changePenShadeBy:'] = function(b) {
+      var sprite = interp.activeThread.target;
+      if (sprite.isSprite) setPenShade(sprite, sprite.penShade + interp.narg(b, 0));
+    };
+
+    table['setPenShadeTo:'] = function(b) {
+      var sprite = interp.activeThread.target;
+      if (sprite.isSprite) setPenShade(sprite, interp.narg(b, 0));
+    };
+
+    table['changePenSizeBy:'] = function(b) {
+      var sprite = interp.activeThread.target;
+      if (sprite.isSprite) setPenSize(sprite, sprite.penSize + interp.narg(b, 0));
+    };
+
+    table['penSize:'] = function(b) {
+      var sprite = interp.activeThread.target;
+      if (sprite.isSprite) setPenSize(sprite, interp.narg(b, 0));
     };
 
     // Data
