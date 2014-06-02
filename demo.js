@@ -1367,6 +1367,9 @@
   function Stage() {
     ScratchObj.call(this, 'Stage');
 
+    this.width = 480;
+    this.height = 360;
+
     this.tempo = 60;
     this.children = [];
 
@@ -1382,8 +1385,8 @@
     this.el = el('stage');
 
     this.canvas = el('canvas', 'Visual-absolute');
-    this.canvas.width = 480;
-    this.canvas.height = 360;
+    this.canvas.width = this.width;
+    this.canvas.height = this.height;
     this.context = this.canvas.getContext('2d');
     this.el.appendChild(this.canvas);
   }
@@ -2505,7 +2508,15 @@
   };
 
   Editor.prototype.getEmptyProject = function() {
-    return new Stage();
+    var stage = new Stage();
+    var empty = document.createElement('canvas');
+    empty.width = stage.width;
+    empty.height = stage.height;
+    var context = empty.getContext('2d');
+    context.fillStyle = '#fff';
+    context.fillRect(0, 0, stage.width, stage.height);
+    stage.addCostume(new Costume('backdrop1', empty, 240, 180));
+    return stage;
   };
 
   Editor.prototype.getDefaultProject = function() {
