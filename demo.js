@@ -1029,6 +1029,7 @@
     this.sounds = [];
     this.variables = [];
     this.lists = [];
+    this.info = {};
   }
 
   ScratchObj.prototype.toJSON = function() {
@@ -1306,7 +1307,7 @@
     json.isDraggable = this.isDraggable;
     json.indexInLibrary = 0; // TODO
     json.visible = this.visible;
-    json.spriteInfo = {};
+    json.spriteInfo = this.info;
     return json;
   };
 
@@ -1323,6 +1324,7 @@
     this.scale = json.scale == null ? 1 : Math.max(0, Math.min(1000, Number(json.scale) || 0));
     this.visible = json.visible == null ? true : !!json.visible;
     this.isDraggable = !!json.isDraggable;
+    this.info = typeof json.spriteInfo === 'object' && !Array.isArray(json.spriteInfo) ? json.spriteInfo : {};
     return this;
   };
 
@@ -1403,16 +1405,19 @@
     var json = ScratchObj.prototype.toJSON.call(this, json);
     json.tempoBPM = this.tempo;
     json.children = this.children;
-    json.info = {
-      scriptCount: this.scriptCount,
-      hasCloudData: false, // TODO
-      spriteCount: this.spriteCount,
-      userAgent: navigator.userAgent,
-      // TODO projectID
-      videoOn: false, // TODO
-      appVersion: Editor.prototype.version
-    };
+    this.updateInfo();
+    json.info = this.info;
     return json;
+  };
+
+  Stage.prototype.updateInfo = function() {
+    this.info.scriptCount = this.scriptCount;
+    this.info.hasCloudData = false; // TODO
+    this.info.spriteCount = this.spriteCount;
+    this.info.userAgent = navigator.userAgent;
+    // TODO projectID
+    this.info.videoOn = false; // TODO
+    this.info.appVersion = Editor.prototype.version;
   };
 
   Stage.deserialize = function(json) {return new Stage().fromJSON(json)};
@@ -1423,6 +1428,7 @@
     if (Array.isArray(json.children)) json.children.map(function(child) {
       return child.objName ? new Sprite().fromJSON(child) : null;
     }).filter(notNull).forEach(this.add, this);
+    this.info = typeof json.info === 'object' && !Array.isArray(json.info) ? json.info : {};
     return this;
   };
 
