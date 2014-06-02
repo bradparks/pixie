@@ -2271,7 +2271,7 @@
         y = t;
       }
       if ((x | 0) === x && (y | 0) === y) {
-        return x + Math.random() * (y - x + x) | 0;
+        return x + Math.random() * (y - x + 1) | 0;
       }
       return x + Math.random() * (y - x);
     };
