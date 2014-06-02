@@ -1175,6 +1175,12 @@
     return o;
   };
 
+  def(ScratchObj.prototype, 'localScriptCount', {get: function() {
+    return this.scripts.filter(function(s) {
+      return !s.isEmpty && s.blocks[0].isHat;
+    }).length;
+  }});
+
 
   function Costume(name, canvas, cx, cy, pixelRatio) {
     this.baseLayerMD5 = null;
@@ -1389,6 +1395,15 @@
     var json = ScratchObj.prototype.toJSON.call(this, json);
     json.tempoBPM = this.tempo;
     json.children = this.children;
+    json.info = {
+      scriptCount: this.scriptCount,
+      hasCloudData: false, // TODO
+      spriteCount: this.spriteCount,
+      userAgent: navigator.userAgent,
+      // TODO projectID
+      videoOn: false, // TODO
+      appVersion: Editor.prototype.version
+    };
     return json;
   };
 
@@ -1496,6 +1511,16 @@
       return name;
     }
   };
+
+  def(Stage.prototype, 'spriteCount', {get: function() {
+    return this.children.length;
+  }});
+
+  def(Stage.prototype, 'scriptCount', {get: function() {
+    return this.children.reduce(function(sum, sprite) {
+      return sum + sprite.localScriptCount;
+    }, this.localScriptCount);
+  }});
 
 
   function LocalBackpack() {}
@@ -2446,6 +2471,8 @@
     this.save = this.save.bind(this);
   }
 
+  Editor.prototype.version = 'js001';
+
   Editor.prototype.changed = function() {
     clearTimeout(this.saveTimeout);
     this.saveTimeout = setTimeout(this.save, 100);
@@ -3115,7 +3142,7 @@
     });
 
     this.elTitleBar.appendChild(this.elVersion = el('version'));
-    this.elVersion.textContent = 'js001';
+    this.elVersion.textContent = editor.version;
 
     this.elTitleBar.appendChild(this.elTitle = el('input', 'project-name'));
     this.elTitle.addEventListener('input', this.titleChanged.bind(this));
