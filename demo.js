@@ -2410,12 +2410,15 @@
         this.installProject(Stage.deserialize(JSON.parse(data)));
         Server.getProjectMetadata(id, function(err, data) {
           if (data) {
-            this.setTitle(data.title);
+            this.stage.title = data.title;
             this.stage.author = data.creator.username;
             this.stage.isPublic = true;
           } else {
+            this.stage.title = T('Unshared Project ({id})', {id: id});
+            this.stage.author = '';
             this.stage.isPublic = false;
           }
+          this.stagePanel.updateTitle();
           this.stagePanel.updateAuthor();
         }.bind(this));
       }.bind(this));
