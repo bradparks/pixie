@@ -2230,7 +2230,7 @@
       return 0;
     };
 
-    // Variables
+    // Data
 
     function getVar(name) {
       return interp.activeThread.target.findOrCreateVariable(name);
