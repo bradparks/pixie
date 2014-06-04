@@ -2608,7 +2608,10 @@
     table['append:toList:'] = function(b) {
       var list = interp.activeThread.target.findOrCreateList(interp.arg(b, 1));
       list.contents.push(interp.arg(b, 0));
-      if (list.watcher) list.watcher.itemAdded();
+      if (list.watcher) {
+        interp.redraw = true;
+        list.watcher.itemAdded();
+      }
     };
 
     table['deleteLine:ofList:'] = function(b) {
@@ -2616,13 +2619,19 @@
       var index = interp.arg(b, 0);
       if (index === 'all') {
         list.contents = [];
-        if (list.watcher) list.watcher.itemsCleared();
+        if (list.watcher) {
+          interp.redraw = true;
+          list.watcher.itemsCleared();
+        }
         return;
       }
       var i = getListIndex(index, list.contents.length);
       if (i === -1) return;
       list.contents.splice(i, 1);
-      if (list.watcher) list.watcher.itemDeleted(i);
+      if (list.watcher) {
+        interp.redraw = true;
+        list.watcher.itemDeleted(i);
+      }
     };
 
     table['insert:at:ofList:'] = function(b) {
@@ -2630,7 +2639,10 @@
       var i = getListIndex(interp.arg(b, 1), list.contents.length + 1);
       if (i === -1) return;
       list.contents.splice(i, 0, interp.arg(b, 0));
-      if (list.watcher) list.watcher.itemInserted(i);
+      if (list.watcher) {
+        interp.redraw = true;
+        list.watcher.itemInserted(i);
+      }
     };
 
     table['setLine:ofList:to:'] = function(b) {
@@ -2638,14 +2650,20 @@
       var i = getListIndex(interp.arg(b, 0), list.contents.length);
       if (i === -1) return;
       list.contents[i] = interp.arg(b, 2);
-      if (list.watcher) list.watcher.itemChanged(i);
+      if (list.watcher) {
+        interp.redraw = true;
+        list.watcher.itemChanged(i);
+      }
     };
 
     table['getLine:ofList:'] = function(b) {
       var list = interp.activeThread.target.findOrCreateList(interp.arg(b, 1));
       var i = getListIndex(interp.arg(b, 0), list.contents.length);
       if (i === -1) return '';
-      if (list.watcher) list.watcher.itemAccessed(i);
+      if (list.watcher) {
+        interp.redraw = true;
+        list.watcher.itemAccessed(i);
+      }
       return list.contents[i];
     };
 
