@@ -328,7 +328,7 @@
       broadcast: function(arg) {
         return new Menu().addAll(arg.app.editor.broadcastNames).add(Menu.line).add([T('new message...'), function() {
             var arg = this;
-            Dialog.prompt(T('New Message'), T('Message name'), function(value) { // NS
+            Dialog.prompt(T('New Message'), T('Message name:'), function(value) { // NS
               if (value) arg.value = value;
             }).show(arg.app.editor);
           }]);
@@ -3138,7 +3138,7 @@
   };
 
   Editor.prototype.newDialog = function(list) {
-    var name = new Dialog.Field(T(list ? 'List name' : 'Variable name'));
+    var name = new Dialog.Field(T(list ? 'List name:' : 'Variable name:'));
     var local = new Dialog.Radio(
       [T('For all sprites'), false],
       [T('For this sprite only'), true]);
@@ -4240,7 +4240,7 @@
   Dialog.Field = function(label) {
     this.value = '';
     this.el = el('label', 'dialog-label');
-    this.el.textContent = label + ':';
+    this.el.textContent = label;
     this.field = el('input', 'dialog-field');
     this.field.addEventListener('input', this.change.bind(this));
     this.el.appendChild(this.field);
