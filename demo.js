@@ -1784,6 +1784,10 @@
     this.scrollToIndex(i);
   };
 
+  ListWatcher.prototype.itemAccessed = function(i) {
+    this.scrollToIndex(i);
+  };
+
   ListWatcher.prototype.scrollToIndex = function(i) {
     var heights = this.cellHeights;
     var y = 0;
@@ -2610,6 +2614,7 @@
       var list = interp.activeThread.target.findOrCreateList(interp.arg(b, 1));
       var i = getListIndex(interp.arg(b, 0), list.contents.length);
       if (i === -1) return '';
+      if (list.watcher) list.watcher.itemAccessed(i);
       return list.contents[i];
     };
 
