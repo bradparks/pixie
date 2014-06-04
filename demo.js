@@ -3749,7 +3749,7 @@
 
 
   function Dialog(title, content) {
-    this.el = el('dialog');
+    this.el = el('dialog Visual-no-select');
     this.el.appendChild(this.elTitle = el('dialog-title'));
     this.el.appendChild(this.elContent = content || el('dialog-content'));
     if (content) content.classList.add('dialog-content');
