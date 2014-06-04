@@ -3069,7 +3069,6 @@
   };
 
   Editor.prototype.step = function() {
-    step(this.exec);
     step(this.topBar);
     step(this.tabPanel);
     step(this.stagePanel);
