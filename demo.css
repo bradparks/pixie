@@ -680,3 +680,85 @@ button::-moz-focus-inner {
   position: fixed;
   z-index: 3;
 }
+
+.list-watcher {
+  border: 2px solid #949191;
+  background: #c1c4c7;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  border-radius: 7px;
+  margin: -1px;
+}
+.list-watcher-title {
+  position: absolute;
+  top: 2px;
+  height: 16px;
+  line-height: 16px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 12px;
+  font-weight: bold;
+}
+.list-watcher-length {
+  position: absolute;
+  bottom: -1px;
+  height: 16px;
+  line-height: 16px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 11px;
+}
+.list-watcher-contents {
+  position: absolute;
+  top: 21px;
+  left: 1px;
+  right: 1px;
+  bottom: 19px;
+  overflow: auto;
+}
+.list-watcher-filler {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+}
+.list-cell {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.list-cell-index {
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-size: 11px;
+}
+.list-cell-index {
+  position: absolute;
+  top: 0;
+  left: -6px;
+  /*left: -3px;*/
+  text-align: right;
+}
+.list-cell-contents {
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-size: 11px;
+  font-weight: bold;
+  color: #fff;
+  background: #cc5b22;
+  box-shadow:
+    inset 1px 1px 1px rgba(0, 0, 0, .3),
+    inset -1px -1px 2px rgba(255, 255, 255, .4);
+  border: 1px solid #fff;
+  border-radius: 4px;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  padding: 2px 4px 5px;
+  /*padding: 3px 4px 4px;*/
+}

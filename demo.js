@@ -1602,6 +1602,299 @@
   }});
 
 
+  function ListWatcher(target, list) {
+    this.target = target;
+    this.list = list;
+    list.watcher = this;
+
+    this.cellPool = [];
+    this.cellCache = [];
+
+    this.el = el('list-watcher');
+    this.el.appendChild(this.elTitle = el('list-watcher-title'));
+    this.el.appendChild(this.elContents = el('list-watcher-contents'));
+    this.elContents.appendChild(this.elFiller = el('list-watcher-filler'));
+    this.el.appendChild(this.elLength = el('list-watcher-length'));
+
+    this.updateCells = this.updateCells.bind(this);
+    this.elContents.addEventListener('scroll', this.updateCells);
+
+    this.elMeasure = el('Visual-metrics list-cell-contents');
+    this.measureNode = document.createTextNode('');
+    this.elMeasure.appendChild(this.measureNode);
+    document.body.appendChild(this.elMeasure);
+
+    this.updateIndexWidth(true);
+    this.resizeTo(100, 200);
+
+    this.updateFiller();
+    this.updateTitle();
+    this.updateLength();
+  }
+
+  ListWatcher.measureIndex = vis.util.createMetrics('list-cell-index');
+
+  ListWatcher.prototype.measure = function(text) {
+    if (hasOwnProperty.call(this.measureCache, text)) {
+      return this.measureCache[text];
+    }
+    this.measureNode.data = text + '\u200C';
+    return this.measureCache[text] = this.elMeasure.offsetHeight - 1;
+  };
+
+  ListWatcher.prototype.measureAll = function() {
+    var heights = [];
+    var total = 0;
+    var contents = this.list.contents;
+    for (var i = 0, l = contents.length; i < l; i++) {
+      var h = this.measure(contents[i]);
+      heights.push(h);
+      total += h;
+    }
+    this.cellHeights = heights;
+    this.contentHeight = total + 1;
+  };
+
+  ListWatcher.prototype.updateContentHeight = function() {
+    var total = 0;
+    var heights = this.cellHeights;
+    for (var i = this.list.contents.length; i--;) {
+      total += heights[i];
+    }
+    this.contentHeight = total + 1;
+    this.updateFiller();
+  };
+
+  ListWatcher.prototype.resizeTo = function(w, h) {
+    this.width = w;
+    this.height = h;
+    this.frameHeight = h - 42;
+    this.el.style.width = (w + 2)+'px';
+    this.el.style.height = (h + 2)+'px';
+
+    this.updateCellWidth();
+  };
+
+  ListWatcher.prototype.updateIndexWidth = function(quiet) {
+    var indexLength = (''+this.list.contents.length).length;
+    if (this.indexLength !== indexLength) {
+      this.indexLength = indexLength;
+      var n = Array(indexLength + 1).join('0');
+      var w = ListWatcher.measureIndex(n).width + 7;
+      this.indexWidth = w;
+
+      var pool = this.cellPool;
+      for (var i = pool.length; i--;) {
+        var cell = pool[i];
+        vis.util.setTransform(cell.elContents, 'translate('+w+'px,0)');
+        cell.elIndex.style.width = w+'px';
+      }
+
+      if (!quiet) this.updateCellWidth();
+    }
+  };
+
+  ListWatcher.prototype.updateCellWidth = function() {
+    this.cellWidth = this.width - 7 - this.indexWidth - vis.util.scrollbarWidth;
+    this.elMeasure.style.width = this.cellWidth+'px';
+    this.measureCache = Object.create(null);
+
+    var pool = this.cellPool;
+    for (var i = pool.length; i--;) {
+      pool[i].elContents.style.width = this.cellWidth+'px';
+    }
+
+    this.measureAll();
+    this.updateCells();
+  };
+
+  ListWatcher.prototype.moveTo = vis.util.moveTo;
+
+  ListWatcher.prototype.updateTitle = function() {
+    // console.log('update title'); // debug
+    this.elTitle.textContent = this.target.isStage ? this.list.name : T('{object}: {name}', {object: this.target.name, name: this.list.name});
+  };
+
+  ListWatcher.prototype.updateLength = function() {
+    // console.log('update length'); // debug
+    this.elLength.textContent = T('length: {count}', {count: this.list.contents.length});
+    this.updateIndexWidth();
+  };
+
+  ListWatcher.prototype.updateFiller = function() {
+    // console.log('update filler'); // debug
+    this.elFiller.style.height = this.contentHeight + 'px';
+  };
+
+  ListWatcher.prototype.itemsCleared = function() {
+    this.cellHeights = [];
+    this.contentHeight = 0;
+    this.updateFiller();
+    this.updateCells();
+    this.updateLength();
+  };
+
+  ListWatcher.prototype.itemAdded = function() {
+    var contents = this.list.contents;
+    var h = this.measure(contents[contents.length - 1]);
+    this.cellHeights.push(h);
+    this.contentHeight += h;
+    this.updateFiller();
+    this.updateLength();
+    if (this.endIndex === contents.length - 1) this.updateCells();
+  };
+
+  ListWatcher.prototype.itemInserted = function(i) {
+    var h = this.measure(this.list.contents[i]);
+    this.cellHeights.splice(i, 0, h);
+    this.contentHeight += h;
+    this.updateFiller();
+    this.updateLength();
+    if (i >= this.startIndex && (i < this.endIndex || this.startIndex === this.endIndex)) this.updateCells();
+  };
+
+  ListWatcher.prototype.itemDeleted = function(i) {
+    var heights = this.cellHeights;
+    this.contentHeight -= heights[i];
+    heights.splice(i, 1);
+    this.updateFiller();
+    this.updateLength();
+    if (i >= this.startIndex && i < this.endIndex) this.updateCells();
+  };
+
+  ListWatcher.prototype.itemChanged = function(i) {
+    var heights = this.cellHeights;
+    var oh = heights[i];
+    var h = this.measure(this.list.contents[i]);
+    if (h !== oh) {
+      this.contentHeight += h - oh;
+      heights[i] = h;
+      this.updateFiller();
+    }
+    if (i >= this.startIndex && i < this.endIndex) this.updateCells();
+  };
+
+  ListWatcher.prototype.updateCells = function() {
+    var top = this.elContents.scrollTop;
+    var bottom = top + this.frameHeight;
+
+    var heights = this.cellHeights;
+    var contents = this.list.contents;
+    var length = contents.length;
+
+    var startIndex = 0;
+    var startY = 0;
+    while (startIndex < length) {
+      var h = heights[startIndex];
+      if (startY + h >= top) break;
+      startY += h;
+      startIndex++;
+    }
+    this.startIndex = startIndex;
+
+    var endIndex = startIndex;
+    var y = startY;
+    while (endIndex < length && y < bottom) {
+      y += heights[endIndex++];
+    }
+    this.endIndex = endIndex;
+
+    var pool = this.cellPool;
+    var usablePool = [];
+    for (var i = pool.length; i--;) {
+      var c = pool[i];
+      if (c.index == null || c.index < startIndex || c.index >= endIndex) {
+        usablePool.push(c);
+      }
+    }
+    this.usablePool = usablePool;
+
+    // debug
+    // this.reusedCells = 0;
+    // this.pooledCells = 0;
+    // this.allocatedCells = 0;
+
+    i = startIndex;
+    y = startY
+    while (i < endIndex) {
+      var cell = this.getCell(i, heights[i], contents[i]);
+      cell.moveTo(0, y);
+      y += heights[i++];
+    }
+
+    // debug
+    // console.log('update cells');
+    // console.log('update cells reuse: %s pool: %s alloc: %s', this.reusedCells, this.pooledCells, this.allocatedCells);
+
+    while (usablePool.length) {
+      var c = usablePool.pop();
+      this.cellCache[c.index] = null;
+      c.index = null;
+      c.visible = false;
+      c.el.style.display = 'none';
+    }
+  };
+
+  ListWatcher.prototype.getCell = function(i, height, text) {
+    var cell = this.cellCache[i];
+    if (cell) {
+      // this.reusedCells++; // debug
+      if (cell.text !== text) {
+        cell.text = text;
+        cell.elContents.textContent = text;
+      }
+    } else {
+      if (this.usablePool.length) {
+        // this.pooledCells++; // debug
+        var cell = this.usablePool.pop();
+        if (cell.text !== text) {
+          cell.text = text;
+          cell.elContents.textContent = text;
+        }
+        if (cell.index != null) {
+          this.cellCache[cell.index] = null;
+        }
+        cell.index = i;
+        cell.elIndex.textContent = i + 1;
+      } else {
+        // this.allocatedCells++; // debug
+        cell = new ListCell(i, height, text);
+        cell.elContents.style.width = this.cellWidth+'px';
+        vis.util.setTransform(cell.elContents, 'translate('+this.indexWidth+'px,0)');
+        cell.elIndex.style.width = this.indexWidth+'px';
+        this.elContents.appendChild(cell.el);
+        this.cellPool.push(cell);
+      }
+      if (!cell.visible) {
+        cell.visible = true;
+        cell.el.style.display = 'block';
+      }
+      this.cellCache[i] = cell;
+    }
+    if (cell.height !== height) {
+      cell.height = height;
+      cell.elIndex.style.lineHeight = (height + 1)+'px';
+    }
+    return cell;
+  };
+
+
+  function ListCell(index, height, text) {
+    this.el = el('list-cell');
+    this.el.appendChild(this.elIndex = el('list-cell-index'));
+    this.el.appendChild(this.elContents = el('list-cell-contents'));
+    this.text = text;
+    this.elContents.textContent = text;
+    this.index = index;
+    this.elIndex.textContent = index + 1;
+    this.height = height;
+    this.elIndex.style.lineHeight = (height + 1)+'px';
+    this.visible = true;
+  }
+
+  ListCell.prototype.moveTo = vis.util.moveTo;
+
+
   function LocalBackpack() {}
 
   LocalBackpack.prototype.isBackpack = true;
@@ -2246,6 +2539,7 @@
     table['append:toList:'] = function(b) {
       var list = interp.activeThread.target.findOrCreateList(interp.arg(b, 1));
       list.contents.push(interp.arg(b, 0));
+      if (list.watcher) list.watcher.itemAdded();
     };
 
     table['deleteLine:ofList:'] = function(b) {
@@ -2253,11 +2547,13 @@
       var index = interp.arg(b, 0);
       if (index === 'all') {
         list.contents = [];
+        if (list.watcher) list.watcher.itemsCleared();
         return;
       }
       var i = getListIndex(index, list.contents.length);
       if (i === -1) return;
       list.contents.splice(i, 1);
+      if (list.watcher) list.watcher.itemDeleted(i);
     };
 
     table['insert:at:ofList:'] = function(b) {
@@ -2265,6 +2561,7 @@
       var i = getListIndex(interp.arg(b, 1), list.contents.length + 1);
       if (i === -1) return;
       list.contents.splice(i, 0, interp.arg(b, 0));
+      if (list.watcher) list.watcher.itemInserted(i);
     };
 
     table['setLine:ofList:to:'] = function(b) {
@@ -2272,6 +2569,7 @@
       var i = getListIndex(interp.arg(b, 0), list.contents.length);
       if (i === -1) return;
       list.contents[i] = interp.arg(b, 2);
+      if (list.watcher) list.watcher.itemChanged(i);
     };
 
     table['getLine:ofList:'] = function(b) {
