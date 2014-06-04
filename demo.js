@@ -1787,8 +1787,8 @@
     var heights = this.cellHeights;
     this.contentHeight -= heights[i];
     heights.splice(i, 1);
-    this.updateFiller();
     this.updateLength();
+    this.updateFiller();
     this.scrollToIndex(i === this.list.contents.length ? i - 1 : i);
   };
 
