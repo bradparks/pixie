@@ -367,7 +367,7 @@
         var stage = arg.app.editor.stage;
         var name = arg.parent.args[1].value;
         if (name === '_stage_') return new Menu('backdrop #', 'backdrop name', 'volume').translate().addLine().addAll(stage.variables.map(getName));
-        var sprite = stage.findChild(name);
+        var sprite = stage.findObject(name);
         return sprite && new Menu('x position', 'y position', 'direction', 'costume #', 'costume name', 'size', 'volume').translate().addLine().addAll(sprite.variables.map(getName));
       },
       timeAndDate: function() {
@@ -903,7 +903,7 @@
       m.add(a[i]);
     }
     m.translate().add(Menu.line);
-    arg.app.editor.stage.children.forEach(function(sprite) {
+    arg.app.editor.stage.sprites.forEach(function(sprite) {
       m.add(sprite.name);
     });
     return m;
@@ -1442,6 +1442,7 @@
 
     this.tempo = 60;
     this.children = [];
+    this.sprites = [];
 
     this.mouseX = 0;
     this.mouseY = 0;
@@ -1504,6 +1505,8 @@
     if (this.children.indexOf(child) === -1) {
       this.children.push(child);
       child.stage = this;
+      if (child.isSprite) this.sprites.push(child);
+      if (child.isWatcher) this.el.appendChild(child.el);
     }
     return this;
   };
@@ -1513,6 +1516,11 @@
     var i = this.children.indexOf(child);
     if (i !== -1) this.children.splice(i, 1);
     child.stage = null;
+    if (child.isSprite) {
+      i = this.sprites.indexOf(child);
+      if (i !== -1) this.sprites.splice(i, 1);
+    }
+    if (child.isWatcher) this.el.removeChild(child.el);
     return this;
   };
 
@@ -1530,16 +1538,16 @@
       context.restore();
     }
     context.drawImage(this.penCanvas, 0, 0);
-    var children = this.children;
-    for (var i = 0, length = children.length; i < length; i++) {
-      children[i].drawOn(context);
+    var sprites = this.sprites;
+    for (var i = 0, length = sprites.length; i < length; i++) {
+      sprites[i].drawOn(context);
     }
   };
 
   Stage.prototype.forEachScript = function(fn, context) {
-    var children = this.children;
-    for (var i = 0, l = children.length; i < l; i++) {
-      children[i].forEachScript(fn, context);
+    var sprites = this.sprites;
+    for (var i = 0, l = sprites.length; i < l; i++) {
+      sprites[i].forEachScript(fn, context);
     }
     ScratchObj.prototype.forEachScript.call(this, fn, context);
   };
@@ -1547,9 +1555,9 @@
   Stage.prototype.findNestedLocal = function(name) {
     var local = this.findLocal(name);
     if (local) return local;
-    var children = this.children;
-    for (var i = 0, l = children.length; i < l; i++) {
-      local = children[i].findLocal(name);
+    var sprites = this.sprites;
+    for (var i = 0, l = sprites.length; i < l; i++) {
+      local = sprites[i].findLocal(name);
       if (local) return local;
     }
     return null;
@@ -1558,18 +1566,18 @@
   Stage.prototype.findNestedLocalList = function(name) {
     var local = this.findLocalList(name);
     if (local) return local;
-    var children = this.children;
-    for (var i = 0, l = children.length; i < l; i++) {
-      local = children[i].findLocalList(name);
+    var sprites = this.sprites;
+    for (var i = 0, l = sprites.length; i < l; i++) {
+      local = sprites[i].findLocalList(name);
       if (local) return local;
     }
     return null;
   };
 
-  Stage.prototype.findChild = function(name) {
-    var children = this.children;
-    for (var i = 0, l = children.length; i < l; i++) {
-      if (children[i].name === name) return children[i];
+  Stage.prototype.findObject = function(name) {
+    var sprites = this.sprites;
+    for (var i = 0, l = sprites.length; i < l; i++) {
+      if (sprites[i].name === name) return sprites[i];
     }
     return this.name === name ? this : null;
   };
@@ -1596,11 +1604,11 @@
   };
 
   def(Stage.prototype, 'spriteCount', {get: function() {
-    return this.children.length;
+    return this.sprites.length;
   }});
 
   def(Stage.prototype, 'scriptCount', {get: function() {
-    return this.children.reduce(function(sum, sprite) {
+    return this.sprites.reduce(function(sum, sprite) {
       return sum + sprite.localScriptCount;
     }, this.localScriptCount);
   }});
@@ -1643,6 +1651,8 @@
     this.updateTitle();
     this.updateLength();
   }
+
+  ListWatcher.prototype.isWatcher = true;
 
   ListWatcher.measureIndex = vis.util.createMetrics('list-cell-index');
 
@@ -2303,7 +2313,7 @@
       if (name === '_mouse_') {
         pointSpriteTowards(sprite, interp.stage.mouseX, interp.stage.mouseY);
       } else {
-        var other = interp.stage.findChild(name);
+        var other = interp.stage.findObject(name);
         if (other) pointSpriteTowards(sprite, other.x, other.y);
       }
     };
@@ -2321,7 +2331,7 @@
       if (name === '_mouse_') {
         moveSpriteTo(sprite, interp.stage.mouseX, interp.stage.mouseY);
       } else {
-        var other = interp.stage.findChild(name);
+        var other = interp.stage.findObject(name);
         if (other) moveSpriteTo(sprite, other.x, other.y);
       }
     };
@@ -3897,14 +3907,14 @@
 
     this.el.appendChild(this.elSpriteSection = el('sprite-section'));
 
-    editor.stage.children.forEach(this.addIcon, this);
+    editor.stage.sprites.forEach(this.addIcon, this);
     this.select(this.icons[0] || this.stageIcon);
   }
 
   SpritePanel.prototype.installProject = function(stage) {
     this.stageIcon.sprite = stage;
     this.removeAllIcons();
-    stage.children.forEach(this.addIcon, this);
+    stage.sprites.forEach(this.addIcon, this);
     this.select(this.icons[0] || this.stageIcon);
   };
 
