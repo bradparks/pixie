@@ -1615,6 +1615,8 @@
     this.el.appendChild(this.elContents = el('list-watcher-contents'));
     this.elContents.appendChild(this.elFiller = el('list-watcher-filler'));
     this.el.appendChild(this.elLength = el('list-watcher-length'));
+    this.el.appendChild(this.elAddButton = el('button', 'list-watcher-add-button'));
+    this.elAddButton.addEventListener('click', this.addItem.bind(this));
 
     this.updateCells = this.updateCells.bind(this);
     this.elContents.addEventListener('scroll', this.updateCells);
@@ -1706,6 +1708,11 @@
 
     this.measureAll();
     this.updateCells();
+  };
+
+  ListWatcher.prototype.addItem = function() {
+    this.list.contents.push('');
+    this.itemAdded();
   };
 
   ListWatcher.prototype.moveTo = vis.util.moveTo;

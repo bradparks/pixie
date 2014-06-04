@@ -724,6 +724,17 @@ button::-moz-focus-inner {
   left: 0;
   width: 1px;
 }
+.list-watcher-add-button {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  background: url(assets.png) -245px -23px;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  width: 15px;
+  height: 15px;
+}
 .list-cell {
   position: absolute;
   top: 0;
