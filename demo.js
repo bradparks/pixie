@@ -1609,6 +1609,7 @@
 
     this.cellPool = [];
     this.cellCache = [];
+    this.scrollTop = 0;
 
     this.el = el('list-watcher');
     this.el.appendChild(this.elTitle = el('list-watcher-title'));
@@ -1616,10 +1617,9 @@
     this.elContents.appendChild(this.elFiller = el('list-watcher-filler'));
     this.el.appendChild(this.elLength = el('list-watcher-length'));
     this.el.appendChild(this.elAddButton = el('button', 'list-watcher-add-button'));
-    this.elAddButton.addEventListener('click', this.addItem.bind(this));
 
-    this.updateCells = this.updateCells.bind(this);
-    this.elContents.addEventListener('scroll', this.updateCells);
+    this.elAddButton.addEventListener('click', this.addItem.bind(this));
+    this.elContents.addEventListener('scroll', this.scroll.bind(this));
 
     this.elMeasure = el('Visual-metrics list-cell-contents');
     this.measureNode = document.createTextNode('');
@@ -1680,6 +1680,7 @@
   ListWatcher.prototype.updateIndexWidth = function(quiet) {
     var indexLength = (''+this.list.contents.length).length;
     if (this.indexLength !== indexLength) {
+      // console.log('update index width'); // debug
       this.indexLength = indexLength;
       var n = Array(indexLength + 1).join('0');
       var w = ListWatcher.measureIndex(n).width + 7;
@@ -1697,6 +1698,7 @@
   };
 
   ListWatcher.prototype.updateCellWidth = function() {
+    // console.log('update cell width'); // debug
     this.cellWidth = this.width - 7 - this.indexWidth - vis.util.scrollbarWidth;
     this.elMeasure.style.width = this.cellWidth+'px';
     this.measureCache = Object.create(null);
@@ -1736,28 +1738,29 @@
   ListWatcher.prototype.itemsCleared = function() {
     this.cellHeights = [];
     this.contentHeight = 0;
+    this.updateLength();
     this.updateFiller();
     this.updateCells();
-    this.updateLength();
   };
 
   ListWatcher.prototype.itemAdded = function() {
     var contents = this.list.contents;
-    var h = this.measure(contents[contents.length - 1]);
+    var last = contents.length - 1;
+    var h = this.measure(contents[last]);
     this.cellHeights.push(h);
     this.contentHeight += h;
-    this.updateFiller();
     this.updateLength();
-    if (this.endIndex === contents.length - 1) this.updateCells();
+    this.updateFiller();
+    this.scrollToIndex(last);
   };
 
   ListWatcher.prototype.itemInserted = function(i) {
     var h = this.measure(this.list.contents[i]);
     this.cellHeights.splice(i, 0, h);
     this.contentHeight += h;
-    this.updateFiller();
     this.updateLength();
-    if (i >= this.startIndex && (i < this.endIndex || this.startIndex === this.endIndex)) this.updateCells();
+    this.updateFiller();
+    this.scrollToIndex(i);
   };
 
   ListWatcher.prototype.itemDeleted = function(i) {
@@ -1766,7 +1769,7 @@
     heights.splice(i, 1);
     this.updateFiller();
     this.updateLength();
-    if (i >= this.startIndex && i < this.endIndex) this.updateCells();
+    this.scrollToIndex(i === this.list.contents.length ? i - 1 : i);
   };
 
   ListWatcher.prototype.itemChanged = function(i) {
@@ -1778,11 +1781,35 @@
       heights[i] = h;
       this.updateFiller();
     }
-    if (i >= this.startIndex && i < this.endIndex) this.updateCells();
+    this.scrollToIndex(i);
+  };
+
+  ListWatcher.prototype.scrollToIndex = function(i) {
+    var heights = this.cellHeights;
+    var y = 0;
+    for (var j = 0; j < i; j++) {
+      y += heights[j];
+    }
+    var y2 = y + heights[i] + 1;
+    var top = this.scrollTop;
+    if (y < top) {
+      this.elContents.scrollTop = this.scrollTop = y;
+    } else if (y2 > top + this.frameHeight) {
+      this.elContents.scrollTop = this.scrollTop = y2 - this.frameHeight;
+    }
+    this.updateCells();
+  };
+
+  ListWatcher.prototype.scroll = function() {
+    var top = this.elContents.scrollTop;
+    if (this.scrollTop !== top) {
+      this.scrollTop = top;
+      this.updateCells();
+    }
   };
 
   ListWatcher.prototype.updateCells = function() {
-    var top = this.elContents.scrollTop;
+    var top = this.scrollTop;
     var bottom = top + this.frameHeight;
 
     var heights = this.cellHeights;
