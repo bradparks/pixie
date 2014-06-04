@@ -1621,7 +1621,7 @@
     this.elAddButton.addEventListener('click', this.addItem.bind(this));
     this.elContents.addEventListener('scroll', this.scroll.bind(this));
 
-    this.elMeasure = el('Visual-metrics list-cell-contents');
+    this.elMeasure = el('list-cell-contents list-cell-metrics');
     this.measureNode = document.createTextNode('');
     this.elMeasure.appendChild(this.measureNode);
     document.body.appendChild(this.elMeasure);

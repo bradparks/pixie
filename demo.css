@@ -773,3 +773,13 @@ button::-moz-focus-inner {
   padding: 2px 4px 5px;
   /*padding: 3px 4px 4px;*/
 }
+.list-cell-metrics {
+  position: fixed;
+  top: -10000px;
+  left: -10000px;
+  background: 0;
+  box-shadow: none;
+  border-radius: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
