@@ -1848,7 +1848,7 @@
       // this.reusedCells++; // debug
       if (cell.text !== text) {
         cell.text = text;
-        cell.elContents.textContent = text;
+        cell.elContents.textContent = text+'\u200C';
       }
     } else {
       if (this.usablePool.length) {
@@ -1856,7 +1856,7 @@
         var cell = this.usablePool.pop();
         if (cell.text !== text) {
           cell.text = text;
-          cell.elContents.textContent = text;
+          cell.elContents.textContent = text+'\u200C';
         }
         if (cell.index != null) {
           this.cellCache[cell.index] = null;
@@ -1891,7 +1891,7 @@
     this.el.appendChild(this.elIndex = el('list-cell-index'));
     this.el.appendChild(this.elContents = el('list-cell-contents'));
     this.text = text;
-    this.elContents.textContent = text;
+    this.elContents.textContent = text+'\u200C';
     this.index = index;
     this.elIndex.textContent = index + 1;
     this.height = height;
