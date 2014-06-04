@@ -892,6 +892,10 @@
   var def = Object.defineProperty;
   var slice = [].slice;
 
+  var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+  var cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame;
+
+
   function spriteMenu(arg) { // TODO include/exclude self
     var m = new Menu;
     var a = slice.call(arguments, 1);
@@ -1609,7 +1613,13 @@
 
     this.cellPool = [];
     this.cellCache = [];
+    this.accessTimes = [];
+    for (var i = list.contents.length; i--;) {
+      this.accessTimes.push(0);
+    }
     this.scrollTop = 0;
+
+    this.updateCells = this.updateCells.bind(this);
 
     this.el = el('list-watcher');
     this.el.appendChild(this.elTitle = el('list-watcher-title'));
@@ -1801,6 +1811,7 @@
     } else if (y2 > top + this.frameHeight) {
       this.elContents.scrollTop = this.scrollTop = y2 - this.frameHeight;
     }
+    this.accessTimes[i] = Date.now();
     this.updateCells();
   };
 
@@ -1813,10 +1824,14 @@
   };
 
   ListWatcher.prototype.updateCells = function() {
+    var now = Date.now();
+    this.animating = false;
+
     var top = this.scrollTop;
     var bottom = top + this.frameHeight;
 
     var heights = this.cellHeights;
+    var accessTimes = this.accessTimes;
     var contents = this.list.contents;
     var length = contents.length;
 
@@ -1855,7 +1870,7 @@
     i = startIndex;
     y = startY
     while (i < endIndex) {
-      var cell = this.getCell(i, heights[i], contents[i]);
+      var cell = this.getCell(i, now - accessTimes[i], heights[i], contents[i]);
       cell.moveTo(0, y);
       y += heights[i++];
     }
@@ -1871,9 +1886,14 @@
       c.visible = false;
       c.el.style.display = 'none';
     }
+
+    if (this.animating) {
+      cancelAnimationFrame(this.animationFrame);
+      this.animationFrame = requestAnimationFrame(this.updateCells);
+    }
   };
 
-  ListWatcher.prototype.getCell = function(i, height, text) {
+  ListWatcher.prototype.getCell = function(i, dt, height, text) {
     var cell = this.cellCache[i];
     if (cell) {
       // this.reusedCells++; // debug
@@ -1909,6 +1929,16 @@
       }
       this.cellCache[i] = cell;
     }
+    if (dt >= 800) {
+      dt = 800;
+    } else {
+      this.animating = true;
+    }
+    if (dt !== cell.dt) {
+      cell.dt = dt;
+      var f = (1 - dt / 800) * 100;
+      cell.elIndex.style.color = 'rgb('+f+'%,'+f+'%,0%)';
+    }
     if (cell.height !== height) {
       cell.height = height;
       cell.elIndex.style.lineHeight = (height + 1)+'px';
@@ -1921,6 +1951,7 @@
     this.el = el('list-cell');
     this.el.appendChild(this.elIndex = el('list-cell-index'));
     this.el.appendChild(this.elContents = el('list-cell-contents'));
+    this.dt = 800;
     this.text = text;
     this.elContents.textContent = text+'\u200C';
     this.index = index;
