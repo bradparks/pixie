@@ -1081,6 +1081,17 @@
     return chooseFile(filter, true, fn);
   }
 
+  function saveFile(defaultName, mimeType, text) {
+    var a = document.createElement('a');
+    var blob = new Blob([text], {type: mimeType})
+    a.href = URL.createObjectURL(blob);
+    a.download = defaultName;
+    a.click();
+    setTimeout(function() {
+      URL.revokeObjectURL(a.href);
+    }, 1500);
+  }
+
 
   function ScratchObj(name) {
     this.name = name;
@@ -1656,6 +1667,72 @@
 
   ListWatcher.measureIndex = vis.util.createMetrics('list-cell-index');
 
+  ListWatcher.prototype.toJSON = function() {
+    return {};
+  };
+
+  ListWatcher.prototype.objectFromPoint = vis.util.opaqueObjectFromPoint;
+
+  def(ListWatcher.prototype, 'contextMenu', {get: function() {
+    return new Menu(
+      ['import', this.importFromFile, {file: true}],
+      ['export', this.exportToFile],
+      Menu.line,
+      ['hide', this.hide]).withContext(this).translate();
+  }});
+
+  ListWatcher.prototype.importFromFile = function(file) {
+    var reader = new FileReader;
+    reader.onloadend = function(e) {
+      var lines = reader.result.split(/\r\n|[\r\n]/);
+      while (lines.length && !lines[lines.length - 1]) lines.pop();
+      var delim = this.guessDelimiter(lines);
+      if (delim) {
+        var count = lines[0].split(delim).length;
+        Dialog.prompt(T('Import List'), T('Which column do you want to import? (1-{count} or "all")?', {count: count}), '1', function(column) {
+          var n = Math.round(Number(column)) - 1;
+          if (n !== n || n < 0 || n >= count) {
+            this.setContents(lines);
+          } else {
+            this.setContents(lines.map(function(l) {
+              return l.split(delim)[n];
+            }));
+          }
+        }.bind(this)).show(this.stage.editor);
+      } else {
+        this.setContents(lines);
+      }
+    }.bind(this);
+    reader.readAsText(file);
+  };
+
+  ListWatcher.prototype.exportToFile = function() {
+    saveFile(this.list.name+'.txt', 'text/plain', this.list.contents.join('\n') + '\n');
+  };
+
+  var DELIMITERS = [',', '\t'];
+  ListWatcher.prototype.guessDelimiter = function(lines) {
+    var mid = Math.floor(lines.length / 2);
+    var end = lines.length - 1;
+    for (var i = 0, l = DELIMITERS.length; i < l; i++) {
+      var d = DELIMITERS[i];
+      var a = lines[0].split(d).length;
+      var b = lines[mid].split(d).length;
+      var c = lines[end].split(d).length;
+      if (a > 1 && a === b && b === c) return d;
+    }
+    return null;
+  };
+
+  ListWatcher.prototype.setContents = function(lines) {
+    this.list.contents = lines;
+    this.updateLength(true);
+    this.measureAll();
+    this.updateFiller();
+    this.elContents.scrollTop = this.scrollTop = 0;
+    this.updateCells();
+  };
+
   ListWatcher.prototype.measure = function(text) {
     if (hasOwnProperty.call(this.measureCache, text)) {
       return this.measureCache[text];
@@ -1744,10 +1821,10 @@
     this.elTitle.textContent = this.target.isStage ? this.list.name : T('{object}: {name}', {object: this.target.name, name: this.list.name});
   };
 
-  ListWatcher.prototype.updateLength = function() {
+  ListWatcher.prototype.updateLength = function(quiet) {
     // console.log('update length'); // debug
     this.elLength.textContent = T('length: {count}', {count: this.list.contents.length});
-    this.updateIndexWidth();
+    this.updateIndexWidth(quiet);
   };
 
   ListWatcher.prototype.updateFiller = function() {
@@ -3012,6 +3089,7 @@
       }
     }
 
+    this.stage.editor = this;
     this.backpack = new LocalBackpack();
 
     this.exec = new Interpreter(this.stage, this);
@@ -3113,6 +3191,7 @@
     this.spritePanel.installProject(stage);
     this.stagePanel.installProject(stage);
     this.stage = stage;
+    stage.editor = this;
   };
 
   Editor.prototype.start = function() {
@@ -3765,6 +3844,24 @@
     document.addEventListener('keydown', this.keyDown.bind(this));
     document.addEventListener('keyup', this.keyUp.bind(this));
   }
+  inherits(StagePanel, vis.Target);
+
+  StagePanel.prototype.acceptsDropOf = function() {
+    return false;
+  };
+
+  StagePanel.prototype.objectFromPoint = function(x, y) {
+    if (!vis.util.containsPoint(this.stage, x, y)) return null;
+    var children = this.stage.children;
+    for (var i = children.length; i--;) {
+      var c = children[i];
+      if (c.isWatcher) {
+        var o = c.objectFromPoint(x - c.x, y - c.y);
+        if (o) return o;
+      }
+    }
+    return this.stage;
+  };
 
   StagePanel.prototype.installProject = function(stage) {
     stage.mouseX = this.stage.mouseX;
@@ -4261,7 +4358,14 @@
     return d;
   };
 
-  Dialog.prompt = function(title, label, yes, no, fn, context) {
+  Dialog.prompt = function(title, label, value, yes, no, fn, context) {
+    if (typeof value === 'function' || value == null) {
+      context = yes;
+      fn = value;
+      no = T('Cancel');
+      yes = T('OK');
+      value = '';
+    }
     if (typeof yes === 'function' || yes == null) {
       context = no;
       fn = yes;
@@ -4274,7 +4378,7 @@
       no = T('Cancel');
     }
 
-    var field = new Dialog.Field(label);
+    var field = new Dialog.Field(label, value);
     var d = new Dialog(title, Dialog.content(
       field.el,
       Dialog.buttons(
@@ -4296,11 +4400,12 @@
     return div;
   };
 
-  Dialog.Field = function(label) {
+  Dialog.Field = function(label, value) {
     this.value = '';
     this.el = el('label', 'dialog-label');
     this.el.textContent = label;
     this.field = el('input', 'dialog-field');
+    if (value != null) this.field.value = value;
     this.field.addEventListener('input', this.change.bind(this));
     this.el.appendChild(this.field);
   };
