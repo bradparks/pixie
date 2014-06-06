@@ -1710,7 +1710,9 @@
     }
   });
 
-  ListWatcher.prototype.objectFromPoint = vis.util.opaqueObjectFromPoint;
+  ListWatcher.prototype.objectFromPoint = function(x, y) {
+    return x >= -1 && y >= -1 && x < this.width && y < this.height ? this : null;
+  };
 
   def(ListWatcher.prototype, 'contextMenu', {get: function() {
     return new Menu(
@@ -3937,6 +3939,10 @@
 
   StagePanel.prototype.objectFromPoint = function(x, y) {
     if (!vis.util.containsPoint(this.stage, x, y)) return null;
+    var bb = this.stage.el.getBoundingClientRect();
+    var bb2 = this.el.getBoundingClientRect();
+    x -= bb.left - bb2.left;
+    y -= bb.top - bb2.top;
     var children = this.stage.children;
     for (var i = children.length; i--;) {
       var c = children[i];
