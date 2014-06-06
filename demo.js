@@ -1033,6 +1033,12 @@
       case '\\\\':
         json[0] = '%';
         break;
+      case 'call':
+        return new Block(['c', '%h ' + json[1], 'call', 10], json.slice(1).map(deserializeArg));
+      case 'getParam':
+        return new Block([json[2] === 'b' ? 'b' : 'r', '%l', 'getParam', 11], [json[1]]);
+      case 'procDef':
+        return new Block(['h', 'define %l', 'procDef', 10], [json[1]]);
     }
     var info = vis.getBlock(json[0], {
       type: typeHint || 'c',
