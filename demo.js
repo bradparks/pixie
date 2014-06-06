@@ -3315,7 +3315,8 @@
   };
 
   Editor.prototype.hasListWatcher = function(name) {
-    return !!this.findListWatcher(name);
+    var watcher = this.findListWatcher(name);
+    return !!watcher && watcher.visible;
   };
 
   Editor.prototype.toggleWatcher = function(array) {
@@ -3673,8 +3674,8 @@
     if (t.watcher) {
       var b = t.watcher;
       if (!Array.isArray(b)) b = [b];
-      var button = el('button', 'check-box');
       var checked = this.editor.hasWatcher(b);
+      var button = el('button', 'check-box'+(checked ? ' checked' : ''));
       button.addEventListener('click', function() {
         if (checked = this.editor.toggleWatcher(b)) {
           button.classList.add('checked');
