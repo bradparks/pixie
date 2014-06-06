@@ -1120,7 +1120,13 @@
   ScratchObj.prototype.fromJSON = function(json) {
     this.name = ''+json.objName;
     this.variables = Array.isArray(json.variables) ? json.variables.map(Variable.deserialize) : [];
-    this.lists = Array.isArray(json.lists) ? json.lists.map(List.deserialize) : [];
+    this.lists = Array.isArray(json.lists) ? json.lists.map(function(j) {
+      var list = List.deserialize(j);
+      list.watcher = new ListWatcher(this, list, Number(j.width) || 100, Number(j.height) || 200);
+      list.watcher.moveTo(Number(j.x) || 0, Number(j.y) || 0);
+      list.watcher.visible = !!j.visible;
+      return list;
+    }, this) : [];
     this.scripts = Array.isArray(json.scripts) ? json.scripts.map(deserializeScript) : [];
     // this.scriptComments = Array.isArray(json.scriptComments) ? json.scriptComments.map(...) : []; // TODO
     // this.sounds = Array.isArray(json.sounds) ? json.sounds.map(...) : []; // TODO
@@ -1505,9 +1511,16 @@
   Stage.prototype.fromJSON = function(json) {
     ScratchObj.prototype.fromJSON.call(this, json);
     this.tempo = json.tempoBPM == null ? 60 : Math.max(20, Math.min(500, Number(json.tempoBPM) || 0));
-    if (Array.isArray(json.children)) json.children.map(function(child) {
-      return child.objName ? new Sprite().fromJSON(child) : null;
-    }).filter(notNull).forEach(this.add, this);
+    if (Array.isArray(json.children)) {
+      json.children.forEach(function(child) {
+        if (child.objName) this.add(new Sprite().fromJSON(child));
+      }, this);
+      this.children.concat(this).forEach(function(child, i) {
+        child.lists.forEach(function(list) {
+          if (list.watcher) this.add(list.watcher);
+        }, this);
+      }, this);
+    }
     this.info = typeof json.info === 'object' && !Array.isArray(json.info) ? json.info : {};
     return this;
   };
@@ -1634,7 +1647,7 @@
   }});
 
 
-  function ListWatcher(target, list) {
+  function ListWatcher(target, list, width, height) {
     this.target = target;
     this.list = list;
     list.watcher = this;
@@ -1666,7 +1679,7 @@
     document.body.appendChild(this.elMeasure);
 
     this.updateIndexWidth(true);
-    this.resizeTo(100, 200);
+    this.resizeTo(width || 100, height || 200);
 
     this.updateFiller();
     this.updateTitle();
