@@ -3946,7 +3946,7 @@
     var children = this.stage.children;
     for (var i = children.length; i--;) {
       var c = children[i];
-      if (c.isWatcher) {
+      if (c.isWatcher && c.visible) {
         var o = c.objectFromPoint(x - c.x, y - c.y);
         if (o) return o;
       }
