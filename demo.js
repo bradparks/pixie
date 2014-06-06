@@ -1348,7 +1348,12 @@
     return {
       listName: this.name,
       contents: this.contents,
-      isPersistent: false // TODO
+      isPersistent: false, // TODO
+      x: this.watcher ? this.watcher.x : undefined,
+      y: this.watcher ? this.watcher.y : undefined,
+      width: this.watcher ? this.watcher.width : undefined,
+      height: this.watcher ? this.watcher.height : undefined,
+      visible: this.watcher ? this.watcher.visible : undefined
     };
   };
 
@@ -1692,7 +1697,7 @@
   ListWatcher.measureIndex = vis.util.createMetrics('list-cell-index');
 
   ListWatcher.prototype.toJSON = function() {
-    return {};
+    return this.list.toJSON();
   };
 
   def(ListWatcher.prototype, 'visible', {
