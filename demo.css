@@ -682,6 +682,9 @@ button::-moz-focus-inner {
 }
 
 .list-watcher {
+  position: absolute;
+  top: 0;
+  left: 0;
   border: 2px solid #949191;
   background: #c1c4c7;
   -moz-box-sizing: border-box;

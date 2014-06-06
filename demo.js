@@ -1593,6 +1593,15 @@
     return this.name === name ? this : null;
   };
 
+  Stage.prototype.findListWatcher = function(name, target) {
+    var children = this.children;
+    for (var i = children.length; i--;) {
+      var c = children[i];
+      if (c.isListWatcher && c.list.name === name && c.target === target) return c;
+    }
+    return null;
+  };
+
   Stage.prototype.uniqueName = function(base) {
     var x = /\d+$/.exec(base);
     var i = 2;
@@ -1637,6 +1646,7 @@
       this.accessTimes.push(0);
     }
     this.scrollTop = 0;
+    this._visible = true;
 
     this.updateCells = this.updateCells.bind(this);
 
@@ -1664,12 +1674,23 @@
   }
 
   ListWatcher.prototype.isWatcher = true;
+  ListWatcher.prototype.isListWatcher = true;
 
   ListWatcher.measureIndex = vis.util.createMetrics('list-cell-index');
 
   ListWatcher.prototype.toJSON = function() {
     return {};
   };
+
+  def(ListWatcher.prototype, 'visible', {
+    get: function() {return this._visible},
+    set: function(value) {
+      if (this._visible !== value) {
+        this._visible = value;
+        this.el.style.visibility = value ? 'visible' : 'hidden';
+      }
+    }
+  });
 
   ListWatcher.prototype.objectFromPoint = vis.util.opaqueObjectFromPoint;
 
@@ -1680,6 +1701,10 @@
       Menu.line,
       ['hide', this.hide]).withContext(this).translate();
   }});
+
+  ListWatcher.prototype.hide = function() {
+    this.visible = false;
+  };
 
   ListWatcher.prototype.importFromFile = function(file) {
     var reader = new FileReader;
@@ -3263,6 +3288,49 @@
     this.refreshPalette();
   };
 
+  Editor.prototype.hasWatcher = function(array) {
+    if (array[0] === 'contentsOfList:') {
+      return this.hasListWatcher(array[1]);
+    }
+    return false; // TODO
+  };
+
+  Editor.prototype.hasListWatcher = function(name) {
+    return !!this.findListWatcher(name);
+  };
+
+  Editor.prototype.toggleWatcher = function(array) {
+    if (array[0] === 'contentsOfList:') {
+      return this.toggleListWatcher(array[1]);
+    }
+    return false;
+  };
+
+  Editor.prototype.toggleListWatcher = function(name) {
+    var target = this.selectedSprite;
+    var list = target.findLocalList(name);
+    if (!list) {
+      target = this.stage;
+      list = target.findOrCreateLocalList(name);
+    }
+    var watcher = this.stage.findListWatcher(name, target);
+    if (watcher) {
+      watcher.visible = !watcher.visible;
+      return watcher.visible;
+    }
+    watcher = new ListWatcher(target, list);
+    watcher.moveTo(5, 5);
+    this.stage.add(watcher);
+    return true;
+  };
+
+  Editor.prototype.findListWatcher = function(name) {
+    var target = this.selectedSprite;
+    var list = target.findLocalList(name);
+    if (!list) target = this.stage;
+    return this.stage.findListWatcher(name, target);
+  };
+
   Editor.prototype.refreshPalette = function() {
     this.tabPanel.scriptEditor.refreshPalette();
   };
@@ -3585,16 +3653,16 @@
     }
     if (t.watcher) {
       var b = t.watcher;
-      if (!b.pop) b = [b];
+      if (!Array.isArray(b)) b = [b];
       var button = el('button', 'check-box');
-      var checked = false;
+      var checked = this.editor.hasWatcher(b);
       button.addEventListener('click', function() {
-        if (checked = !checked) {
+        if (checked = this.editor.toggleWatcher(b)) {
           button.classList.add('checked');
         } else {
           button.classList.remove('checked');
         }
-      });
+      }.bind(this));
       this.palette.add(Palette.inline(button));
       return this.eval(b);
     }
