@@ -1751,8 +1751,7 @@
 
   ListWatcher.prototype.setContents = function(lines) {
     this.list.contents = lines;
-    this.updateLength(true);
-    this.measureAll();
+    this.updateLength();
     this.updateFiller();
     this.elContents.scrollTop = this.scrollTop = 0;
     this.updateCells();
