@@ -719,7 +719,8 @@ button::-moz-focus-inner {
   left: 1px;
   right: 1px;
   bottom: 19px;
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: scroll;
 }
 .list-watcher-filler {
   position: absolute;
