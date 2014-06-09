@@ -4641,6 +4641,7 @@
     this.dragY = this.y - e.clientY;
     document.addEventListener('mousemove', this.mouseMove);
     document.addEventListener('mouseup', this.mouseUp);
+    document.body.appendChild(this.el);
   };
 
   Dialog.prototype.mouseMove = function(e) {
