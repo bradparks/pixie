@@ -3107,9 +3107,8 @@
 
 
   function Editor() {
-    this.stage = this.getEmptyProject();
-
     if (location.hash.length > 1) {
+      this.stage = this.getEmptyProject();
       var id = location.hash.slice(1);
       Server.getProject(id, function(err, data) {
         if (err) {
@@ -3136,6 +3135,7 @@
         this.stage = Stage.deserialize(JSON.parse(localStorage.getItem('visual demo project')));
       } catch (e) {
         console.warn(e.stack);
+        this.stage = this.getDefaultProject();
       }
     }
 
