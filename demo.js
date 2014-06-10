@@ -647,6 +647,7 @@
 
   var Workspace = vis.Workspace;
   var Palette = vis.Palette;
+  var Comment = vis.Comment;
   var Block = vis.Block;
   var Arg = vis.Arg;
   var Menu = vis.Menu;
@@ -1017,7 +1018,11 @@
 
   function deserializeScript(json) {
     // TODO not very defensive
-    return deserializeStack(json[2]).moveTo(json[0], json[1]);
+    return (json.length > 3 ? deserializeComment(json) : deserializeStack(json[2])).moveTo(json[0], json[1]);
+  }
+
+  function deserializeComment(json) {
+    return new Comment(json[6], json[2], json[3], !json[4]);
   }
 
   function deserializeStack(json) {
@@ -1111,12 +1116,17 @@
   }
 
   ScratchObj.prototype.toJSON = function() {
+    var scripts = [];
+    var comments = [];
+    this.scripts.filter(function(s) {
+      (s.isScript ? scripts : comments).push(s);
+    })
     return {
       objName: this.name,
       variables: this.variables.length ? this.variables : undefined,
       lists: this.lists.length ? this.lists : undefined,
-      scripts: this.scripts.length ? this.scripts : undefined,
-      scriptComments: undefined, // TODO
+      scripts: scripts.length ? scripts : undefined,
+      scriptComments: comments.length ? comments : undefined, // TODO
       sounds: this.sounds.length ? this.sounds : undefined,
       costumes: this.costumes.length ? this.costumes : undefined,
       currentCostumeIndex: this.costume
@@ -1133,8 +1143,7 @@
       list.watcher.visible = !!j.visible;
       return list;
     }, this) : [];
-    this.scripts = Array.isArray(json.scripts) ? json.scripts.map(deserializeScript) : [];
-    // this.scriptComments = Array.isArray(json.scriptComments) ? json.scriptComments.map(...) : []; // TODO
+    this.scripts = (Array.isArray(json.scriptComments) ? json.scriptComments : []).concat(Array.isArray(json.scripts) ? json.scripts : []).map(deserializeScript);
     // this.sounds = Array.isArray(json.sounds) ? json.sounds.map(...) : []; // TODO
     if (Array.isArray(json.costumes)) json.costumes.map(Costume.deserialize).forEach(this.addCostume, this);
     this.costume = (Math.round(Number(json.currentCostumeIndex)) % this.costumes.length + this.costumes.length) % this.costumes.length || 0;
