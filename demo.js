@@ -647,6 +647,7 @@
 
   var Workspace = vis.Workspace;
   var Palette = vis.Palette;
+  var Script = vis.Script;
   var Comment = vis.Comment;
   var Block = vis.Block;
   var Arg = vis.Arg;
@@ -759,7 +760,7 @@
     context.drawImage(assets, 245, 0, 23, 23, 0, 0, 23, 23);
   };
 
-  vis.Script.prototype.addRunningEffect = function() {
+  Script.prototype.addRunningEffect = function() {
     if (!this._runningEffect) {
       this.addEffect(this.runningEffect);
       this._runningEffect = true;
@@ -767,7 +768,7 @@
     return this;
   };
 
-  vis.Script.prototype.runningEffect = function() {
+  Script.prototype.runningEffect = function() {
     var canvas = this.shadow(0, 0, 12, '#ff9');
     var ctx = canvas.getContext('2d');
     ctx.drawImage(canvas, 0, 0);
@@ -775,7 +776,7 @@
     return canvas;
   };
 
-  vis.Script.prototype.removeRunningEffect = function() {
+  Script.prototype.removeRunningEffect = function() {
     this.removeEffect(this.runningEffect);
     this._runningEffect = false;
     return this;
@@ -1026,7 +1027,7 @@
   }
 
   function deserializeStack(json) {
-    return new vis.Script(json.map(deserializeCommand));
+    return new Script(json.map(deserializeCommand));
   }
 
   function deserializeCommand(json) {
@@ -3713,7 +3714,7 @@
     if (!Array.isArray(t)) {
       t = [t];
     }
-    var script = new vis.Script().add(new Block(t[0], t.slice(1).map(this.evalArg, this)));
+    var script = new Script().add(new Block(t[0], t.slice(1).map(this.evalArg, this)));
     if (!this.editor.exec.table[t[0]]) script.addEffect(script.outline.bind(script, 2, '#faa'));
     this.palette.add(script);
   };
