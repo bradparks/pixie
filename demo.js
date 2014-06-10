@@ -1249,7 +1249,7 @@
   ScratchObj.prototype.forEachScript = function(fn, context) {
     var s = this.scripts;
     for (var i = 0, l = s.length; i < l; i++) {
-      if (s[i].blocks.length) fn.call(context, s[i], this);
+      if (s[i].isBlock && s[i].blocks.length) fn.call(context, s[i], this);
     }
   };
 
@@ -1273,7 +1273,7 @@
 
   def(ScratchObj.prototype, 'localScriptCount', {get: function() {
     return this.scripts.filter(function(s) {
-      return !s.isEmpty && s.blocks[0].isHat;
+      return s.isBlock && !s.isEmpty && s.blocks[0].isHat;
     }).length;
   }});
 
