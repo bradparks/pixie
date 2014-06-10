@@ -3603,8 +3603,7 @@
 
       var b = el('button', 'palette-button');
       b.value = id;
-      b.style.color = cat[2];
-      b.innerHTML = '<div><strong>' + T(cat[1]) + '</strong></div>';
+      b.innerHTML = '<div style="color:'+cat[2]+'"><strong>' + T(cat[1]) + '</strong></div>';
       b.addEventListener('click', buttonClick);
 
       this.buttons[cat[0]] = b;
