@@ -651,6 +651,7 @@
   var Comment = vis.Comment;
   var Block = vis.Block;
   var Arg = vis.Arg;
+  var Icon = vis.Icon;
   var Menu = vis.Menu;
 
   function T(key, values) {
@@ -739,21 +740,21 @@
     return translations ? translations.indexOf(value) !== -1 : true;
   };
 
-  vis.Icon.prototype.icons.turnRight = function(context) {
+  Icon.prototype.icons.turnRight = function(context) {
     context.canvas.width = 16;
     context.canvas.height = 15;
     if (!assetsLoaded) return onAssetsLoaded(this.redraw, this);
     context.drawImage(assets, 229, 0, 16, 15, 0, 0, 16, 15);
   };
 
-  vis.Icon.prototype.icons.turnLeft = function(context) {
+  Icon.prototype.icons.turnLeft = function(context) {
     context.canvas.width = 16;
     context.canvas.height = 15;
     if (!assetsLoaded) return onAssetsLoaded(this.redraw, this);
     context.drawImage(assets, 229, 15, 16, 15, 0, 0, 16, 15);
   };
 
-  vis.Icon.prototype.icons.greenFlag = function(context) {
+  Icon.prototype.icons.greenFlag = function(context) {
     context.canvas.width = 23;
     context.canvas.height = 23;
     if (!assetsLoaded) return onAssetsLoaded(this.redraw, this);
