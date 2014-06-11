@@ -740,25 +740,31 @@
     return translations ? translations.indexOf(value) !== -1 : true;
   };
 
-  Icon.prototype.icons.turnRight = function(context) {
-    context.canvas.width = 16;
-    context.canvas.height = 15;
-    if (!assetsLoaded) return onAssetsLoaded(this.redraw, this);
-    context.drawImage(assets, 229, 0, 16, 15, 0, 0, 16, 15);
+  Icon.prototype.icons.turnRight = {
+    width: 16,
+    height: 15,
+    draw: function(context) {
+      if (!assetsLoaded) return onAssetsLoaded(this.redraw, this);
+      context.drawImage(assets, 229, 0, 16, 15, 0, 0, 16, 15);
+    }
   };
 
-  Icon.prototype.icons.turnLeft = function(context) {
-    context.canvas.width = 16;
-    context.canvas.height = 15;
-    if (!assetsLoaded) return onAssetsLoaded(this.redraw, this);
-    context.drawImage(assets, 229, 15, 16, 15, 0, 0, 16, 15);
+  Icon.prototype.icons.turnLeft = {
+    width: 16,
+    height: 15,
+    draw: function(context) {
+      if (!assetsLoaded) return onAssetsLoaded(this.redraw, this);
+      context.drawImage(assets, 229, 15, 16, 15, 0, 0, 16, 15);
+    }
   };
 
-  Icon.prototype.icons.greenFlag = function(context) {
-    context.canvas.width = 23;
-    context.canvas.height = 23;
-    if (!assetsLoaded) return onAssetsLoaded(this.redraw, this);
-    context.drawImage(assets, 245, 0, 23, 23, 0, 0, 23, 23);
+  Icon.prototype.icons.greenFlag = {
+    width: 23,
+    height: 23,
+    draw: function(context) {
+      if (!assetsLoaded) return onAssetsLoaded(this.redraw, this);
+      context.drawImage(assets, 245, 0, 23, 23, 0, 0, 23, 23);
+    }
   };
 
   Script.prototype.addRunningEffect = function() {
@@ -3162,6 +3168,7 @@
     this.spritePanel = new SpritePanel(this);
 
     this.app = new vis.App();
+    this.app.blockScale = 2;
     this.app.editor = this;
     this.app.exec = this.exec;
     this.app.add(this.exec);
