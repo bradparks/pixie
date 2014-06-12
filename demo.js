@@ -4531,6 +4531,7 @@
   };
 
   TipsPanel.prototype.open = function() {
+    if (this.tip == null) this.setContent('home');
     if (!this.isOpen) this.toggle();
   };
 
