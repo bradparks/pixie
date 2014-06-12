@@ -3166,6 +3166,7 @@
     this.stagePanel = new StagePanel(this);
     this.backpackPanel = new BackpackPanel(this);
     this.spritePanel = new SpritePanel(this);
+    this.tipsPanel = new TipsPanel(this);
 
     this.app = new vis.App();
     this.app.editor = this;
@@ -3176,6 +3177,7 @@
     this.app.add(this.stagePanel);
     this.app.add(this.spritePanel);
     this.app.add(this.backpackPanel);
+    this.app.add(this.tipsPanel);
 
     this.el = el('editor Visual-no-select');
 
@@ -3190,6 +3192,7 @@
     this.el.appendChild(this.stagePanel.el);
     this.el.appendChild(this.spritePanel.el);
     this.el.appendChild(this.backpackPanel.el);
+    this.el.appendChild(this.tipsPanel.el);
 
     this.tabPanel.scriptEditor.category = 1;
 
@@ -4352,6 +4355,17 @@
   BackpackPanel.prototype.toggle = function() {
     this.editor.el.classList.toggle('backpack-open');
   };
+
+
+  function TipsPanel(editor) {
+    this.editor = editor;
+
+    this.el = el('tips-panel');
+    this.el.appendChild(this.elTitle = el('tips-title'));
+    this.elTitle.appendChild(this.elIcon = el('tips-icon'));
+    this.elIcon.textContent = '?';
+    this.el.appendChild(this.elContent = el('tips-content'));
+  }
 
 
   function Dialog(title, content) {

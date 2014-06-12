@@ -577,6 +577,49 @@ button::-moz-focus-inner {
 .backpack-open .backpack-panel {
   bottom: 1px;
 }
+.tips-panel {
+  position: absolute;
+  top: 60px;
+  right: 0;
+  bottom: 0;
+  width: 19px;
+}
+.tips-title {
+  width: 100%;
+  padding: 0 5px;
+  height: 34px;
+  line-height: 32px;
+  background: linear-gradient(#fff, #e6e8e8);
+  color: #888;
+  border: 1px solid #bbb;
+  border-right: 0;
+  border-radius: 10px 0 0 0;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.tips-content {
+  position: absolute;
+  top: 34px;
+  left: 0;
+  bottom: 1px;
+  width: 100%;
+  border: 1px solid #bbb;
+  border-top: 0;
+  border-right: 0;
+  border-radius: 0 0 0 10px;
+  background: #e6e8e8;
+}
+.tips-icon {
+  display: inline;
+  font: bold 11px/1.5385em Helvetica Neue, Arial, sans-serif;
+  border: 2px solid #aaa;
+  border-radius: 10px;
+  padding: 0 3px;
+}
+.tips-icon:hover {
+  color: #1aa0d8;
+  border-color: #1aa0d8;
+}
 .dialog {
   position: fixed;
   left: 0;
