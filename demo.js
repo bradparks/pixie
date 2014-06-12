@@ -1255,7 +1255,7 @@
   ScratchObj.prototype.forEachScript = function(fn, context) {
     var s = this.scripts;
     for (var i = 0, l = s.length; i < l; i++) {
-      if (s[i].isBlock && s[i].blocks.length) fn.call(context, s[i], this);
+      if (s[i].isScript && s[i].blocks.length) fn.call(context, s[i], this);
     }
   };
 
