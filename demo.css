@@ -232,6 +232,7 @@ button::-moz-focus-inner {
     -1px 0 rgb(124, 126, 128),
     0 0 0 1px rgb(199, 200, 202),
     inset 1px 1px 1px -1px rgba(0, 0, 0, .5);
+  -webkit-appearance: none;
 }
 .project-author {
   position: absolute;
@@ -738,10 +739,12 @@ button::-moz-focus-inner {
   margin: 0 0 0 8px;
   padding: 4px 1px;
   border: 1px solid #d0d1d2;
+  border-radius: 0;
   background: #fff;
   font: inherit;
   font-size: 12px;
   outline: 0;
+  -webkit-appearance: none;
 }
 .dialog-radio-label {
   margin: 0 8px;
