@@ -610,9 +610,12 @@ button::-moz-focus-inner {
   border-radius: 0 0 0 10px;
   background: #e6e8e8;
 }
+.tips-icon,
+.tips-close-button {
+  font: bold 11px/1.5385em Helvetica Neue, Arial, sans-serif;
+}
 .tips-icon {
   display: inline;
-  font: bold 11px/1.5385em Helvetica Neue, Arial, sans-serif;
   border: 2px solid #aaa;
   border-radius: 10px;
   padding: 0 3px;
@@ -620,6 +623,26 @@ button::-moz-focus-inner {
 .tips-icon:hover {
   color: #1aa0d8;
   border-color: #1aa0d8;
+}
+.tips-close-button {
+  color: white;
+  border-radius: 13px;
+  padding: 0;
+  border: 0;
+  margin: 0;
+  width: 16px;
+  height: 16px;
+  text-align: center;
+  line-height: 14px;
+  display: block;
+  position: absolute;
+  left: 282px;
+  top: 8px;
+  background: #777;
+  cursor: pointer;
+}
+.tips-close-button:hover {
+  background: #1aa0d8;
 }
 .tips-open .tab-panel {
   right: 324px;

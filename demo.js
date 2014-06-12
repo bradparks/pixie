@@ -4365,13 +4365,21 @@
     this.el.appendChild(this.elTitle = el('tips-title'));
     this.elTitle.appendChild(this.elIcon = el('tips-icon'));
     this.elIcon.textContent = '?';
+    this.elTitle.appendChild(this.elClose = el('tips-close-button'));
+    this.elClose.textContent = 'x';
     this.el.appendChild(this.elContent = el('tips-content'));
 
     this.el.addEventListener('click', this.open.bind(this));
+    this.elClose.addEventListener('click', this.close.bind(this));
   }
 
   TipsPanel.prototype.open = function() {
     if (!this.isOpen) this.toggle();
+  };
+
+  TipsPanel.prototype.close = function(e) {
+    if (this.isOpen) this.toggle();
+    e.stopPropagation();
   };
 
   TipsPanel.prototype.toggle = function(e) {
