@@ -745,16 +745,16 @@
     height: 15,
     draw: function(context) {
       if (!assetsLoaded) return onAssetsLoaded(this.redraw, this);
-      context.drawImage(assets, 229, 0, 16, 15, 0, 0, 16, 15);
+      context.drawImage(assets, 230, 0, 31, 29, 0, 0, 15.5, 14.5);
     }
   };
 
   Icon.prototype.icons.turnLeft = {
-    width: 16,
+    width: 15,
     height: 15,
     draw: function(context) {
       if (!assetsLoaded) return onAssetsLoaded(this.redraw, this);
-      context.drawImage(assets, 229, 15, 16, 15, 0, 0, 16, 15);
+      context.drawImage(assets, 230, 30, 30, 29, 0, 0, 15, 14.5);
     }
   };
 
@@ -763,7 +763,7 @@
     height: 23,
     draw: function(context) {
       if (!assetsLoaded) return onAssetsLoaded(this.redraw, this);
-      context.drawImage(assets, 245, 0, 23, 23, 0, 0, 23, 23);
+      context.drawImage(assets, 262, 0, 46, 46, 0, 0, 23, 23);
     }
   };
 

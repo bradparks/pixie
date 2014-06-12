@@ -660,7 +660,7 @@ button::-moz-focus-inner {
   outline: 0;
   padding: 0;
   border: 0;
-  background: url(assets.png) -268px 0;
+  background: url(assets.png) -309px 0;
   width: 13px;
   height: 12px;
   vertical-align: middle;
@@ -671,7 +671,7 @@ button::-moz-focus-inner {
   top: -1px;
 }
 .check-box.checked {
-  background-position: -268px -12px;
+  background-position: -309px -12px;
 }
 .dialog-separator {
   border-top: 1px solid #d0d0d0;
@@ -734,7 +734,7 @@ button::-moz-focus-inner {
   position: absolute;
   left: 0;
   bottom: 0;
-  background: url(assets.png) -245px -23px;
+  background: url(assets.png) -309px -24px;
   border: 0;
   padding: 0;
   margin: 0;
