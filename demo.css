@@ -407,7 +407,7 @@ button::-moz-focus-inner {
   top: 33px;
   bottom: 22px;
   right: 22px;
-  -webkit-transition: bottom .2s;
+  -webkit-transition: bottom .2s, right .2s;
 }
 .tab {
   display: inline-block;
@@ -583,6 +583,7 @@ button::-moz-focus-inner {
   right: 0;
   bottom: 0;
   width: 19px;
+  -webkit-transition: width .2s;
 }
 .tips-title {
   width: 100%;
@@ -619,6 +620,12 @@ button::-moz-focus-inner {
 .tips-icon:hover {
   color: #1aa0d8;
   border-color: #1aa0d8;
+}
+.tips-open .tab-panel {
+  right: 324px;
+}
+.tips-open .tips-panel {
+  width: 321px;
 }
 .dialog {
   position: fixed;

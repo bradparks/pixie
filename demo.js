@@ -4359,13 +4359,25 @@
 
   function TipsPanel(editor) {
     this.editor = editor;
+    this.isOpen = false;
 
     this.el = el('tips-panel');
     this.el.appendChild(this.elTitle = el('tips-title'));
     this.elTitle.appendChild(this.elIcon = el('tips-icon'));
     this.elIcon.textContent = '?';
     this.el.appendChild(this.elContent = el('tips-content'));
+
+    this.el.addEventListener('click', this.open.bind(this));
   }
+
+  TipsPanel.prototype.open = function() {
+    if (!this.isOpen) this.toggle();
+  }
+
+  TipsPanel.prototype.toggle = function(e) {
+    this.isOpen = !this.isOpen;
+    this.editor.el.classList.toggle('tips-open');
+  };
 
 
   function Dialog(title, content) {
