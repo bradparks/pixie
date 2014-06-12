@@ -515,6 +515,7 @@ button::-moz-focus-inner {
 .palette-label {
   color: #5c5d5f;
   padding: 0 2px;
+  white-space: nowrap;
 }
 .palette-separator {
   width: 100px;
