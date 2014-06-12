@@ -627,6 +627,7 @@ button::-moz-focus-inner {
   border: 2px solid #aaa;
   border-radius: 10px;
   padding: 0 3px;
+  -webkit-transition: opacity .2s;
 }
 .tips-icon:hover {
   color: #1aa0d8;
@@ -654,6 +655,9 @@ button::-moz-focus-inner {
 }
 .tips-open .tab-panel {
   right: 324px;
+}
+.tips-open .tips-icon {
+  opacity: 0;
 }
 .tips-open .tips-panel {
   width: 321px;
