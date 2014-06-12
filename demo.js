@@ -4515,12 +4515,18 @@
     this.elClose.textContent = 'x';
     this.elTitle.appendChild(this.elLabel = el('tips-label'));
     this.elLabel.textContent = T('Tips');
+    this.elLabel.appendChild(this.elHome = el('tips-home'));
     this.el.appendChild(this.elContent = el('tips-content'));
     this.elContent.appendChild(this.elFrame = el('iframe', 'tips-frame'));
 
     this.el.addEventListener('click', this.open.bind(this));
     this.elClose.addEventListener('click', this.close.bind(this));
+    this.elLabel.addEventListener('click', this.home.bind(this));
   }
+
+  TipsPanel.prototype.home = function() {
+    this.show('home');
+  };
 
   TipsPanel.prototype.show = function(tip) {
     this.setContent(tip);

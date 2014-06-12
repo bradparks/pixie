@@ -607,8 +607,19 @@ button::-moz-focus-inner {
   width: 50px;
   cursor: pointer;
 }
+.tips-home {
+  position: absolute;
+  top: 8px;
+  left: 0;
+  width: 18px;
+  height: 15px;
+  background: url(assets.png) -86px -23px no-repeat;
+}
 .tips-label:hover {
   color: #1aa0d8;
+}
+.tips-label:hover .tips-home {
+  background-position: -86px -38px;
 }
 .tips-content {
   position: absolute;
