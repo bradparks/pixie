@@ -4513,6 +4513,8 @@
     this.elIcon.textContent = '?';
     this.elTitle.appendChild(this.elClose = el('tips-close-button'));
     this.elClose.textContent = 'x';
+    this.elTitle.appendChild(this.elLabel = el('tips-label'));
+    this.elLabel.textContent = T('Tips');
     this.el.appendChild(this.elContent = el('tips-content'));
     this.elContent.appendChild(this.elFrame = el('iframe', 'tips-frame'));
 

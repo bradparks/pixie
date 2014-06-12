@@ -589,6 +589,7 @@ button::-moz-focus-inner {
   width: 100%;
   padding: 0 5px;
   height: 34px;
+  font: bold 11px Helvetica Neue, Arial, sans-serif;
   line-height: 32px;
   background: linear-gradient(#fff, #e6e8e8);
   color: #888;
@@ -597,6 +598,17 @@ button::-moz-focus-inner {
   border-radius: 10px 0 0 0;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+}
+.tips-label {
+  position: absolute;
+  top: 1px;
+  left: 16px;
+  padding-left: 24px;
+  width: 50px;
+  cursor: pointer;
+}
+.tips-label:hover {
+  color: #1aa0d8;
 }
 .tips-content {
   position: absolute;
@@ -621,10 +633,6 @@ button::-moz-focus-inner {
   opacity: 0;
   -webkit-transition: opacity .2s;
   pointer-events: none;
-}
-.tips-icon,
-.tips-close-button {
-  font: bold 11px/1.5385em Helvetica Neue, Arial, sans-serif;
 }
 .tips-icon {
   display: inline;
