@@ -632,7 +632,7 @@ button::-moz-focus-inner {
   border-right: 0;
   border-radius: 0 0 0 10px;
   background: #e6e8e8;
-  -webkit-transition: background .2s;
+  -webkit-transition: background step-start .2s;
 }
 .tips-frame {
   position: absolute;
@@ -689,6 +689,7 @@ button::-moz-focus-inner {
 }
 .tips-open .tips-content {
   background: #eee;
+  -webkit-transition: background step-end .2s;
 }
 .tips-open .tips-frame,
 .tips-open .tips-label {
