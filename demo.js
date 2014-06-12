@@ -3168,7 +3168,6 @@
     this.spritePanel = new SpritePanel(this);
 
     this.app = new vis.App();
-    this.app.blockScale = 2;
     this.app.editor = this;
     this.app.exec = this.exec;
     this.app.add(this.exec);
