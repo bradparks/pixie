@@ -750,7 +750,7 @@
   };
 
   Icon.prototype.icons.turnLeft = {
-    width: 15,
+    width: 16,
     height: 15,
     draw: function(context) {
       if (!assetsLoaded) return onAssetsLoaded(this.redraw, this);
