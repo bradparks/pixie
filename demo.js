@@ -4372,7 +4372,7 @@
 
   TipsPanel.prototype.open = function() {
     if (!this.isOpen) this.toggle();
-  }
+  };
 
   TipsPanel.prototype.toggle = function(e) {
     this.isOpen = !this.isOpen;
