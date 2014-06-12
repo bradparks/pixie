@@ -609,6 +609,7 @@ button::-moz-focus-inner {
   border-right: 0;
   border-radius: 0 0 0 10px;
   background: #e6e8e8;
+  -webkit-transition: background .2s;
 }
 .tips-frame {
   position: absolute;
@@ -660,6 +661,9 @@ button::-moz-focus-inner {
 }
 .tips-open .tips-icon {
   opacity: 0;
+}
+.tips-open .tips-content {
+  background: #eee;
 }
 .tips-open .tips-frame {
   opacity: 1;
