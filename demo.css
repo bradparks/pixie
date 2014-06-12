@@ -659,7 +659,7 @@ button::-moz-focus-inner {
 }
 .tips-open .tab-panel,
 .tips-open .backpack-panel {
-  right: 324px;
+  right: 324px; /* NS */
 }
 .tips-open .tips-icon {
   opacity: 0;
