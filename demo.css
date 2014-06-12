@@ -657,7 +657,8 @@ button::-moz-focus-inner {
 .tips-close-button:hover {
   background: #1aa0d8;
 }
-.tips-open .tab-panel {
+.tips-open .tab-panel,
+.tips-open .backpack-panel {
   right: 324px;
 }
 .tips-open .tips-icon {
