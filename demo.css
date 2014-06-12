@@ -620,6 +620,7 @@ button::-moz-focus-inner {
   border: 0;
   opacity: 0;
   -webkit-transition: opacity .2s;
+  pointer-events: none;
 }
 .tips-icon,
 .tips-close-button {
@@ -667,6 +668,7 @@ button::-moz-focus-inner {
 }
 .tips-open .tips-frame {
   opacity: 1;
+  pointer-events: auto;
 }
 .tips-open .tips-panel {
   width: 321px;
