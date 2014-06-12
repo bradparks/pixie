@@ -641,6 +641,9 @@ button::-moz-focus-inner {
   width: 100%;
   height: 100%;
   border: 0;
+}
+.tips-frame,
+.tips-label {
   opacity: 0;
   -webkit-transition: opacity .2s;
   pointer-events: none;
@@ -682,11 +685,13 @@ button::-moz-focus-inner {
 }
 .tips-open .tips-icon {
   opacity: 0;
+  pointer-events: none;
 }
 .tips-open .tips-content {
   background: #eee;
 }
-.tips-open .tips-frame {
+.tips-open .tips-frame,
+.tips-open .tips-label {
   opacity: 1;
   pointer-events: auto;
 }
