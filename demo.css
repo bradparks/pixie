@@ -133,6 +133,7 @@ button::-moz-focus-inner {
   top: 33px;
   left: 5px;
   width: 482px;
+  -webkit-transition: width .2s;
 }
 .player .stage-panel {
   top: 0;
@@ -143,6 +144,7 @@ button::-moz-focus-inner {
   right: 9px;
   top: 401px;
   color: #5c5d5f;
+  -webkit-transition: top .2s;
 }
 .mouse-label {
   display: inline-block;
@@ -167,6 +169,9 @@ button::-moz-focus-inner {
   height: 37px;
   line-height: 37px;
   background: linear-gradient(#ffffff, #e6e8e8);
+}
+.title-label {
+  -webkit-transition: opacity .2s;
 }
 .title-button {
   vertical-align: middle;
@@ -249,6 +254,31 @@ button::-moz-focus-inner {
   height: 360px;
   box-shadow: 0 0 0 1px #d0d1d2;
   background: #fff;
+  -webkit-transform-origin: 0 0;
+  -webkit-transition: -webkit-transform .2s, box-shadow .2s;
+}
+.small-stage .stage-panel {
+  width: 242px;
+}
+.small-stage .project-name {
+  width: 110px;
+}
+.small-stage .sprite-panel {
+  width: 243px;
+  top: 271px;
+}
+.small-stage .mouse-coords {
+  top: 221px;
+}
+.small-stage .tab-panel {
+  left: 252px;
+}
+.small-stage .title-label {
+  opacity: 0;
+}
+.small-stage .stage {
+  -webkit-transform: scale(.5);
+  box-shadow: 0 0 0 2px #d0d1d2;
 }
 .sprite-panel {
   position: absolute;
@@ -256,6 +286,7 @@ button::-moz-focus-inner {
   left: 5px;
   bottom: 0;
   width: 483px;
+  -webkit-transition: top .2s, width .2s;
 }
 .sprite-panel .title-bar {
   position: relative;
@@ -408,7 +439,7 @@ button::-moz-focus-inner {
   top: 33px;
   bottom: 22px;
   right: 22px;
-  -webkit-transition: bottom .2s, right .2s;
+  -webkit-transition: left .2s, bottom .2s, right .2s;
 }
 .tab {
   display: inline-block;

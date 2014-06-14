@@ -3304,6 +3304,7 @@
 
     this.stage.editor = this;
     this.backpack = new LocalBackpack();
+    this.isSmallStage = false;
 
     this.exec = new Interpreter(this.stage, this);
 
@@ -3687,6 +3688,14 @@
     }
   };
 
+  Editor.prototype.toggleSmallStage = function() {
+    if (this.isSmallStage = !this.isSmallStage) {
+      this.el.classList.add('small-stage');
+    } else {
+      this.el.classList.remove('small-stage');
+    }
+  };
+
   Editor.prototype.languageMenu = function() {
     return new Menu(
       'English').withContext(this);
@@ -3710,7 +3719,7 @@
     return new Menu(
       'Undelete',
       Menu.line,
-      'Small stage layout',
+      ['Small stage layout', this.toggleSmallStage, {checked: this.isSmallStage}],
       'Turbo mode').translate().withContext(this);
   };
 
