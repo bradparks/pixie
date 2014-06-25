@@ -256,6 +256,7 @@ button::-moz-focus-inner {
   background: #fff;
   -webkit-transform-origin: 0 0;
   -webkit-transition: -webkit-transform .2s, box-shadow .2s;
+  overflow: hidden;
 }
 .small-stage .stage-panel {
   width: 242px;
