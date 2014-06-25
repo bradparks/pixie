@@ -3380,7 +3380,7 @@
   };
 
   Editor.prototype.chooseProjectFile = function() {
-    return chooseFile('.sb2', this.openProjectFile.bind(this));
+    chooseFile('.sb2', this.openProjectFile.bind(this));
   };
 
   Editor.prototype.getEmptyProject = function() {
