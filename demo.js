@@ -3370,7 +3370,9 @@
     var reader = new FileReader;
     reader.onloadend = function(e) {
       var zip = new JSZip(reader.result);
-      var stage = Stage.deserialize(JSON.parse(zip.file('project.json').asText()));
+      var json = zip.file(/\/project.json$/)[0];
+      if (!json) return;
+      var stage = Stage.deserialize(JSON.parse(json.asText()));
       stage.title = stripExtension(file.name);
       this.installProject(stage);
     }.bind(this);
