@@ -1678,6 +1678,7 @@
     // TODO projectID
     this.info.videoOn = false; // TODO
     this.info.appVersion = Editor.prototype.version;
+    this.info.title = this.title;
   };
 
   Stage.deserialize = function(json) {return new Stage().fromJSON(json)};
@@ -1696,6 +1697,9 @@
       }, this);
     }
     this.info = typeof json.info === 'object' && !Array.isArray(json.info) ? json.info : {};
+    if (this.info.title) {
+      this.title = ''+this.info.title;
+    }
     return this;
   };
 
