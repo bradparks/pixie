@@ -3272,7 +3272,7 @@
   function Editor() {
     if (location.hash.length > 1) {
       this.stage = this.getEmptyProject();
-      var id = location.hash.slice(1);
+      var id = location.hash.slice(1).match(/\d+/)+'';
       Server.getProject(id, function(err, data) {
         if (err) {
           Dialog.alert(T('Error'), T('Could not fetch project from scratch.mit.edu.')).show(this);
