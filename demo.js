@@ -1854,7 +1854,7 @@
     this.elMeasure = el('list-cell-contents list-cell-metrics');
     this.measureNode = document.createTextNode('');
     this.elMeasure.appendChild(this.measureNode);
-    document.body.appendChild(this.elMeasure);
+    vis.util.metricsContainer.appendChild(this.elMeasure);
 
     this.updateIndexWidth(true);
     this.resizeTo(width || 100, height || 200);
