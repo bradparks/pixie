@@ -1011,7 +1011,7 @@
       xhr.send();
       if (cb) {
         xhr.onload = function() {
-          if (xhr.status == 200) {
+          if (xhr.status === 200) {
             cb(null, xhr.responseText);
           } else {
             cb(new Error('HTTP ' + xhr.status));
