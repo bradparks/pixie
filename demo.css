@@ -272,7 +272,8 @@ button::-moz-focus-inner {
 .small-stage .mouse-coords {
   top: 221px;
 }
-.small-stage .tab-panel {
+.small-stage .tab-panel,
+.small-stage .backpack-panel {
   left: 252px;
 }
 .small-stage .title-label {
@@ -587,7 +588,7 @@ button::-moz-focus-inner {
   left: 492px;
   right: 22px;
   height: 136px;
-  -webkit-transition: bottom .2s, right .2s;
+  -webkit-transition: bottom .2s, right .2s, left .2s;
 }
 .backpack-title {
   background: linear-gradient(#ffffff, #e6e8e8);
