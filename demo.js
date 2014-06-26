@@ -4313,7 +4313,7 @@
     this.elNewGroup.textContent = T('New sprite:');
     this.addNewButton('new-library', this.newFromLibrary);
     this.addNewButton('new-paint');
-    this.addNewButton('new-import');
+    this.addNewButton('new-import', null, 'image/*,.sprite2', true);
     this.addNewButton('new-camera');
 
     this.el.appendChild(this.elStageSection = el('stage-section'));
@@ -4388,9 +4388,23 @@
     this.icons = [];
   };
 
-  SpritePanel.prototype.addNewButton = function(name, fn) {
-    var button = el('button', 'new-button '+name);
-    if (fn) button.addEventListener('click', fn.bind(this));
+  SpritePanel.prototype.addNewButton = function(name, fn, file, multiple) {
+    var button = el(file ? 'div' : 'button', 'new-button '+name);
+    if (file) {
+      var form = el('form', 'new-button-form');
+      var input = el('input', 'new-button-input');
+      input.type = 'file';
+      if (typeof file === 'string') input.accept = file;
+      if (multiple) input.multiple = true;
+      form.appendChild(input);
+      button.appendChild(form);
+      if (fn) input.addEventListener('change', function() {
+        fn(multiple ? slice.call(input.files) : input.files[0]);
+        form.reset();
+      });
+    } else {
+      if (fn) button.addEventListener('click', fn.bind(this));
+    }
     this.elNewGroup.appendChild(button);
   };
 

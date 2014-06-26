@@ -316,10 +316,22 @@ button::-moz-focus-inner {
   border: 0;
   margin: 0;
   padding: 0;
+  display: inline-block;
+  overflow: hidden;
   position: relative;
   top: 3px;
   vertical-align: top;
   background: url(assets.png);
+}
+.new-button-input {
+  position: absolute;
+  vertical-align: top;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  margin: 0;
+  padding: 0;
+  font-size: 19px;
 }
 .new-library {
   background-position: -115px 0;
