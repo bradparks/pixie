@@ -1642,6 +1642,7 @@
     this.scale = 1;
     this.visible = true;
     this.isDraggable = false;
+    this.indexInLibrary = 1e6;
 
     this.isPenDown = false;
     this.penSize = 1;
@@ -1661,7 +1662,7 @@
     json.direction = this.direction;
     json.rotationStyle = this.rotationStyle;
     json.isDraggable = this.isDraggable;
-    json.indexInLibrary = 0; // TODO
+    json.indexInLibrary = this.indexInLibrary;
     json.visible = this.visible;
     json.spriteInfo = this.info;
     return json;
@@ -1680,6 +1681,7 @@
     this.scale = json.scale == null ? 1 : Math.max(0, Math.min(1000, Number(json.scale) || 0));
     this.visible = json.visible == null ? true : !!json.visible;
     this.isDraggable = !!json.isDraggable;
+    this.indexInLibrary = Math.max(-1e6, Math.min(1e6, Number(json.indexInLibrary) || 0));
     this.info = typeof json.spriteInfo === 'object' && !Array.isArray(json.spriteInfo) ? json.spriteInfo : {};
     return this;
   };
@@ -4426,14 +4428,19 @@
 
     this.el.appendChild(this.elSpriteSection = el('sprite-section'));
 
-    editor.stage.sprites.forEach(this.addIcon, this);
-    this.select(this.icons[0] || this.stageIcon);
+    this.addIcons(editor.stage);
   }
 
   SpritePanel.prototype.installProject = function(stage) {
     this.stageIcon.sprite = stage;
     this.removeAllIcons();
-    stage.sprites.forEach(this.addIcon, this);
+    this.addIcons(stage);
+  };
+
+  SpritePanel.prototype.addIcons = function(stage) {
+    stage.sprites.slice().sort(function(a, b) {
+      return a.indexInLibrary - b.indexInLibrary;
+    }).forEach(this.addIcon, this);
     this.select(this.icons[0] || this.stageIcon);
   };
 
