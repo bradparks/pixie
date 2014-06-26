@@ -1606,9 +1606,9 @@
         context.scale(-1, 1);
       }
       context.scale(this.scale, this.scale);
+      context.translate(-costume.cx, -costume.cy);
       context.scale(costume.scale, costume.scale);
-
-      context.drawImage(costume.canvas, -costume.cx, -costume.cy);
+      context.drawImage(costume.canvas, 0, 0);
       context.restore();
     }
   };
