@@ -1022,6 +1022,84 @@
     }
   };
 
+  var IO = {
+    writeArchive: function(object, cb, context) {
+      try {
+        var zip = new JSZip;
+        IO.contents = zip.folder('contents');
+        IO.imageCount = 0;
+        IO.soundCount = 0;
+        IO.contents.file((object.isStage ? 'project' : 'sprite') + '.json', JSON.stringify(object));
+        cb.call(context, null, zip.generate({type: "arraybuffer"}));
+      } catch (e) {
+        cb.call(context, e);
+      } finally {
+        IO.contents = null;
+      }
+    },
+    writeImage: function(image) {
+      if (!IO.contents) return -1;
+      var canvas = document.createElement('canvas');
+      canvas.width = image.width;
+      canvas.height = image.height;
+      canvas.getContext('2d').drawImage(image, 0, 0);
+      var id = IO.imageCount++;
+      IO.contents.file(id+'.png', canvas.toDataURL().slice('data:image/png;base64,'.length), {base64: true});
+      return id;
+    },
+    readArchiveFile: function(file, cb, context) {
+      var reader = new FileReader;
+      reader.onloadend = function(e) {
+        IO.readArchive(reader.result, function(err, object) {
+          if (err) return cb.call(context, err);
+          if (object.isStage) object.title = stripExtension(file.name);
+          cb.call(context, null, object);
+        });
+      };
+      reader.readAsArrayBuffer(file);
+    },
+    readArchive: function(data, cb, context) {
+      var zip = new JSZip(data);
+      IO.images = {};
+      IO.sounds = {};
+      var json, x;
+      for (var name in zip.files) if (hasOwnProperty.call(zip.files, name)) {
+        if (x = /(\d+)\.(?:gif|jpg|png|svg)$/.exec(name)) {
+          IO.images[x[1]] = IO.getImage(zip.file(name));
+        } else if (/\.json$/.test(name)) {
+          json = zip.file(name).asText();
+        }
+      }
+      if (!json) return cb(new Error('No JSON data'));
+      try {
+        var object = JSON.parse(json);
+        if (hasOwnProperty.call(object, 'children')) {
+          cb.call(context, null, Stage.deserialize(object));
+        } else if (hasOwnProperty.call(object, 'direction')) {
+          cb.call(context, null, Sprite.deserialize(object));
+        } else {
+          throw new TypeError('Unknown object');
+        }
+      } catch (e) {
+        cb.call(context, e);
+      } finally {
+        IO.images = null;
+        IO.sounds = null;
+      }
+    },
+    MIME_TYPES: {
+      'png': 'image/png',
+      'gif': 'image/gif',
+      'jpg': 'image/jpeg',
+      'svg': 'image/svg+xml'
+    },
+    getImage: function(file, ext) {
+      var img = document.createElement('img');
+      img.src = 'data:'+IO.MIME_TYPES[file.name.split('.').pop()]+';base64,'+btoa(file.asBinary());
+      return img;
+    }
+  };
+
   var assets = document.createElement('img');
   var assetsLoaded = false;
   assets.src = 'assets.png';
@@ -1464,7 +1542,7 @@
   Costume.prototype.toJSON = function() {
     return {
       costumeName: this.name,
-      baseLayerID: -1,
+      baseLayerID: IO.writeImage(this.canvas),
       baseLayerMD5: this.baseLayerMD5, // TODO
       bitmapResolution: this.pixelRatio,
       rotationCenterX: this.cx,
@@ -1476,7 +1554,11 @@
     var cx = Math.max(-1e6, Math.min(1e6, Number(json.rotationCenterX)));
     var cy = Math.max(-1e6, Math.min(1e6, Number(json.rotationCenterY)));
     var pr = Math.max(1, Math.min(16, Number(json.bitmapResolution) || 0));
-    return new Costume(''+json.costumeName, ''+json.baseLayerMD5, cx, cy, pr);
+    var canvas = ''+json.baseLayerMD5;
+    if (typeof json.baseLayerID === 'number' && json.baseLayerID > -1) {
+      canvas = IO.images && IO.images[json.baseLayerID] || canvas;
+    }
+    return new Costume(''+json.costumeName, canvas, cx, cy, pr);
   };
 
   Costume.prototype.copy = function() {
@@ -3403,20 +3485,26 @@
   };
 
   Editor.prototype.openProjectFile = function(file) {
-    var reader = new FileReader;
-    reader.onloadend = function(e) {
-      var zip = new JSZip(reader.result);
-      var json = zip.file(/(?:^|\/)project.json$/)[0];
-      if (!json) return;
-      var stage = Stage.deserialize(JSON.parse(json.asText()));
-      stage.title = stripExtension(file.name);
+    IO.readArchiveFile(file, function(err, stage) {
+      if (err) return console.warn(err.stack); // TODO
+      if (!stage.isStage) {
+        var sprite = stage;
+        stage = this.getEmptyProject();
+        stage.add(sprite);
+      }
       this.installProject(stage);
-    }.bind(this);
-    reader.readAsArrayBuffer(file);
+    }, this);
   };
 
   Editor.prototype.chooseProjectFile = function() {
     chooseFile('.sb2', this.openProjectFile.bind(this));
+  };
+
+  Editor.prototype.saveProjectFile = function() {
+    IO.writeArchive(this.stage, function(err, data) {
+      if (err) return console.warn(err.stack); // TODO
+      saveFile(this.stage.title+'.sb2', 'application/octet-stream', data);
+    }, this);
   };
 
   Editor.prototype.getEmptyProject = function() {
@@ -3748,7 +3836,7 @@
       'Go to my stuff',
       Menu.line,
       ['Upload from your computer', this.openProjectFile, {file: '.sb2'}],
-      'Download to your computer',
+      ['Download to your computer', this.saveProjectFile],
       Menu.line,
       'Revert').translate().withContext(this);
   };
@@ -4468,8 +4556,15 @@
       this.sprite.visible ? ['hide', this.hideSprite] : ['show', this.showSprite],
       ['delete', this.deleteSprite],
       Menu.line,
-      'save to local file').withContext(this).translate();
+      ['save to local file', this.saveSpriteFile]).withContext(this).translate();
   }});
+
+  SpriteIcon.prototype.saveSpriteFile = function() {
+    IO.writeArchive(this.sprite, function(err, data) {
+      if (err) return console.warn(err.stack); // TODO
+      saveFile(this.sprite.name+'.sprite2', 'application/octet-stream', data);
+    }, this);
+  };
 
   SpriteIcon.prototype.duplicateSprite = function() {
     var sprite = this.sprite.copy();
