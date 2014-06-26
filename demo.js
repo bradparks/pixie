@@ -4064,7 +4064,10 @@
     this.showMenu(this.editButton, this.editor.editMenu());
   };
 
-  TopBar.prototype.showTips = function() {};
+  TopBar.prototype.showTips = function() {
+    this.editor.tipsPanel.home();
+  };
+
   TopBar.prototype.showAbout = function() {};
 
   TopBar.prototype.showMenu = function(button, menu) {
