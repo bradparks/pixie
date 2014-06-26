@@ -423,9 +423,9 @@
         "heading:",
         "pointTowards:",
         "---",
-        "gotoX:y:",
+        ["gotoX:y:", {current: 'x'}, {current: 'y'}],
         "gotoSpriteOrMouse:",
-        "glideSecs:toX:y:elapsed:from:",
+        ["glideSecs:toX:y:elapsed:from:", 1, {current: 'x'}, {current: 'y'}],
         "---",
         "changeXposBy:",
         "xpos:",
@@ -3918,6 +3918,12 @@
     if (arg.first) {
       var key = arg.first === 'var' ? 'variables' : arg.first === 'list' ? 'lists' : '';
       if (key) return this.editor.stage[key].concat(this.editor.selectedSprite[key]).map(getName).sort()[0];
+    }
+    if (arg.current) {
+      switch (arg.current) {
+        case 'x': return Math.round(this.editor.selectedSprite.x || 0);
+        case 'y': return Math.round(this.editor.selectedSprite.y || 0);
+      }
     }
     return '';
   };
