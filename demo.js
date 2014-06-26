@@ -3358,7 +3358,7 @@
 
     this.el.appendChild(this.elTopButtons = el('project-buttons'));
     this.elTopButtons.appendChild(this.elShareButton = el('button', 'project-button'));
-    this.elShareButton.innerText = T('Share');
+    this.elShareButton.textContent = T('Share');
     this.elTopButtons.appendChild(this.elFlipButton = el('button', 'project-button flip'));
     this.elFlipButton.innerHTML = '<i></i>'+T('See project page');
 
