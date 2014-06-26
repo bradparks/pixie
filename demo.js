@@ -3052,6 +3052,7 @@
 
     table['doWaitUntil'] = function(b) {
       if (!interp.barg(b, 0)) {
+        interp.yield = true;
         interp.activeThread.pc--;
       }
     };
