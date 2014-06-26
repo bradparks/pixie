@@ -2726,6 +2726,14 @@
       }
     };
 
+    table['nextCostume'] = function() {
+      var sprite = interp.activeThread.target;
+      if (sprite.isSprite) {
+        sprite.costume = (sprite.costume + 1) % sprite.costumes.length;
+        if (sprite.visible) interp.redraw = true;
+      }
+    };
+
     table['changeSizeBy:'] = function(b) {
       var sprite = interp.activeThread.target;
       if (sprite.isSprite) {
