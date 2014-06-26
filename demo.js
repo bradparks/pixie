@@ -1097,6 +1097,21 @@
       var img = document.createElement('img');
       img.src = 'data:'+IO.MIME_TYPES[file.name.split('.').pop()]+';base64,'+btoa(file.asBinary());
       return img;
+    },
+    readImageFile: function(file, cb, context) {
+      var reader = new FileReader;
+      reader.onloadend = function() {
+        if (reader.error) return cb.call(context, reader.error);
+        var image = document.createElement('img');
+        image.src = 'data:'+file.type+';base64,'+btoa(reader.result);
+        image.onload = function() {
+          cb.call(context, null, image);
+        };
+        image.onerror = function() {
+          cb.call(context, null, new Error('Failed to load image'));
+        };
+      };
+      reader.readAsBinaryString(file);
     }
   };
 
@@ -4401,7 +4416,7 @@
     this.elNewGroup.textContent = T('New sprite:');
     this.addNewButton('new-library', this.newFromLibrary);
     this.addNewButton('new-paint');
-    this.addNewButton('new-import', null, 'image/*,.sprite2', true);
+    this.addNewButton('new-import', this.newFromFile, 'image/*,.sprite2');
     this.addNewButton('new-camera');
 
     this.el.appendChild(this.elStageSection = el('stage-section'));
@@ -4422,11 +4437,28 @@
     this.select(this.icons[0] || this.stageIcon);
   };
 
+  SpritePanel.prototype.emptySprite = function() {
+    return new Sprite(this.editor.stage.uniqueName(T('Sprite1')));
+  };
+
   SpritePanel.prototype.newFromLibrary = function() {
-    var sprite = new Sprite(this.editor.stage.uniqueName(T('Sprite1')))
+    this.editor.addSprite(this.emptySprite()
       .addCostume(new Costume('costume1', 'f9a1c175dbe2e5dee472858dd30d16bb.svg', 47, 55))
-      .addCostume(new Costume('costume2', 'c68e7b211672862001dd4fce12129813.png', 57, 41));
-    this.editor.addSprite(sprite);
+      .addCostume(new Costume('costume2', 'c68e7b211672862001dd4fce12129813.png', 57, 41)));
+  };
+
+  SpritePanel.prototype.newFromFile = function(file) {
+    if (/^image\//.test(file.type)) {
+      IO.readImageFile(file, function(image) {
+        this.editor.addSprite(this.emptySprite()
+          .addCostume(new Costume(stripExtension(file.name), image, image.width / 2, image.height / 2)));
+      }, this);
+    } else {
+      IO.readArchiveFile(file, function(err, object) {
+        if (err || !object.isSprite) return console.warn(err, object); // TODO
+        this.editor.addSprite(object);
+      }, this);
+    }
   };
 
   SpritePanel.prototype.select = function(icon) {
@@ -4486,8 +4518,9 @@
       if (multiple) input.multiple = true;
       form.appendChild(input);
       button.appendChild(form);
+      var self = this;
       if (fn) input.addEventListener('change', function() {
-        fn(multiple ? slice.call(input.files) : input.files[0]);
+        fn.call(self, multiple ? slice.call(input.files) : input.files[0]);
         form.reset();
       });
     } else {
