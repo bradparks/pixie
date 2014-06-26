@@ -2743,13 +2743,24 @@
       }
     };
 
+    table['comeToFront'] = function(b) {
+      var sprite = interp.activeThread.target;
+      if (sprite.isSprite) {
+        var sprites = interp.stage.sprites;
+        var i = sprites.indexOf(sprite);
+        if (i !== -1) sprites.splice(i, 1);
+        sprites.splice(sprites.length, 0, sprite);
+        if (sprite.visible) interp.redraw = true;
+      }
+    };
+
     table['goBackByLayers:'] = function(b) {
       var sprite = interp.activeThread.target;
       if (sprite.isSprite) {
         var sprites = interp.stage.sprites;
         var i = sprites.indexOf(sprite);
         var delta = interp.narg(b, 0);
-        sprites.splice(i, 1);
+        if (i !== -1) sprites.splice(i, 1);
         sprites.splice(Math.max(0, Math.min(sprites.length, i - delta)), 0, sprite);
         if (sprite.visible) interp.redraw = true;
       }
