@@ -2728,7 +2728,7 @@
 
     table['nextCostume'] = function() {
       var sprite = interp.activeThread.target;
-      if (sprite.isSprite) {
+      if (sprite.isSprite && sprite.costumes.length) {
         sprite.costume = (sprite.costume + 1) % sprite.costumes.length;
         if (sprite.visible) interp.redraw = true;
       }
