@@ -3436,7 +3436,7 @@
       .addCostume(new Costume('backdrop1', '739b5e2a2435f6e1ec2993791b423146.png', 240, 180));
     stage.add(new Sprite('Sprite1')
       .addCostume(new Costume('costume1', 'f9a1c175dbe2e5dee472858dd30d16bb.svg', 47, 55))
-      .addCostume(new Costume('costume2', 'c68e7b211672862001dd4fce12129813.png', 57, 41)));
+      .addCostume(new Costume('costume2', 'c68e7b211672862001dd4fce12129813.png', 94, 108, 2)));
     stage.title = T('Untitled');
     return stage;
   };
