@@ -4626,7 +4626,7 @@
     var x = (w - aw)/2;
     var y = (h - ah)/2;
 
-    this.tmpContext.width = this.tmpContext.width;
+    this.elTmp.width = this.elTmp.width;
     this.tmpContext.drawImage(costume.canvas, x, y, aw, ah);
 
     var ps = [-1, 0, 1];
