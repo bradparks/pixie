@@ -3987,12 +3987,12 @@
       var button = el('button', 'ui-button');
       button.textContent = T(t.text);
       if (editor[t.action]) button.addEventListener('click', editor[t.action].bind(editor));
-      return this.palette.add(Palette.element(button));
+      return this.palette.add(Palette.element(button, 0, 26));
     }
     if (t.text) {
       var div = el('palette-label');
       div.textContent = T(t.text);
-      return this.palette.add(Palette.element(div));
+      return this.palette.add(Palette.element(div, 0, 14));
     }
     if (t.watcher) {
       var b = t.watcher;
@@ -4006,11 +4006,11 @@
           button.classList.remove('checked');
         }
       }.bind(this));
-      this.palette.add(Palette.inline(button));
+      this.palette.add(Palette.inline(button, 13, 12));
       return this.eval(b);
     }
     if (t === '==') {
-      return this.palette.add(Palette.element(el('palette-separator')));
+      return this.palette.add(Palette.element(el('palette-separator'), 0, 2));
     }
     if (t === '--' || t === '---') {
       return this.palette.add(Palette.space(t.length * 10 - 5));
