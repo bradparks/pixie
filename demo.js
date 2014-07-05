@@ -3597,24 +3597,12 @@
     stage.editor = this;
   };
 
-  Editor.prototype.start = function() {
-    this.interval = setInterval(this.step.bind(this), 1000 / 60);
-  };
-
   Editor.prototype.stop = function() {
     clearInterval(this.interval);
   };
 
   Editor.prototype.resize = function() {
     this.app.resize();
-  };
-
-  Editor.prototype.step = function() {
-    step(this.topBar);
-    step(this.tabPanel);
-    step(this.stagePanel);
-    step(this.spritePanel);
-    step(this.backpackPanel);
   };
 
   Editor.prototype.setTitle = function(name) {
@@ -5225,7 +5213,6 @@
   var editor = new Editor();
   document.body.appendChild(editor.el);
   editor.resize();
-  editor.start();
   window.editor = editor;
 
   // var player = document.querySelector('.player');
