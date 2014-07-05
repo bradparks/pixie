@@ -1523,25 +1523,29 @@
   }});
 
 
-  function Costume(name, canvas, cx, cy, pixelRatio) {
+  function Costume(name, canvas, cx, cy, pixelRatio, textLayer) {
     this.baseLayerMD5 = null;
     this.loaded = true;
     if (typeof canvas === 'string') { // MD5
       this.baseLayerMD5 = canvas;
       canvas = Server.getImageAsset(canvas);
     }
-    if (canvas.tagName === 'IMG') {
-      if (!canvas.width) {
-        this.loaded = false;
-        canvas.addEventListener('load', function() {
-          this.loaded = true;
-          this.updateSize();
-          if (this.owner) this.owner.redraw();
-        }.bind(this));
-      }
+    if (typeof textLayer === 'string') { // MD5
+      this.textLayerMD5 = textLayer;
+      textLayer = Server.getImageAsset(textLayer);
     }
     this.name = name;
     this.canvas = canvas;
+    if (canvas.tagName === 'IMG') {
+      this.textLayer = textLayer;
+      this.baseLayer = canvas;
+      if (!canvas.width) {
+        this.loaded = false;
+        canvas.addEventListener('load', this.baseLayerLoaded.bind(this));
+      } else if (this.textLayer) {
+        this.composite();
+      }
+    }
     this.cx = cx || 0;
     this.cy = cy || 0;
     this.pixelRatio = pixelRatio || 1;
@@ -1570,16 +1574,55 @@
     var cy = Math.max(-1e6, Math.min(1e6, Number(json.rotationCenterY)));
     var pr = Math.max(1, Math.min(16, Number(json.bitmapResolution) || 0));
     var canvas = ''+json.baseLayerMD5;
+    var textLayer = json.textLayerMD5 && ''+json.textLayerMD5;
     if (typeof json.baseLayerID === 'number' && json.baseLayerID > -1) {
       canvas = IO.images && IO.images[json.baseLayerID] || canvas;
     }
-    return new Costume(''+json.costumeName, canvas, cx, cy, pr);
+    if (typeof json.textLayerID === 'number' && json.textLayerID > -1) {
+      textLayer = IO.images && IO.images[json.textLayerID] || textLayer;
+    }
+    return new Costume(''+json.costumeName, canvas, cx, cy, pr, textLayer);
   };
 
   Costume.prototype.copy = function() {
     var c = new Costume(this.name, this.canvas, this.cx, this.cy);
     c.baseLayerMD5 = this.baseLayerMD5;
     return c;
+  };
+
+  Costume.prototype.baseLayerLoaded = function() {
+    if (this.textLayer) {
+      if (this.textLayer.width) {
+        this.composite();
+      } else {
+        this.textLayer.addEventListener('load', this.composite.bind(this));
+      }
+    } else {
+      this.imageLoaded();
+    }
+  };
+
+  Costume.prototype.composite = function() {
+    this.canvas = document.createElement('canvas');
+    this.canvas.width = this.baseLayer.width;
+    this.canvas.height = this.baseLayer.height;
+    var context = this.canvas.getContext('2d');
+    context.drawImage(this.baseLayer, 0, 0);
+    if (this.textLayer.width) context.drawImage(this.textLayer, 0, 0);
+    this.imageLoaded();
+  };
+
+  Costume.prototype.imageLoaded = function() {
+    this.loaded = true;
+    this.updateSize();
+    if (this.owner) {
+      this.owner.redraw();
+      var s = this.owner.stage || this.owner;
+      if (s.isStage && s.editor && s.editor.selectedSprite === this.owner) {
+        var icon = s.editor.tabPanel.costumeEditor.iconFor(this);
+        if (icon) icon.updateThumbnail();
+      }
+    }
   };
 
 
