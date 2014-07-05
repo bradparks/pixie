@@ -4074,11 +4074,114 @@
   };
 
 
-  function CostumeEditor() {
+  function CostumeEditor(editor) {
+    this.editor = editor;
+
     this.el = el('costume-editor');
+    this.el.appendChild(this.elNewLabel = el('costume-new-label'));
+    this.el.appendChild(this.elList = el('costume-list'));
+    this.el.appendChild(this.elEditor = el('image-editor'));
   }
 
-  CostumeEditor.prototype.showSprite = function(sprite) {};
+  CostumeEditor.prototype.showSprite = function(sprite) {
+    this.sprite = sprite;
+    this.elNewLabel.textContent = sprite.isSprite ? T('New costume:') : T('New backdrop:');
+    this.updateList();
+  };
+
+  CostumeEditor.prototype.updateList = function() {
+    while (this.elList.firstChild) this.elList.removeChild(this.elList.lastChild);
+    this.icons = this.sprite.costumes.map(function(c) {
+      var icon = new CostumeIcon(this, c);
+      this.elList.appendChild(icon.el);
+      return icon;
+    }, this);
+  };
+
+  CostumeEditor.prototype.iconFor = function(costume) {
+    var i = this.icons.length;
+    while (i--) {
+      if (this.icons[i].costume === costume) {
+        return this.icons[i];
+      }
+    }
+    return null;
+  };
+
+  CostumeEditor.prototype.select = function(icon) {
+    if (this.selectedIcon) {
+      this.selectedIcon.deselect();
+    }
+    if (this.selectedIcon = icon) {
+      icon.select();
+    }
+  };
+
+  function CostumeIcon(costumeEditor, costume) {
+    this.costumeEditor = costumeEditor;
+    this.sprite = costumeEditor.editor.selectedSprite;
+    this.costume = costume;
+
+    this.el = el('costume-icon');
+    this.el.appendChild(this.elThumbnail = el('canvas', 'costume-thumbnail'));
+    this.elThumbnail.width = 68;
+    this.elThumbnail.height = 51;
+    this.context = this.elThumbnail.getContext('2d');
+    this.el.appendChild(this.elNumber = el('costume-number'));
+    this.el.appendChild(this.elName = el('costume-name'));
+    this.el.appendChild(this.elInfo = el('costume-info'));
+
+    this.el.addEventListener('click', this.click.bind(this));
+
+    this.updateIndex();
+    this.updateName();
+    this.updateThumbnail();
+
+    if (costume === this.sprite.costumes[this.sprite.costume]) {
+      costumeEditor.select(this);
+    }
+  }
+
+  CostumeIcon.prototype.select = function() {
+    this.el.classList.add('selected');
+  };
+
+  CostumeIcon.prototype.deselect = function() {
+    this.el.classList.remove('selected');
+  };
+
+  CostumeIcon.prototype.click = function() {
+    this.costumeEditor.select(this);
+    this.sprite.costume = this.index;
+    this.sprite.redraw();
+  };
+
+  CostumeIcon.prototype.updateIndex = function() {
+    this.index = this.sprite.costumes.indexOf(this.costume);
+    this.elNumber.textContent = this.index + 1;
+  };
+
+  CostumeIcon.prototype.updateName = function() {
+    this.elName.textContent = this.costume.name;
+  };
+
+  CostumeIcon.prototype.updateInfo = function() {
+    this.elInfo.textContent = this.costume.canvas.width + '\xd7' + this.costume.canvas.height;
+  };
+
+  CostumeIcon.prototype.updateThumbnail = function() {
+    this.updateInfo();
+    var tw = this.elThumbnail.width;
+    var th = this.elThumbnail.height;
+    var iw = this.costume.canvas.width;
+    var ih = this.costume.canvas.height;
+    this.context.clearRect(0, 0, tw, th);
+    if (!iw || !ih) return;
+    var s = Math.min(1, tw / iw, th / ih);
+    var sw = s * iw;
+    var sh = s * ih;
+    this.context.drawImage(this.costume.canvas, (tw - sw) / 2, (th - sh) / 2, sw, sh);
+  };
 
 
   function SoundEditor() {
@@ -4145,7 +4248,7 @@
   };
 
   TabPanel.prototype.resize = function() {
-    if (this._panel) this._panel.resize();
+    if (this._panel) resize(this._panel);
   };
 
   TabPanel.prototype.uninstall = function(parent) {
