@@ -3868,6 +3868,7 @@
     } else {
       this.el.classList.remove('small-stage');
     }
+    setTimeout(this.resize.bind(this), 200);
   };
 
   Editor.prototype.languageMenu = function() {
