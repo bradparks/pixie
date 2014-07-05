@@ -134,6 +134,8 @@ button::-moz-focus-inner {
   left: 5px;
   width: 482px;
   -webkit-transition: width .2s;
+  -moz-transition: width .2s;
+  transition: width .2s;
 }
 .player .stage-panel {
   top: 0;
@@ -145,6 +147,8 @@ button::-moz-focus-inner {
   top: 401px;
   color: #5c5d5f;
   -webkit-transition: top .2s;
+  -moz-transition: top .2s;
+  transition: top .2s;
 }
 .mouse-label {
   display: inline-block;
@@ -172,6 +176,8 @@ button::-moz-focus-inner {
 }
 .title-label {
   -webkit-transition: opacity .2s;
+  -moz-transition: opacity .2s;
+  transition: opacity .2s;
 }
 .title-button {
   vertical-align: middle;
@@ -239,6 +245,8 @@ button::-moz-focus-inner {
     inset 1px 1px 1px -1px rgba(0, 0, 0, .5);
   -webkit-appearance: none;
   -webkit-transition: width .2s;
+  -moz-transition: width .2s;
+  transition: width .2s;
 }
 .project-author {
   position: absolute;
@@ -259,6 +267,8 @@ button::-moz-focus-inner {
   -moz-transform-origin: 0 0;
   transform-origin: 0 0;
   -webkit-transition: -webkit-transform .2s, box-shadow .2s;
+  -moz-transition: -moz-transform .2s, box-shadow .2s;
+  transition: transform .2s, box-shadow .2s;
   overflow: hidden;
 }
 .small-stage .stage-panel {
@@ -294,6 +304,8 @@ button::-moz-focus-inner {
   bottom: 0;
   width: 483px;
   -webkit-transition: top .2s, width .2s;
+  -moz-transition: top .2s, width .2s;
+  transition: top .2s, width .2s;
 }
 .sprite-panel .title-bar {
   position: relative;
@@ -459,6 +471,8 @@ button::-moz-focus-inner {
   bottom: 22px;
   right: 22px;
   -webkit-transition: left .2s, bottom .2s, right .2s;
+  -moz-transition: left .2s, bottom .2s, right .2s;
+  transition: left .2s, bottom .2s, right .2s;
 }
 .tab {
   display: inline-block;
@@ -673,6 +687,8 @@ button::-moz-focus-inner {
   right: 22px;
   height: 136px;
   -webkit-transition: bottom .2s, right .2s, left .2s;
+  -moz-transition: bottom .2s, right .2s, left .2s;
+  transition: bottom .2s, right .2s, left .2s;
 }
 .backpack-title {
   background: linear-gradient(#ffffff, #e6e8e8);
@@ -703,6 +719,8 @@ button::-moz-focus-inner {
   bottom: 0;
   width: 19px;
   -webkit-transition: width .2s;
+  -moz-transition: width .2s;
+  transition: width .2s;
 }
 .tips-title {
   width: 100%;
@@ -765,6 +783,8 @@ button::-moz-focus-inner {
 .tips-label {
   opacity: 0;
   -webkit-transition: opacity .2s;
+  -moz-transition: opacity .2s;
+  transition: opacity .2s;
   pointer-events: none;
 }
 .tips-icon {
@@ -773,6 +793,8 @@ button::-moz-focus-inner {
   border-radius: 10px;
   padding: 0 3px;
   -webkit-transition: opacity .2s;
+  -moz-transition: opacity .2s;
+  transition: opacity .2s;
 }
 .tips-icon:hover {
   color: #1aa0d8;
