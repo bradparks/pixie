@@ -256,6 +256,8 @@ button::-moz-focus-inner {
   box-shadow: 0 0 0 1px #d0d1d2;
   background: #fff;
   -webkit-transform-origin: 0 0;
+  -moz-transform-origin: 0 0;
+  transform-origin: 0 0;
   -webkit-transition: -webkit-transform .2s, box-shadow .2s;
   overflow: hidden;
 }
@@ -281,6 +283,8 @@ button::-moz-focus-inner {
 }
 .small-stage .stage {
   -webkit-transform: scale(.5);
+  -moz-transform: scale(.5);
+  transform: scale(.5);
   box-shadow: 0 0 0 2px #d0d1d2;
 }
 .sprite-panel {
