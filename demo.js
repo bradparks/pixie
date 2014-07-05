@@ -3651,6 +3651,7 @@
       return;
     }
     (local ? this.selectedSprite : this.stage).lists.push(new List(name));
+    this.toggleWatcher(['contentsOfList:', name]);
     this.refreshPalette();
   };
 
