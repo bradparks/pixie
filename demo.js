@@ -4400,6 +4400,9 @@
     var bb2 = this.el.getBoundingClientRect();
     x -= bb.left - bb2.left;
     y -= bb.top - bb2.top;
+    var f = this.editor.isSmallStage ? 2 : 1;
+    x *= f;
+    y *= f;
     var children = this.stage.children;
     for (var i = children.length; i--;) {
       var c = children[i];
