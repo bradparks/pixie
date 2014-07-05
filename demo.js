@@ -3952,12 +3952,6 @@
   ScriptEditor.prototype.install = function(parent) {
     parent.add(this.palette);
     parent.add(this.workspace);
-    this.resize();
-  };
-
-  ScriptEditor.prototype.resize = function() {
-    this.palette.resize();
-    this.workspace.resize();
   };
 
   ScriptEditor.prototype.uninstall = function(parent) {
@@ -4275,11 +4269,6 @@
 
   TabPanel.prototype.install = function(parent) {
     if (this._panel) parent.add(this._panel);
-    this.resize();
-  };
-
-  TabPanel.prototype.resize = function() {
-    if (this._panel) resize(this._panel);
   };
 
   TabPanel.prototype.uninstall = function(parent) {
@@ -4675,11 +4664,6 @@
     this.icons.forEach(function(icon) {
       parent.add(icon);
     });
-  };
-
-  SpritePanel.prototype.resize = function() {
-    resize(this.stageIcon);
-    this.icons.forEach(resize);
   };
 
   SpritePanel.prototype.uninstall = function() {
