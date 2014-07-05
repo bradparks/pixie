@@ -3983,12 +3983,9 @@
   });
 
   ScriptEditor.prototype.refreshPalette = function(resetScroll) {
-    if (resetScroll) {
-      this.palette.el.scrollLeft =
-      this.palette.el.scrollTop = 0;
-    } else {
-      var sl = this.palette.el.scrollLeft;
-      var st = this.palette.el.scrollTop;
+    if (!resetScroll) {
+      var sx = this.palette.scrollX;
+      var sy = this.palette.scrollY;
     }
 
     var scripts = this.palette.scripts;
@@ -4000,8 +3997,7 @@
     (palettes[this._category] || []).forEach(this.eval, this);
 
     if (!resetScroll) {
-      this.palette.el.scrollLeft = sl;
-      this.palette.el.scrollTop = st;
+      this.palette.scrollTo(sx, sy);
     }
   };
 
