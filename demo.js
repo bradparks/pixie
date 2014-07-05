@@ -4597,7 +4597,7 @@
   SpritePanel.prototype.newFromLibrary = function() {
     this.editor.addSprite(this.emptySprite()
       .addCostume(new Costume('costume1', 'f9a1c175dbe2e5dee472858dd30d16bb.svg', 47, 55))
-      .addCostume(new Costume('costume2', 'c68e7b211672862001dd4fce12129813.png', 57, 41)));
+      .addCostume(new Costume('costume2', 'c68e7b211672862001dd4fce12129813.png', 94, 108, 2)));
   };
 
   SpritePanel.prototype.newFromFile = function(file) {
