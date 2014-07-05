@@ -3527,6 +3527,7 @@
     document.addEventListener('wheel', this.hideBubble.bind(this));
 
     this.save = this.save.bind(this);
+    this.resize = this.resize.bind(this);
   }
 
   Editor.prototype.version = 'js001';
@@ -3869,7 +3870,7 @@
     } else {
       this.el.classList.remove('small-stage');
     }
-    setTimeout(this.resize.bind(this), 200);
+    setTimeout(this.resize, 200);
   };
 
   Editor.prototype.languageMenu = function() {
@@ -4882,6 +4883,7 @@
   TipsPanel.prototype.toggle = function(e) {
     this.isOpen = !this.isOpen;
     this.editor.el.classList.toggle('tips-open');
+    setTimeout(this.editor.resize, 200);
   };
 
 
