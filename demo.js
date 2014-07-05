@@ -4485,13 +4485,16 @@
 
   StagePanel.prototype.resize = function() {
     var bb = this.elStage.getBoundingClientRect();
-    this.stageCenterX = (bb.left + bb.right) / 2;
-    this.stageCenterY = (bb.top + bb.bottom) / 2;
+    this.stageCenterX = Math.round((bb.left + bb.right) / 2);
+    this.stageCenterY = Math.round((bb.top + bb.bottom) / 2);
+    this.width = Math.round(bb.width);
+    this.height = Math.round(bb.height);
   };
 
   StagePanel.prototype.updateMouse = function(e) {
-    this.stage.mouseX = Math.max(-240, Math.min(240, e.clientX - this.stageCenterX));
-    this.stage.mouseY = Math.max(-180, Math.min(180, this.stageCenterY - e.clientY));
+    var f = this.editor.isSmallStage ? 2 : 1;
+    this.stage.mouseX = Math.max(-240, Math.min(240, f * (e.clientX - this.stageCenterX)));
+    this.stage.mouseY = Math.max(-180, Math.min(180, f * (this.stageCenterY - e.clientY)));
     this.elMouseX.textContent = this.stage.mouseX;
     this.elMouseY.textContent = this.stage.mouseY;
   };
