@@ -2029,6 +2029,11 @@
     }, this.localScriptCount);
   }});
 
+  Object.defineProperty(Stage.prototype, 'contextMenu', {get: function() {
+    return new Menu(
+      'save picture of stage');
+  }});
+
 
   function ListWatcher(target, list, width, height) {
     this.target = target;
