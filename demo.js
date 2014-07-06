@@ -1835,10 +1835,17 @@
       'info',
       Menu.line,
       'duplicate',
-      'save to local file',
+      ['save to local file', this.saveSpriteFile],
       Menu.line,
-      'delete');
+      'delete').withContext(this);
   }});
+
+  Sprite.prototype.saveSpriteFile = function() {
+    IO.writeArchive(this, function(err, data) {
+      if (err) return console.warn(err.stack); // TODO
+      saveFile(this.name+'.sprite2', 'application/octet-stream', data);
+    }, this);
+  };
 
 
   function Stage() {
@@ -4820,10 +4827,7 @@
   }});
 
   SpriteIcon.prototype.saveSpriteFile = function() {
-    IO.writeArchive(this.sprite, function(err, data) {
-      if (err) return console.warn(err.stack); // TODO
-      saveFile(this.sprite.name+'.sprite2', 'application/octet-stream', data);
-    }, this);
+    this.sprite.saveSpriteFile();
   };
 
   SpriteIcon.prototype.duplicateSprite = function() {
