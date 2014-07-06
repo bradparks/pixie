@@ -1373,15 +1373,26 @@
     return chooseFile(filter, true, fn);
   }
 
-  function saveFile(defaultName, mimeType, text) {
+  function saveFile(defaultName, mimeType, data, base64) {
     var a = document.createElement('a');
-    var blob = new Blob([text], {type: mimeType})
+    if (base64) {
+      var b64 = atob(data);
+      data = new Uint8Array(b64.length);
+      for (var i = b64.length; i--;) {
+        data[i] = b64.charCodeAt(i);
+      }
+    }
+    var blob = new Blob([data], {type: mimeType})
     a.href = URL.createObjectURL(blob);
     a.download = defaultName;
     a.click();
     setTimeout(function() {
       URL.revokeObjectURL(a.href);
     }, 1500);
+  }
+
+  function saveImage(defaultName, canvas) {
+    saveFile(defaultName + '.png', 'image/png', canvas.toDataURL().slice('data:image/png;base64,'.length), true);
   }
 
 
@@ -2031,8 +2042,12 @@
 
   Object.defineProperty(Stage.prototype, 'contextMenu', {get: function() {
     return new Menu(
-      'save picture of stage');
+      ['save picture of stage', this.savePicture]).withContext(this);
   }});
+
+  Stage.prototype.savePicture = function() {
+    saveImage('stage', this.canvas);
+  };
 
 
   function ListWatcher(target, list, width, height) {
