@@ -887,7 +887,7 @@
         if (g.indexOf(this.name) !== -1) {
           for (var j = 0, l = g.length; j < l; j++) {
             var b = vis.getBlock(g[j]);
-            m.add([b[1].replace(/%[\w.]+/g, '').trim(), b[2]]);
+            m.add([T(b[1]).replace(/%[\w.]+/g, '').trim(), b[2]]);
           }
         }
       }
