@@ -452,12 +452,12 @@
         "show",
         "hide",
         "--",
-        "lookLike:",
+        ["lookLike:", {first: 'costume'}],
         "nextCostume"
       ]},
-      "startScene",
+      ["startScene", {first: 'backdrop'}],
       {if: "stage", then: [
-        "startSceneAndWait",
+        ["startSceneAndWait", {first: 'backdrop'}],
         "nextScene"
       ]},
       "--",
@@ -479,8 +479,8 @@
     ],
     3: [
       // sound
-      "playSound:",
-      "doPlaySoundAndWait",
+      ["playSound:", {first: 'sound'}],
+      ["doPlaySoundAndWait", {first: 'sound'}],
       "stopAllSounds",
       "--",
       "playDrum",
@@ -523,7 +523,7 @@
       "whenGreenFlag",
       "whenKeyPressed",
       "whenClicked",
-      "whenSceneStarts",
+      ["whenSceneStarts", {first: 'backdrop'}],
       "---",
       "whenSensorGreaterThan",
       "---",
@@ -575,7 +575,7 @@
       {watcher: "timer"},
       "timerReset",
       "--",
-      "getAttribute:of:",
+      ["getAttribute:of:", {first: 'attribute'}, {first: 'sprite'}],
       "--",
       {watcher: "timeAndDate"},
       "timestamp",
@@ -4089,6 +4089,20 @@
     if (arg.first) {
       var key = arg.first === 'var' ? 'variables' : arg.first === 'list' ? 'lists' : '';
       if (key) return this.editor.stage[key].concat(this.editor.selectedSprite[key]).map(getName).sort()[0];
+      if (arg.first === 'costume' || arg.first === 'backdrop') {
+        var costume = (arg.first === 'costume' ? this.editor.selectedSprite : this.editor.stage).costumes[0];
+        return costume ? costume.name : '';
+      }
+      if (arg.first === 'sound') {
+        var sound = this.editor.selectedSprite.sounds[0];
+        return sound ? sound.name : '';
+      }
+      if (arg.first === 'attribute') {
+        return this.editor.stage.sprites.length ? 'x position' : 'volume';
+      }
+      if (arg.first === 'sprite') {
+        return this.editor.stage.sprites.length ? this.editor.stage.sprites[0].name : '_stage_';
+      }
     }
     if (arg.current) {
       switch (arg.current) {
