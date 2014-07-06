@@ -3539,8 +3539,12 @@
 
   Interpreter.prototype.primNoop = function() {};
 
+  var undefinedWarnings = Object.create(null);
   Interpreter.prototype.primUndefined = function(b) {
-    console.log('undefined: ' + b.name);
+    if (!undefinedWarnings[b.name]) {
+      console.warn('undefined: ' + b.name);
+      undefinedWarnings[b.name] = true;
+    }
     return 0;
   };
 
