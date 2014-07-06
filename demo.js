@@ -1837,7 +1837,7 @@
       'duplicate',
       ['save to local file', this.saveSpriteFile],
       Menu.line,
-      'delete').withContext(this);
+      'delete').withContext(this).translate();
   }});
 
   Sprite.prototype.saveSpriteFile = function() {
@@ -2049,7 +2049,7 @@
 
   Object.defineProperty(Stage.prototype, 'contextMenu', {get: function() {
     return new Menu(
-      ['save picture of stage', this.savePicture]).withContext(this);
+      ['save picture of stage', this.savePicture]).withContext(this).translate();
   }});
 
   Stage.prototype.savePicture = function() {
