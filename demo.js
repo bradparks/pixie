@@ -1821,7 +1821,13 @@
   };
 
   Object.defineProperty(Sprite.prototype, 'contextMenu', {get: function() {
-    return new Menu('info', Menu.line, 'duplicate', 'save to local file', Menu.line, 'delete');
+    return new Menu(
+      'info',
+      Menu.line,
+      'duplicate',
+      'save to local file',
+      Menu.line,
+      'delete');
   }});
 
 
