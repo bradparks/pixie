@@ -3640,7 +3640,9 @@
       }.bind(this));
     } else {
       try {
+        console.time('load');
         this.stage = Stage.deserialize(JSON.parse(localStorage.getItem('visual demo project')));
+        console.timeEnd('load');
       } catch (e) {
         console.warn(e.stack);
         this.stage = this.getDefaultProject();
