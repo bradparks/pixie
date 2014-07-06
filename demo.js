@@ -3361,7 +3361,7 @@
     };
 
     table['doUntil'] = function(b) {
-      if (interp.barg(b, 0)) {
+      if (!interp.barg(b, 0)) {
         interp.startScript(b.args[1].script, true);
       }
     };
