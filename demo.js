@@ -1450,6 +1450,11 @@
     return this;
   };
 
+  ScratchObj.prototype.setCostume = function(i) {
+    this.costume = i % this.costumes.length || 0;
+    if (this.costume < 0) this.costume += this.costumes.length
+  };
+
   ScratchObj.prototype.redraw = function() {
     this.stage.redraw();
   };
@@ -2956,6 +2961,28 @@
         sprite.visible = false;
         interp.redraw = true;
       }
+    };
+
+    table['lookLike:'] = function(b) {
+      var name = interp.arg(b, 0);
+      var target = interp.activeThread.target;
+      if (typeof name !== 'number') {
+        name = ''+name;
+        for (var i = target.costumes.length; i--;) {
+          if (target.costumes[i].name === name) {
+            return target.costume = i;
+          }
+        }
+        if (name === 'previous costume') {
+          return target.setCostume(target.costume - 1);
+        }
+        if (name === 'next costume') {
+          return target.setCostume(target.costume + 1);
+        }
+        name = asNumber(name);
+        if (name !== name) return;
+      }
+      target.setCostume(name);
     };
 
     table['nextCostume'] = function() {
