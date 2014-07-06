@@ -4644,6 +4644,8 @@
         default:
           return;
       }
+    }
+    if (document.activeElement === document.body) {
       e.preventDefault();
     }
     if (name) {
