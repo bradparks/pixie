@@ -827,6 +827,22 @@
     }
   };
 
+  Block.prototype.groups = [ // NS
+    ['changeXposBy:', 'xpos:', 'changeYposBy:', 'ypos:'],
+    ['xpos', 'ypos'],
+    ['say:', 'think:'],
+    ['say:duration:elapsed:from:', 'think:duration:elapsed:from:'],
+    ['show', 'hide'],
+    ['playSound:', 'doPlaySoundAndWait'],
+    ['putPenDown', 'putPenDown'],
+    ['setPenHueTo:', 'changePenHueBy:', 'setPenShadeTo:', 'changePenShadeBy:', 'changePenSizeBy:', 'setPenSizeTo:'],
+    ['doIf', 'doIfElse'],
+    ['mouseX', 'mouseY'],
+    ['+', '-', '*', '/', '%'],
+    ['&', '|'],
+    ['<', '=', '>']
+  ];
+
   Block.prototype.defaultContextMenu = Object.getOwnPropertyDescriptor(Block.prototype, 'contextMenu').get;
   Object.defineProperty(Block.prototype, 'contextMenu', {get: function() {
     var m = this.defaultContextMenu();
@@ -855,6 +871,24 @@
         if (editor.selectedSprite.isSprite && locals.length) {
           if (globals.length) m.addLine();
           m.addAll(locals.map(getName));
+        }
+      }
+    } else if (!this.workspace.isPalette) {
+      m.addLine();
+      m.action = function(value) {
+        this.name = value;
+        this.infoSpec = vis.getBlock(value)[1];
+        this.spec = T(this.infoSpec);
+        this.fn = null;
+      }.bind(this);
+      var gs = this.groups;
+      for (var i = gs.length; i--;) {
+        var g = gs[i];
+        if (g.indexOf(this.name) !== -1) {
+          for (var j = 0, l = g.length; j < l; j++) {
+            var b = vis.getBlock(g[j]);
+            m.add([b[1].replace(/%[\w.]+/g, '').trim(), b[2]]);
+          }
         }
       }
     }
