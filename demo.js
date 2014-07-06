@@ -3469,6 +3469,7 @@
 
   Interpreter.prototype.primUndefined = function(b) {
     console.log('undefined: ' + b.name);
+    return 0;
   };
 
 
