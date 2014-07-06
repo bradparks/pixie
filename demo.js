@@ -3369,6 +3369,28 @@
       interp.resetTimer();
     };
 
+    table['getAttribute:of:'] = function(b) {
+      var name = interp.arg(b, 1);
+      var target = name === '_stage_' ? interp.stage : interp.stage.findObject(name);
+      if (!target) return 0;
+      var attribute = interp.arg(b, 0);
+      switch (attribute) {
+        case 'x position': return target.x;
+        case 'y position': return target.y;
+        case 'direction': return target.direction;
+        case 'costume #':
+        case 'backdrop #': return target.costume + 1;
+        case 'costume name':
+        case 'backdrop name':
+          var costume = target.costumes[target.costume];
+          return costume ? costume.name : '';
+        case 'size': return target.scale * 100;
+        case 'volume': return 0; // TODO
+      }
+      var v = target.findLocal(attribute);
+      return v ? v.value : 0;
+    };
+
     table['timeAndDate'] = function(b) {
       var d = new Date();
       switch (interp.arg(b, 0)) {
