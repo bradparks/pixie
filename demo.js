@@ -1806,7 +1806,6 @@
     hitTestCanvas.width = hitTestCanvas.height = 1;
     var costume = this.costumes[this.costume];
     if (!costume || !costume.canvas.width) return false;
-    console.log(x, y);
     hitTestContext.drawImage(costume.canvas, -x - costume.cx, -y - costume.cy);
     return hitTestContext.getImageData(0, 0, 1, 1).data[3] !== 0;
   };
