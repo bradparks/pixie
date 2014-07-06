@@ -1835,6 +1835,19 @@
     return s && this.opaqueAt(s.mouseX - this.x, this.y - s.mouseY);
   };
 
+  Sprite.prototype.isTouchingSprite = function(other) {
+    hitTestCanvas.width = 480;
+    hitTestCanvas.height = 360;
+    this.drawOn(hitTestContext);
+    hitTestContext.globalCompositeOperation = 'destination-in';
+    other.drawOn(hitTestContext);
+    var d = hitTestContext.getImageData(0, 0, 480, 360).data;
+    for (var i = d.length + 3; (i -= 4) >= 3;) {
+      if (d[i]) return true;
+    }
+    return false;
+  };
+
   Object.defineProperty(Sprite.prototype, 'contextMenu', {get: function() {
     return new Menu(
       'info',
@@ -3380,6 +3393,16 @@
     };
 
     // Sensing
+
+    table['touching:'] = function(b) {
+      var sprite = interp.activeThread.target;
+      if (!sprite.isSprite) return false;
+      var target = interp.arg(b, 0);
+      if (target === '_mouse_') return sprite.isTouchingMouse();
+      if (target === '_edge_') return false; // TODO
+      target = interp.stage.findObject(target);
+      return target ? sprite.isTouchingSprite(target) : false;
+    };
 
     table['keyPressed:'] = function(b) {
       return !!interp.stage.keys[interp.arg(b, 0)];
