@@ -834,7 +834,7 @@
     ['say:duration:elapsed:from:', 'think:duration:elapsed:from:'],
     ['show', 'hide'],
     ['playSound:', 'doPlaySoundAndWait'],
-    ['putPenDown', 'putPenDown'],
+    ['putPenDown', 'putPenUp'],
     ['setPenHueTo:', 'changePenHueBy:', 'setPenShadeTo:', 'changePenShadeBy:', 'changePenSizeBy:', 'setPenSizeTo:'],
     ['doIf', 'doIfElse'],
     ['mouseX', 'mouseY'],
