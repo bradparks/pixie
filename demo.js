@@ -1800,6 +1800,30 @@
     return o;
   };
 
+  var hitTestCanvas = document.createElement('canvas');
+  var hitTestContext = hitTestCanvas.getContext('2d');
+  Sprite.prototype.opaqueAt = function(x, y) {
+    hitTestCanvas.width = hitTestCanvas.height = 1;
+    var costume = this.costumes[this.costume];
+    if (!costume || !costume.canvas.width) return false;
+    console.log(x, y);
+    hitTestContext.drawImage(costume.canvas, -x - costume.cx, -y - costume.cy);
+    return hitTestContext.getImageData(0, 0, 1, 1).data[3] !== 0;
+  };
+
+  Sprite.prototype.objectFromPoint = function(x, y) {
+    return this.opaqueAt(x, y) ? this : null;
+  };
+
+  Sprite.prototype.isTouchingMouse = function() {
+    var s = this.stage;
+    return s && this.opaqueAt(s.mouseX - this.x, this.y - s.mouseY);
+  };
+
+  Object.defineProperty(Sprite.prototype, 'contextMenu', {get: function() {
+    return new Menu('info', Menu.line, 'duplicate', 'save to local file', Menu.line, 'delete');
+  }});
+
 
   function Stage() {
     ScratchObj.call(this, 'Stage');
@@ -4452,8 +4476,8 @@
     var children = this.stage.children;
     for (var i = children.length; i--;) {
       var c = children[i];
-      if (c.isWatcher && c.visible) {
-        var o = c.objectFromPoint(x - c.x, y - c.y);
+      if (c.visible) {
+        var o = c.isWatcher ? c.objectFromPoint(x - c.x, y - c.y) : c.objectFromPoint(x - (240 + c.x), y - (180 - c.y));
         if (o) return o;
       }
     }
