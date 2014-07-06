@@ -5382,10 +5382,12 @@
   };
 
 
+  console.time('init');
   var editor = new Editor();
   document.body.appendChild(editor.el);
   editor.resize();
   window.editor = editor;
+  console.timeEnd('init');
 
   // var player = document.querySelector('.player');
   // var stagePanel = new StagePanel(new Stage());
