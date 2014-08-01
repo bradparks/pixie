@@ -1,0 +1,3 @@
+[submodule "visual"]
+	path = visual
+	url = https://github.com/nathan/visual
