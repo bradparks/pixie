@@ -3641,7 +3641,7 @@
     } else {
       try {
         console.time('load');
-        this.stage = Stage.deserialize(JSON.parse(localStorage.getItem('visual demo project')));
+        this.stage = Stage.deserialize(JSON.parse(localStorage.getItem('pixie project')));
         console.timeEnd('load');
       } catch (e) {
         console.warn(e.stack);
@@ -3707,7 +3707,7 @@
   };
 
   Editor.prototype.save = function() {
-    localStorage.setItem('visual demo project', JSON.stringify(this.stage));
+    localStorage.setItem('pixie project', JSON.stringify(this.stage));
   };
 
   Editor.prototype.newProject = function() {
