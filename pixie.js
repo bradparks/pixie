@@ -4346,7 +4346,9 @@
     this.elImportButton = this.addNewButton('new-import', T('Upload costume from file'), this.newFromFile, 'image/*');
     this.elCameraButton = this.addNewButton('new-camera', T('New costume from camera'), this.newFromCamera);
     this.el.appendChild(this.elList = el('costume-list'));
-    this.el.appendChild(this.elEditor = el('image-editor'));
+
+    this.imageEditor = new ImageEditor(this);
+    this.el.appendChild(this.imageEditor.el);
   }
 
   CostumesPanel.prototype.addNewButton = function(name, title, fn, file, multiple) {
@@ -4490,6 +4492,11 @@
     var sh = s * ih;
     this.context.drawImage(this.costume.canvas, (tw - sw) / 2, (th - sh) / 2, sw, sh);
   };
+
+
+  function ImageEditor() {
+    this.el = el('image-editor');
+  }
 
 
   function SoundsPanel() {
