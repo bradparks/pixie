@@ -4415,8 +4415,16 @@
 
   CostumesPanel.prototype.newFromEditor = function(file) {
     var empty = document.createElement('canvas');
-    empty.width = 2;
-    empty.height = 2;
+    if (this.sprite.isStage) {
+      empty.width = 960;
+      empty.height = 720;
+      var cx = empty.getContext('2d');
+      cx.fillStyle = '#fff';
+      cx.fillRect(0, 0, empty.width, empty.height);
+    } else {
+      empty.width = 2;
+      empty.height = 2;
+    }
     this.addCostume(new Costume('costume1', empty, 0, 0, 2));
   };
 
