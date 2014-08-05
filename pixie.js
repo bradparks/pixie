@@ -4341,7 +4341,7 @@
     this.el = el('costume-editor');
     this.el.appendChild(this.elNewLabel = el('costume-new-label'));
     this.el.appendChild(this.elNewGroup = el('costume-new-group'));
-    this.addNewButton('new-library', this.newFromLibrary);
+    this.elLibraryButton = this.addNewButton('new-library', this.newFromLibrary);
     this.addNewButton('new-paint', this.newFromEditor);
     this.addNewButton('new-import', this.newFromFile, 'image/*,.sprite2');
     this.addNewButton('new-camera', this.newFromCamera);
@@ -4368,11 +4368,13 @@
       if (fn) button.addEventListener('click', fn.bind(this));
     }
     this.elNewGroup.appendChild(button);
+    return button;
   };
 
   CostumeEditor.prototype.showSprite = function(sprite) {
     this.sprite = sprite;
     this.elNewLabel.textContent = sprite.isSprite ? T('New costume:') : T('New backdrop:');
+    this.elLibraryButton.classList.toggle('new-backdrop-library', sprite.isStage);
     this.updateList();
   };
 
