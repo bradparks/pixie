@@ -4631,11 +4631,11 @@
   };
 
   StagePanel.prototype.objectFromPoint = function(x, y) {
-    if (!vis.util.containsPoint(this.stage, x, y)) return null;
     var bb = this.stage.el.getBoundingClientRect();
     var bb2 = this.el.getBoundingClientRect();
     x -= bb.left - bb2.left;
     y -= bb.top - bb2.top;
+    if (!vis.util.containsPoint(this.stage, x, y)) return null;
     var f = this.editor.isSmallStage ? 2 : 1;
     x *= f;
     y *= f;
