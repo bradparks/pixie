@@ -4343,7 +4343,7 @@
     this.el.appendChild(this.elNewGroup = el('costume-new-group'));
     this.elLibraryButton = this.addNewButton('new-library', T('Choose costume from library'), this.newFromLibrary);
     this.addNewButton('new-paint', T('Paint new costume'), this.newFromEditor);
-    this.addNewButton('new-import', T('Upload costume from file'), this.newFromFile, 'image/*,.sprite2');
+    this.addNewButton('new-import', T('Upload costume from file'), this.newFromFile, 'image/*');
     this.addNewButton('new-camera', T('New costume from camera'), this.newFromCamera);
     this.el.appendChild(this.elList = el('costume-list'));
     this.el.appendChild(this.elEditor = el('image-editor'));
