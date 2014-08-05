@@ -4411,6 +4411,20 @@
     }
   };
 
+  CostumeEditor.prototype.newFromFile = function(file) {
+    IO.readImageFile(file, function(err, image) {
+      if (err) return;
+      this.addCostume(new Costume(stripExtension(file.name), image, image.width / 2 | 0, image.height / 2 | 0));
+    }, this);
+  };
+
+  CostumeEditor.prototype.addCostume = function(c) {
+      this.sprite.addCostume(c);
+      var icon = new CostumeIcon(this, c);
+      this.elList.appendChild(icon.el);
+      this.icons.push(icon);
+  };
+
   function CostumeIcon(costumeEditor, costume) {
     this.costumeEditor = costumeEditor;
     this.sprite = costumeEditor.editor.selectedSprite;
