@@ -7,6 +7,11 @@ body {
   font: 12px Arial, Verdana, DejaVu Sans, sans-serif;
   -webkit-perspective: 1500px;
 }
+@media screen and (min-width: 960px) and (min-height: 600px) {
+  body {
+    overflow: hidden;
+  }
+}
 .editor {
   position: absolute;
   top: 0;
