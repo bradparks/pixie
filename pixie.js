@@ -4651,7 +4651,7 @@
   };
 
   StagePanel.prototype.click = function(e) {
-    var bb = this.el.getBoundingClientRect();
+    var bb = this.stage.el.getBoundingClientRect();
     var x = e.clientX - bb.left;
     var y = e.clientY - bb.top;
     if (x >= 0 && y >= 0 && x < 480 && y < 360) {
