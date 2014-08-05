@@ -4655,7 +4655,6 @@
     var x = e.clientX - bb.left;
     var y = e.clientY - bb.top;
     var target = this.objectFromPoint(x, y);
-    console.log(target);
     if (target) this.editor.exec.triggerClick(target);
   };
 
