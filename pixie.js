@@ -4536,10 +4536,16 @@
   }
 
   ImageEditor.prototype.createPalette = function() {
-    [0, 40, 50, 70, 80, 90, 100].forEach(function(c) {
-      this.addPaletteColor('hsl(0, 0%, '+c+'%)');
+    [0, 40, 50, 70, 80, 90, 100].forEach(function(l) {
+      this.addPaletteColor('hsl(0, 0%, '+l+'%)');
     }, this);
     this.addPaletteColor('transparent');
+    var hues = [0, 35, 60, 140, 180, 225, 270, 315];
+    [90, 80, 50, 40, 30, 20].forEach(function(l) {
+      hues.forEach(function(h) {
+        this.addPaletteColor('hsl('+h+', 100%, '+l+'%)');
+      }, this);
+    }, this);
   };
 
   ImageEditor.prototype.addPaletteColor = function(color) {
