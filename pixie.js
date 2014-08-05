@@ -4496,6 +4496,8 @@
 
   function ImageEditor() {
     this.el = el('image-editor');
+
+    this.el.appendChild(this.elSettings = el('image-editor-settings'));
   }
 
 

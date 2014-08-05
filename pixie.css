@@ -708,6 +708,15 @@ button::-moz-focus-inner {
   background: #f2f2f2;
   box-shadow: 0 0 0 1px #d0d1d2;
 }
+.image-editor-settings {
+  position: absolute;
+  bottom: 9px;
+  left: 11px;
+  right: 10px;
+  height: 105px;
+  border: 1px solid #d0d1d2;
+  background: #f6f6f6;
+}
 .backpack-panel {
   position: absolute;
   bottom: -117px;
