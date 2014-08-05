@@ -4422,6 +4422,8 @@
 
   CostumesPanel.prototype.addCostume = function(c) {
       this.sprite.addCostume(c);
+      this.sprite.costume = this.sprite.costumes.indexOf(c);
+      this.sprite.redraw();
       var icon = new CostumeIcon(this, c);
       this.elList.appendChild(icon.el);
       this.icons.push(icon);
