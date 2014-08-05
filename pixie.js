@@ -810,14 +810,15 @@
     return this.type !== 't' && this.type !== 'l' && (this.type !== 'b' || b.isBoolean) && (this.type !== 'm' || menusThatAcceptReporters.indexOf(this.menu) !== -1);
   };
 
-  Workspace.prototype.paddingX = 10;
-  Workspace.prototype.paddingY = 10;
+  Workspace.prototype.paddingLeft = 10;
+  Workspace.prototype.paddingTop = 10;
   Workspace.prototype.spacing = 10;
 
-  Palette.prototype.paddingX = 6;
-  Palette.prototype.paddingY = 7;
+  Palette.prototype.paddingLeft = 6;
+  Palette.prototype.paddingTop = 7;
+  Palette.prototype.paddingRight = 6;
+  Palette.prototype.paddingBottom = 6;
   Palette.prototype.spacing = 5;
-  Palette.prototype.extraSpace = 6;
   Palette.prototype.spaceSize = 15;
 
   Block.prototype.click = function() {
