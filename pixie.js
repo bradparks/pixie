@@ -3034,6 +3034,11 @@
       startScene(name);
     };
 
+    table['nextScene'] = function() {
+      interp.stage.costume = (interp.stage.costume + 1) % interp.stage.costumes.length;
+      interp.redraw = true;
+    };
+
     table['changeSizeBy:'] = function(b) {
       var sprite = interp.activeThread.target;
       if (sprite.isSprite) {
