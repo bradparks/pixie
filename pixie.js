@@ -318,7 +318,7 @@
         return new Menu().addAll(arg.app.editor.selectedSprite.costumes.map(getName));
       },
       backdrop: function(arg) {
-        return new Menu().addAll(arg.app.editor.stage.costumes.map(getName));
+        return new Menu().addAll(arg.app.editor.stage.costumes.map(getName)).addLine().addTranslated('next backdrop').addTranslated('previous backdrop');
       },
       sound: function(arg) {
         return new Menu().addAll(arg.app.editor.selectedSprite.sounds.map(getName)).add(Menu.line).add([T('record...'), function() {
