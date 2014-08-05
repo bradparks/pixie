@@ -4413,6 +4413,13 @@
     }
   };
 
+  CostumesPanel.prototype.newFromEditor = function(file) {
+    var empty = document.createElement('canvas');
+    empty.width = 2;
+    empty.height = 2;
+    this.addCostume(new Costume('costume1', empty, 0, 0, 2));
+  };
+
   CostumesPanel.prototype.newFromFile = function(file) {
     IO.readImageFile(file, function(err, image) {
       if (err) return;
