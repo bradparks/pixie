@@ -4651,12 +4651,12 @@
   };
 
   StagePanel.prototype.click = function(e) {
-    var bb = this.stage.el.getBoundingClientRect();
+    var bb = this.el.getBoundingClientRect();
     var x = e.clientX - bb.left;
     var y = e.clientY - bb.top;
-    if (x >= 0 && y >= 0 && x < 480 && y < 360) {
-      this.editor.exec.triggerClick(this.objectFromPoint(x, y));
-    }
+    var target = this.objectFromPoint(x, y);
+    console.log(target);
+    if (target) this.editor.exec.triggerClick(target);
   };
 
   StagePanel.prototype.installProject = function(stage) {
