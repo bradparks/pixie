@@ -3030,8 +3030,7 @@
     }
 
     table['startScene'] = function(b) {
-      var name = interp.arg(b, 0);
-      startScene(name);
+      startScene(interp.arg(b, 0));
     };
 
     table['nextScene'] = function() {
