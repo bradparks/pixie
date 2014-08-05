@@ -4527,11 +4527,13 @@
 
     this.elSettings.appendChild(this.elColorPicker = el('color-picker'));
     this.elColorPicker.appendChild(this.elSwatchButton = el('button', 'color-picker-swatch-button wheel'));
-    this.elColorPicker.appendChild(this.elBackground = el('color-picker-color background'));
-    this.elColorPicker.appendChild(this.elForeground = el('color-picker-color foreground'));
+    this.elColorPicker.appendChild(this.elColors = el('color-picker-colors'));
+    this.elColors.appendChild(this.elBackground = el('color-picker-color background'));
+    this.elColors.appendChild(this.elForeground = el('color-picker-color foreground'));
     this.elColorPicker.appendChild(this.elEyedropperButton = el('button', 'color-picker-eyedropper'));
     this.elColorPicker.appendChild(this.elPalette = el('color-picker-palette'));
     this.elPalette.addEventListener('mousedown', this.swatchClick.bind(this));
+    this.elColors.addEventListener('mousedown', this.swapColors.bind(this));
     this.createPalette();
 
     this.foreground = '#000';
@@ -4564,6 +4566,12 @@
     if (e.target.className === 'color-picker-palette-color') {
       this.foreground = e.target.style.backgroundColor;
     }
+  };
+
+  ImageEditor.prototype.swapColors = function() {
+    var fg = this.foreground;
+    this.foreground = this.background;
+    this.background = fg;
   };
 
   def(ImageEditor.prototype, 'foreground', {
