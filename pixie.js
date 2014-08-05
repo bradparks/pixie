@@ -3007,6 +3007,33 @@
       }
     };
 
+    function startScene(name) {
+      var count = interp.stage.costumes.length;
+      if (name === 'next backdrop') {
+        var i = (interp.stage.costume + 1) % count;
+      } else if (name === 'previous backdrop') {
+        var i = (interp.stage.costume - 1 + count) % count;
+      } else {
+        var n = +name;
+        if (n === n) {
+          i = (n - 1) % count;
+          if (i < 0) i += count;
+        } else {
+          name = ''+name;
+          for (var i = count; i--;) {
+            if (interp.stage.costumes[i].name === name) break;
+          }
+        }
+      }
+      if (i !== -1) interp.stage.costume = i;
+      interp.redraw = true;
+    }
+
+    table['startScene'] = function(b) {
+      var name = interp.arg(b, 0);
+      startScene(name);
+    };
+
     table['changeSizeBy:'] = function(b) {
       var sprite = interp.activeThread.target;
       if (sprite.isSprite) {
