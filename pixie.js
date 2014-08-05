@@ -4530,7 +4530,24 @@
     this.elColorPicker.appendChild(this.elBackgroundColor = el('color-picker-color background'));
     this.elColorPicker.appendChild(this.elForegroundColor = el('color-picker-color foreground'));
     this.elColorPicker.appendChild(this.elEyedropperButton = el('button', 'color-picker-eyedropper'));
+    this.elColorPicker.appendChild(this.elPalette = el('color-picker-palette'));
+    this.elPalette.addEventListener('click', this.swatchClick);
+    this.createPalette();
   }
+
+  ImageEditor.prototype.createPalette = function() {
+    [0, 40, 50, 70, 80, 90, 100].forEach(function(c) {
+      this.addPaletteColor('hsl(0, 0%, '+c+'%)');
+    }, this);
+  };
+
+  ImageEditor.prototype.addPaletteColor = function(color) {
+    var b = el('color-picker-palette-color');
+    b.style.background = color;
+    this.elPalette.appendChild(b);
+  };
+
+  ImageEditor.prototype.swatchClick = function(e) {};
 
 
   function SoundsPanel() {

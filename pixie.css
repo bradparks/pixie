@@ -769,6 +769,20 @@ button::-moz-focus-inner {
 .color-picker-eyedropper:hover {
   background: rgb(96, 183, 227) url(assets.png) -362px -25px;
 }
+.color-picker-palette {
+  position: absolute;
+  top: 5px;
+  left: 52px;
+  width: 110px;
+  height: 96px;
+  text-align: left;
+}
+.color-picker-palette-color {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin: 0 2px 2px 0;
+}
 .backpack-panel {
   position: absolute;
   bottom: -117px;
