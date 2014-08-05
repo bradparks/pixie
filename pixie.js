@@ -4342,9 +4342,9 @@
     this.el.appendChild(this.elNewLabel = el('costume-new-label'));
     this.el.appendChild(this.elNewGroup = el('costume-new-group'));
     this.elLibraryButton = this.addNewButton('new-library', T('Choose costume from library'), this.newFromLibrary);
-    this.addNewButton('new-paint', T('Paint new costume'), this.newFromEditor);
-    this.addNewButton('new-import', T('Upload costume from file'), this.newFromFile, 'image/*');
-    this.addNewButton('new-camera', T('New costume from camera'), this.newFromCamera);
+    this.elPaintButton = this.addNewButton('new-paint', T('Paint new costume'), this.newFromEditor);
+    this.elImportButton = this.addNewButton('new-import', T('Upload costume from file'), this.newFromFile, 'image/*');
+    this.elCameraButton = this.addNewButton('new-camera', T('New costume from camera'), this.newFromCamera);
     this.el.appendChild(this.elList = el('costume-list'));
     this.el.appendChild(this.elEditor = el('image-editor'));
   }
@@ -4376,6 +4376,10 @@
     this.sprite = sprite;
     this.elNewLabel.textContent = sprite.isSprite ? T('New costume:') : T('New backdrop:');
     this.elLibraryButton.classList.toggle('new-backdrop-library', sprite.isStage);
+    this.elLibraryButton.title = sprite.isSprite ? T('Choose costume from library') : T('Choose backdrop from library');
+    this.elPaintButton.title = sprite.isSprite ? T('Paint new costume') : T('Paint new backdrop');
+    this.elImportButton.title = sprite.isSprite ? T('Upload costume from file') : T('Upload backdrop from file');
+    this.elCameraButton.title = sprite.isSprite ? T('New costume from camera') : T('New backdrop from camera');
     this.updateList();
   };
 
