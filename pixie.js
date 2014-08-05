@@ -4127,7 +4127,7 @@
   function ScriptsPanel(editor) {
     this.editor = editor;
 
-    this.el = el('script-editor');
+    this.el = el('scripts-panel');
     this.el.appendChild(this.elButtons = el('palette-buttons'));
     this.el.appendChild(this.elPalette = el('palette-contents'));
     this.el.appendChild(this.elWorkspace = el('editor-workspace'));
@@ -4338,7 +4338,7 @@
   function CostumesPanel(editor) {
     this.editor = editor;
 
-    this.el = el('costume-editor');
+    this.el = el('costumes-panel');
     this.el.appendChild(this.elNewLabel = el('costume-new-label'));
     this.el.appendChild(this.elNewGroup = el('costume-new-group'));
     this.elLibraryButton = this.addNewButton('new-library', T('Choose costume from library'), this.newFromLibrary);
@@ -4493,7 +4493,7 @@
 
 
   function SoundsPanel() {
-    this.el = el('sound-editor');
+    this.el = el('sounds-panel');
   }
 
   SoundsPanel.prototype.showSprite = function(sprite) {};
