@@ -3347,7 +3347,7 @@
 
     table['whenGreenFlag'] = this.primNoop;
     table['whenKeyPressed'] = this.primNoop;
-    // table['whenClicked'] = this.primNoop;
+    table['whenClicked'] = this.primNoop;
     table['whenSceneStarts'] = this.primNoop;
     // table['whenSensorGreaterThan'] = this.primNoop;
     table['whenIReceive'] = this.primNoop;
@@ -4620,6 +4620,7 @@
     document.addEventListener('mousedown', this.mouseDown.bind(this));
     document.addEventListener('mousemove', this.updateMouse.bind(this));
     document.addEventListener('mouseup', this.mouseUp.bind(this));
+    document.addEventListener('click', this.click.bind(this));
     document.addEventListener('keydown', this.keyDown.bind(this));
     document.addEventListener('keyup', this.keyUp.bind(this));
   }
@@ -4647,6 +4648,15 @@
       }
     }
     return this.stage;
+  };
+
+  StagePanel.prototype.click = function(e) {
+    var bb = this.el.getBoundingClientRect();
+    var x = e.clientX - bb.left;
+    var y = e.clientY - bb.top;
+    if (x >= 0 && y >= 0 && x < 480 && y < 360) {
+      this.editor.exec.triggerClick(this.objectFromPoint(x, y));
+    }
   };
 
   StagePanel.prototype.installProject = function(stage) {
