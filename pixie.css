@@ -665,6 +665,7 @@ button::-moz-focus-inner {
   font-size: 11px;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .costume-info {
   position: absolute;
