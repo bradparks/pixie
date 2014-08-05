@@ -766,6 +766,9 @@ button::-moz-focus-inner {
   border-radius: 5px;
   background: url(assets.png) -362px -1px, linear-gradient(#fff, #e6e8e8);
 }
+.color-picker-eyedropper:hover {
+  background: rgb(96, 183, 227) url(assets.png) -362px -25px;
+}
 .backpack-panel {
   position: absolute;
   bottom: -117px;
