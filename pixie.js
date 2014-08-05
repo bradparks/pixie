@@ -4501,7 +4501,8 @@
   };
 
   CostumeIcon.prototype.updateInfo = function() {
-    this.elInfo.textContent = this.costume.canvas.width + '\xd7' + this.costume.canvas.height;
+    var s = this.costume.scale;
+    this.elInfo.textContent = (this.costume.canvas.width * s | 0) + '\xd7' + (this.costume.canvas.height * s | 0);
   };
 
   CostumeIcon.prototype.updateThumbnail = function() {
