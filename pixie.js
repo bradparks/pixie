@@ -4506,6 +4506,9 @@
     this.el = el('image-editor');
 
     this.el.appendChild(this.elSettings = el('image-editor-settings'));
+
+    this.elSettings.appendChild(this.elColorPicker = el('color-picker'));
+    this.elColorPicker.appendChild(this.elSwatchButton = el('button', 'color-picker-swatch-button'));
   }
 
 

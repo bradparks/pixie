@@ -716,6 +716,24 @@ button::-moz-focus-inner {
   height: 105px;
   border: 1px solid #d0d1d2;
   background: #f6f6f6;
+  text-align: center;
+}
+.color-picker {
+  display: inline-block;
+  position: relative;
+  height: 100%;
+  width: 195px;
+}
+.color-picker-swatch-button {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  width: 37px;
+  height: 32px;
+  position: absolute;
+  left: 7px;
+  bottom: 4px;
+  background: url(assets.png) -323px 0;
 }
 .backpack-panel {
   position: absolute;
