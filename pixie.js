@@ -3038,6 +3038,19 @@
       startScene(interp.arg(b, 0));
     };
 
+    table['startSceneAndWait'] = function(b) {
+      if (interp.activeThread.extra === null) {
+        interp.activeThread.extra = startScene(interp.arg(b, 0));
+      }
+      if (interp.activeThread.extra.every(function(t) {return t.done})) {
+        interp.activeThread.extra = null;
+      } else {
+        interp.activeThread.pc--;
+        interp.yield = true;
+        interp.waiting = true;
+      }
+    }
+
     table['nextScene'] = function() {
       interp.stage.costume = (interp.stage.costume + 1) % interp.stage.costumes.length;
       interp.redraw = true;
