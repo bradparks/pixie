@@ -773,12 +773,13 @@ button::-moz-focus-inner {
   position: absolute;
   top: 5px;
   left: 52px;
-  width: 110px;
+  width: 112px;
   height: 96px;
   text-align: left;
 }
 .color-picker-palette-color {
   display: inline-block;
+  vertical-align: top;
   width: 12px;
   height: 12px;
   margin: 0 2px 2px 0;

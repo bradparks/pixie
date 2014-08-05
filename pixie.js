@@ -4539,11 +4539,15 @@
     [0, 40, 50, 70, 80, 90, 100].forEach(function(c) {
       this.addPaletteColor('hsl(0, 0%, '+c+'%)');
     }, this);
+    this.addPaletteColor('transparent');
   };
 
   ImageEditor.prototype.addPaletteColor = function(color) {
     var b = el('color-picker-palette-color');
     b.style.background = color;
+    if (color === 'transparent') {
+      b.style.backgroundImage = 'linear-gradient(-45deg, transparent 7.5px, #f00 7.5px, #f00 9.5px, transparent 9.5px)';
+    }
     this.elPalette.appendChild(b);
   };
 
