@@ -4778,7 +4778,7 @@
   StagePanel.prototype.keyDown = function(e) {
     var name = getKeyName(e.keyCode);
     if (e.metaKey || e.ctrlKey) {
-      switch (name) {
+      switch ((e.altKey ? '~' : '') + (e.shiftKey ? '!' : '') + name) {
         case 's':
           this.editor.save();
           break;
