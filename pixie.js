@@ -4509,6 +4509,8 @@
 
     this.elSettings.appendChild(this.elColorPicker = el('color-picker'));
     this.elColorPicker.appendChild(this.elSwatchButton = el('button', 'color-picker-swatch-button wheel'));
+    this.elColorPicker.appendChild(this.elBackgroundColor = el('color-picker-color background'));
+    this.elColorPicker.appendChild(this.elForegroundColor = el('color-picker-color foreground'));
   }
 
 

@@ -738,6 +738,21 @@ button::-moz-focus-inner {
 .color-picker-swatch-button.wheel {
   background: url(assets.png) -323px -33px;
 }
+.color-picker-color {
+  position: absolute;
+  background: #fff;
+  width: 25px;
+  height: 25px;
+  top: 5px;
+  left: 6px;
+  border: 1px solid rgba(204, 204, 204, .8);
+  box-shadow: inset 0 0 0 1px rgba(204, 204, 204, .8);
+  border-radius: 4px;
+}
+.color-picker-color.background {
+  top: 16px;
+  left: 17px;
+}
 .backpack-panel {
   position: absolute;
   bottom: -117px;
