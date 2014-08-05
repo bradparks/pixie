@@ -4527,12 +4527,15 @@
 
     this.elSettings.appendChild(this.elColorPicker = el('color-picker'));
     this.elColorPicker.appendChild(this.elSwatchButton = el('button', 'color-picker-swatch-button wheel'));
-    this.elColorPicker.appendChild(this.elBackgroundColor = el('color-picker-color background'));
-    this.elColorPicker.appendChild(this.elForegroundColor = el('color-picker-color foreground'));
+    this.elColorPicker.appendChild(this.elBackground = el('color-picker-color background'));
+    this.elColorPicker.appendChild(this.elForeground = el('color-picker-color foreground'));
     this.elColorPicker.appendChild(this.elEyedropperButton = el('button', 'color-picker-eyedropper'));
     this.elColorPicker.appendChild(this.elPalette = el('color-picker-palette'));
     this.elPalette.addEventListener('click', this.swatchClick);
     this.createPalette();
+
+    this.foreground = '#000';
+    this.background = '#fff';
   }
 
   ImageEditor.prototype.createPalette = function() {
@@ -4558,6 +4561,22 @@
   };
 
   ImageEditor.prototype.swatchClick = function(e) {};
+
+  def(ImageEditor.prototype, 'foreground', {
+    get: function() {return this._foreground},
+    set: function(value) {
+      this._foreground = value;
+      this.elForeground.style.background = value;
+    }
+  });
+
+  def(ImageEditor.prototype, 'background', {
+    get: function() {return this._background},
+    set: function(value) {
+      this._background = value;
+      this.elBackground.style.background = value;
+    }
+  });
 
 
   function SoundsPanel() {
