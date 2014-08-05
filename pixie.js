@@ -4578,7 +4578,7 @@
     get: function() {return this._foreground},
     set: function(value) {
       this._foreground = value;
-      this.elForeground.style.backgroundColor = value;
+      this.setSwatchColor(this.elForeground, value);
     }
   });
 
@@ -4586,9 +4586,18 @@
     get: function() {return this._background},
     set: function(value) {
       this._background = value;
-      this.elBackground.style.backgroundColor = value;
+      this.setSwatchColor(this.elBackground, value);
     }
   });
+
+  ImageEditor.prototype.setSwatchColor = function(el, color) {
+    if (color === 'transparent') {
+      el.style.backgroundColor = '#fff';
+      el.style.backgroundImage = 'linear-gradient(-45deg, transparent 15.5px, #f00 15.5px, #f00 17.5px, transparent 17.5px)';
+    } else {
+      el.style.backgroundColor = color;
+    }
+  };
 
 
   function SoundsPanel() {
