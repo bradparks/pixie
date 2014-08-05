@@ -4531,7 +4531,7 @@
     this.elColorPicker.appendChild(this.elForeground = el('color-picker-color foreground'));
     this.elColorPicker.appendChild(this.elEyedropperButton = el('button', 'color-picker-eyedropper'));
     this.elColorPicker.appendChild(this.elPalette = el('color-picker-palette'));
-    this.elPalette.addEventListener('click', this.swatchClick);
+    this.elPalette.addEventListener('mousedown', this.swatchClick.bind(this));
     this.createPalette();
 
     this.foreground = '#000';
@@ -4553,14 +4553,18 @@
 
   ImageEditor.prototype.addPaletteColor = function(color) {
     var b = el('color-picker-palette-color');
-    b.style.background = color;
+    b.style.backgroundColor = color;
     if (color === 'transparent') {
       b.style.backgroundImage = 'linear-gradient(-45deg, transparent 7.5px, #f00 7.5px, #f00 9.5px, transparent 9.5px)';
     }
     this.elPalette.appendChild(b);
   };
 
-  ImageEditor.prototype.swatchClick = function(e) {};
+  ImageEditor.prototype.swatchClick = function(e) {
+    if (e.target.className === 'color-picker-palette-color') {
+      this.foreground = e.target.style.backgroundColor;
+    }
+  };
 
   def(ImageEditor.prototype, 'foreground', {
     get: function() {return this._foreground},
