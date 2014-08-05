@@ -4340,9 +4340,35 @@
 
     this.el = el('costume-editor');
     this.el.appendChild(this.elNewLabel = el('costume-new-label'));
+    this.el.appendChild(this.elNewGroup = el('costume-new-group'));
+    this.addNewButton('new-library', this.newFromLibrary);
+    this.addNewButton('new-paint', this.newFromEditor);
+    this.addNewButton('new-import', this.newFromFile, 'image/*,.sprite2');
+    this.addNewButton('new-camera', this.newFromCamera);
     this.el.appendChild(this.elList = el('costume-list'));
     this.el.appendChild(this.elEditor = el('image-editor'));
   }
+
+  CostumeEditor.prototype.addNewButton = function(name, fn, file, multiple) {
+    var button = el(file ? 'div' : 'button', 'new-button '+name);
+    if (file) {
+      var form = el('form', 'new-button-form');
+      var input = el('input', 'new-button-input');
+      input.type = 'file';
+      if (typeof file === 'string') input.accept = file;
+      if (multiple) input.multiple = true;
+      form.appendChild(input);
+      button.appendChild(form);
+      var self = this;
+      if (fn) input.addEventListener('change', function() {
+        fn.call(self, multiple ? slice.call(input.files) : input.files[0]);
+        form.reset();
+      });
+    } else {
+      if (fn) button.addEventListener('click', fn.bind(this));
+    }
+    this.elNewGroup.appendChild(button);
+  };
 
   CostumeEditor.prototype.showSprite = function(sprite) {
     this.sprite = sprite;
@@ -4793,9 +4819,9 @@
     this.elTitleBar.appendChild(this.elNewGroup = el('new-group'));
     this.elNewGroup.textContent = T('New sprite:');
     this.addNewButton('new-library', this.newFromLibrary);
-    this.addNewButton('new-paint');
+    this.addNewButton('new-paint', this.newFromEditor);
     this.addNewButton('new-import', this.newFromFile, 'image/*,.sprite2');
-    this.addNewButton('new-camera');
+    this.addNewButton('new-camera', this.newFromCamera);
 
     this.el.appendChild(this.elStageSection = el('stage-section'));
     this.elStageSection.appendChild(this.stageIcon.el);
@@ -4891,26 +4917,7 @@
     this.icons = [];
   };
 
-  SpritePanel.prototype.addNewButton = function(name, fn, file, multiple) {
-    var button = el(file ? 'div' : 'button', 'new-button '+name);
-    if (file) {
-      var form = el('form', 'new-button-form');
-      var input = el('input', 'new-button-input');
-      input.type = 'file';
-      if (typeof file === 'string') input.accept = file;
-      if (multiple) input.multiple = true;
-      form.appendChild(input);
-      button.appendChild(form);
-      var self = this;
-      if (fn) input.addEventListener('change', function() {
-        fn.call(self, multiple ? slice.call(input.files) : input.files[0]);
-        form.reset();
-      });
-    } else {
-      if (fn) button.addEventListener('click', fn.bind(this));
-    }
-    this.elNewGroup.appendChild(button);
-  };
+  SpritePanel.prototype.addNewButton = CostumeEditor.prototype.addNewButton;
 
   SpritePanel.prototype.install = function(parent) {
     parent.add(this.stageIcon);

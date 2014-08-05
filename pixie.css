@@ -624,6 +624,17 @@ button::-moz-focus-inner {
   font-weight: bold;
   color: #5c5d5f;
 }
+.costume-new-group {
+  position: absolute;
+  top: 26px;
+  left: 0px;
+}
+.costume-new-group .new-import {
+  margin-left: 2px;
+}
+.costume-new-group .new-camera {
+  margin-left: 9px;
+}
 .costume-list {
   position: absolute;
   top: 57px;
