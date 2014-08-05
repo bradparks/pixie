@@ -735,6 +735,9 @@ button::-moz-focus-inner {
   bottom: 4px;
   background: url(assets.png) -323px 0;
 }
+.color-picker-swatch-button.wheel {
+  background: url(assets.png) -323px -33px;
+}
 .backpack-panel {
   position: absolute;
   bottom: -117px;
