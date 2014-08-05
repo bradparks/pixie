@@ -4427,6 +4427,14 @@
       this.icons.push(icon);
   };
 
+  CostumesPanel.prototype.install = function(parent) {
+    parent.add(this.imageEditor);
+  };
+
+  CostumesPanel.prototype.uninstall = function(parent) {
+    parent.remove(this.imageEditor);
+  };
+
   function CostumeIcon(costumeEditor, costume) {
     this.costumeEditor = costumeEditor;
     this.sprite = costumeEditor.editor.selectedSprite;
