@@ -2557,6 +2557,10 @@
     return this.trigger('whenIReceive', event, true);
   };
 
+  Interpreter.prototype.triggerBackdrop = function(name) {
+    return this.trigger('whenSceneStarts', name, true);
+  };
+
   Interpreter.prototype.triggerKey = function(key) {
     return this.trigger('whenKeyPressed', key);
   };
@@ -3027,6 +3031,7 @@
       }
       if (i !== -1) interp.stage.costume = i;
       interp.redraw = true;
+      return interp.triggerBackdrop(name);
     }
 
     table['startScene'] = function(b) {
@@ -3330,7 +3335,7 @@
     table['whenGreenFlag'] = this.primNoop;
     table['whenKeyPressed'] = this.primNoop;
     // table['whenClicked'] = this.primNoop;
-    // table['whenSceneStarts'] = this.primNoop;
+    table['whenSceneStarts'] = this.primNoop;
     // table['whenSensorGreaterThan'] = this.primNoop;
     table['whenIReceive'] = this.primNoop;
 
