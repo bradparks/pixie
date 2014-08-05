@@ -4341,16 +4341,17 @@
     this.el = el('costume-editor');
     this.el.appendChild(this.elNewLabel = el('costume-new-label'));
     this.el.appendChild(this.elNewGroup = el('costume-new-group'));
-    this.elLibraryButton = this.addNewButton('new-library', this.newFromLibrary);
-    this.addNewButton('new-paint', this.newFromEditor);
-    this.addNewButton('new-import', this.newFromFile, 'image/*,.sprite2');
-    this.addNewButton('new-camera', this.newFromCamera);
+    this.elLibraryButton = this.addNewButton('new-library', T('Choose costume from library'), this.newFromLibrary);
+    this.addNewButton('new-paint', T('Paint new costume'), this.newFromEditor);
+    this.addNewButton('new-import', T('Upload costume from file'), this.newFromFile, 'image/*,.sprite2');
+    this.addNewButton('new-camera', T('New costume from camera'), this.newFromCamera);
     this.el.appendChild(this.elList = el('costume-list'));
     this.el.appendChild(this.elEditor = el('image-editor'));
   }
 
-  CostumeEditor.prototype.addNewButton = function(name, fn, file, multiple) {
+  CostumeEditor.prototype.addNewButton = function(name, title, fn, file, multiple) {
     var button = el(file ? 'div' : 'button', 'new-button '+name);
+    button.title = title;
     if (file) {
       var form = el('form', 'new-button-form');
       var input = el('input', 'new-button-input');
@@ -4820,10 +4821,10 @@
 
     this.elTitleBar.appendChild(this.elNewGroup = el('new-group'));
     this.elNewGroup.textContent = T('New sprite:');
-    this.addNewButton('new-library', this.newFromLibrary);
-    this.addNewButton('new-paint', this.newFromEditor);
-    this.addNewButton('new-import', this.newFromFile, 'image/*,.sprite2');
-    this.addNewButton('new-camera', this.newFromCamera);
+    this.addNewButton('new-library', T('Choose sprite from library'), this.newFromLibrary);
+    this.addNewButton('new-paint', T('Paint new sprite'), this.newFromEditor);
+    this.addNewButton('new-import', T('Upload sprite from file'), this.newFromFile, 'image/*,.sprite2');
+    this.addNewButton('new-camera', T('New sprite from file'), this.newFromCamera);
 
     this.el.appendChild(this.elStageSection = el('stage-section'));
     this.elStageSection.appendChild(this.stageIcon.el);
