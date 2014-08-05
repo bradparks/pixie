@@ -4124,7 +4124,7 @@
   };
 
 
-  function ScriptEditor(editor) {
+  function ScriptsPanel(editor) {
     this.editor = editor;
 
     this.el = el('script-editor');
@@ -4139,11 +4139,11 @@
     this.workspace.on('change', this.save, this);
   }
 
-  ScriptEditor.prototype.save = function() {
+  ScriptsPanel.prototype.save = function() {
     if (this.sprite) this.sprite.scripts = this.workspace.scripts.slice(0);
   };
 
-  ScriptEditor.prototype.showSprite = function(sprite) {
+  ScriptsPanel.prototype.showSprite = function(sprite) {
     this.save();
     this.sprite = null;
     if (sprite) {
@@ -4155,7 +4155,7 @@
     this.refreshPalette();
   };
 
-  ScriptEditor.prototype.createButtons = function() {
+  ScriptsPanel.prototype.createButtons = function() {
     var self = this;
     function buttonClick() {
       self.category = this.value;
@@ -4175,17 +4175,17 @@
     }, this);
   };
 
-  ScriptEditor.prototype.install = function(parent) {
+  ScriptsPanel.prototype.install = function(parent) {
     parent.add(this.palette);
     parent.add(this.workspace);
   };
 
-  ScriptEditor.prototype.uninstall = function(parent) {
+  ScriptsPanel.prototype.uninstall = function(parent) {
     parent.remove(this.palette);
     parent.remove(this.workspace);
   };
 
-  def(ScriptEditor.prototype, 'category', {
+  def(ScriptsPanel.prototype, 'category', {
     get: function() {return this._category},
     set: function(value) {
       if (this._category === value) {
@@ -4205,7 +4205,7 @@
     }
   });
 
-  ScriptEditor.prototype.refreshPalette = function(resetScroll) {
+  ScriptsPanel.prototype.refreshPalette = function(resetScroll) {
     if (!resetScroll) {
       var sx = this.palette.scrollX;
       var sy = this.palette.scrollY;
@@ -4224,7 +4224,7 @@
     }
   };
 
-  ScriptEditor.prototype.eval = function(t) {
+  ScriptsPanel.prototype.eval = function(t) {
     if (t.if) {
       ((this.evalCondition(t.if) ? t.then : t.else) || []).forEach(this.eval, this);
       return;
@@ -4273,7 +4273,7 @@
     this.palette.add(script);
   };
 
-  ScriptEditor.prototype.evalArg = function(arg) {
+  ScriptsPanel.prototype.evalArg = function(arg) {
     if (typeof arg !== 'object') return arg;
     if (arg.first) {
       var key = arg.first === 'var' ? 'variables' : arg.first === 'list' ? 'lists' : '';
@@ -4302,7 +4302,7 @@
     return '';
   };
 
-  ScriptEditor.prototype.evalCondition = function(condition) {
+  ScriptsPanel.prototype.evalCondition = function(condition) {
     var stage = this.editor.stage;
     var sprite = this.editor.selectedSprite;
     switch (condition) {
@@ -4313,7 +4313,7 @@
     }
   };
 
-  ScriptEditor.prototype.evalAll = function(all) {
+  ScriptsPanel.prototype.evalAll = function(all) {
     function getter(get) {
       return function(name) {return {watcher: [get, name]}};
     }
@@ -4335,7 +4335,7 @@
   };
 
 
-  function CostumeEditor(editor) {
+  function CostumesPanel(editor) {
     this.editor = editor;
 
     this.el = el('costume-editor');
@@ -4349,7 +4349,7 @@
     this.el.appendChild(this.elEditor = el('image-editor'));
   }
 
-  CostumeEditor.prototype.addNewButton = function(name, title, fn, file, multiple) {
+  CostumesPanel.prototype.addNewButton = function(name, title, fn, file, multiple) {
     var button = el(file ? 'div' : 'button', 'new-button '+name);
     button.title = title;
     if (file) {
@@ -4372,7 +4372,7 @@
     return button;
   };
 
-  CostumeEditor.prototype.showSprite = function(sprite) {
+  CostumesPanel.prototype.showSprite = function(sprite) {
     this.sprite = sprite;
     this.elNewLabel.textContent = sprite.isSprite ? T('New costume:') : T('New backdrop:');
     this.elLibraryButton.classList.toggle('new-backdrop-library', sprite.isStage);
@@ -4383,7 +4383,7 @@
     this.updateList();
   };
 
-  CostumeEditor.prototype.updateList = function() {
+  CostumesPanel.prototype.updateList = function() {
     while (this.elList.firstChild) this.elList.removeChild(this.elList.lastChild);
     this.icons = this.sprite.costumes.map(function(c) {
       var icon = new CostumeIcon(this, c);
@@ -4392,7 +4392,7 @@
     }, this);
   };
 
-  CostumeEditor.prototype.iconFor = function(costume) {
+  CostumesPanel.prototype.iconFor = function(costume) {
     var i = this.icons.length;
     while (i--) {
       if (this.icons[i].costume === costume) {
@@ -4402,7 +4402,7 @@
     return null;
   };
 
-  CostumeEditor.prototype.select = function(icon) {
+  CostumesPanel.prototype.select = function(icon) {
     if (this.selectedIcon) {
       this.selectedIcon.deselect();
     }
@@ -4411,14 +4411,14 @@
     }
   };
 
-  CostumeEditor.prototype.newFromFile = function(file) {
+  CostumesPanel.prototype.newFromFile = function(file) {
     IO.readImageFile(file, function(err, image) {
       if (err) return;
       this.addCostume(new Costume(stripExtension(file.name), image, image.width / 2 | 0, image.height / 2 | 0));
     }, this);
   };
 
-  CostumeEditor.prototype.addCostume = function(c) {
+  CostumesPanel.prototype.addCostume = function(c) {
       this.sprite.addCostume(c);
       var icon = new CostumeIcon(this, c);
       this.elList.appendChild(icon.el);
@@ -4492,11 +4492,11 @@
   };
 
 
-  function SoundEditor() {
+  function SoundsPanel() {
     this.el = el('sound-editor');
   }
 
-  SoundEditor.prototype.showSprite = function(sprite) {};
+  SoundsPanel.prototype.showSprite = function(sprite) {};
 
 
   function TabPanel(editor) {
@@ -4506,9 +4506,9 @@
     this.el.appendChild(this.elContent = el('tab-panel-content'));
 
     this.tabPanels = [
-      this.scriptEditor = new ScriptEditor(editor),
-      this.costumeEditor = new CostumeEditor(editor),
-      this.soundEditor = new SoundEditor(editor)];
+      this.scriptEditor = new ScriptsPanel(editor),
+      this.costumeEditor = new CostumesPanel(editor),
+      this.soundEditor = new SoundsPanel(editor)];
     this.tabs = [];
 
     var self = this;
@@ -4938,7 +4938,7 @@
     this.icons = [];
   };
 
-  SpritePanel.prototype.addNewButton = CostumeEditor.prototype.addNewButton;
+  SpritePanel.prototype.addNewButton = CostumesPanel.prototype.addNewButton;
 
   SpritePanel.prototype.install = function(parent) {
     parent.add(this.stageIcon);
