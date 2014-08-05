@@ -3083,6 +3083,10 @@
       return costume ? costume.name : '';
     };
 
+    table['backgroundIndex'] = function() {
+      return interp.stage.costume + 1;
+    };
+
     table['scale'] = function() {
       var sprite = interp.activeThread.target;
       return sprite.isSprite ? sprite.scale * 100 : 0;
