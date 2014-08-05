@@ -753,6 +753,19 @@ button::-moz-focus-inner {
   top: 16px;
   left: 17px;
 }
+.color-picker-eyedropper {
+  position: absolute;
+  top: 5px;
+  right: 0;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  width: 25px;
+  height: 25px;
+  border: 1px solid #d0d1d2;
+  border-radius: 5px;
+  background: url(assets.png) -362px -1px, linear-gradient(#fff, #e6e8e8);
+}
 .backpack-panel {
   position: absolute;
   bottom: -117px;
