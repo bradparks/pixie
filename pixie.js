@@ -4566,7 +4566,7 @@
     get: function() {return this._foreground},
     set: function(value) {
       this._foreground = value;
-      this.elForeground.style.background = value;
+      this.elForeground.style.backgroundColor = value;
     }
   });
 
@@ -4574,7 +4574,7 @@
     get: function() {return this._background},
     set: function(value) {
       this._background = value;
-      this.elBackground.style.background = value;
+      this.elBackground.style.backgroundColor = value;
     }
   });
 
