@@ -4762,6 +4762,7 @@
     this.brushCanvas.width =
     this.brushCanvas.height = Math.ceil(size) * 2;
     bx.save();
+    bx.fillStyle = this._cursorColor;
     bx.translate(Math.ceil(size), Math.ceil(size));
     if (size < 1) {
       bx.fillRect(0, 0, 1, 1);
@@ -4864,7 +4865,9 @@
     get: function() {return this._foreground},
     set: function(value) {
       this._foreground = value;
+      this._cursorColor = value === 'transparent' ? '#000' : value;
       this.setSwatchColor(this.elForeground, value);
+      this.updateCursor();
     }
   });
 
