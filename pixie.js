@@ -4648,10 +4648,12 @@
     cx.fillRect(size, 0, size, size);
     cx.fillRect(0, size, size, size);
     this.elCanvasGrid.style.backgroundImage = 'url('+JSON.stringify(this.gridCanvas.toDataURL())+')';
+    this.viewportOffsetX = Math.max(0, (vw - zoom * 480) / 2);
+    this.viewportOffsetY = Math.max(0, (vh - zoom * 360) / 2);
     this.elCanvasGrid.style.left =
-    this.elCanvasFill.style.left = Math.max(0, (vw - zoom * 480) / 2)+'px';
+    this.elCanvasFill.style.left = this.viewportOffsetX+'px';
     this.elCanvasGrid.style.top =
-    this.elCanvasFill.style.top = Math.max(0, (vh - zoom * 360) / 2)+'px';
+    this.elCanvasFill.style.top = this.viewportOffsetY+'px';
     this.elBitmap.width =
     this.elCursor.width = vw;
     this.elBitmap.height =
@@ -4748,8 +4750,8 @@
     var oldX = this.cursorX;
     var oldY = this.cursorY;
     var bb = this.elCursor.getBoundingClientRect();
-    this.cursorX = (this.mouseX - bb.left + this.scrollX) / this._zoom | 0;
-    this.cursorY = (this.mouseY - bb.top + this.scrollY) / this._zoom | 0;
+    this.cursorX = (this.mouseX - bb.left + this.scrollX - this.viewportOffsetX) / this._zoom | 0;
+    this.cursorY = (this.mouseY - bb.top + this.scrollY - this.viewportOffsetY) / this._zoom | 0;
     var size = this._brushSize;
     var bx = this.brushContext;
     this.brushCanvas.width =
@@ -4770,7 +4772,7 @@
     cx.imageSmoothingEnabled = false;
     cx.clearRect(0, 0, this.elCursor.width, this.elCursor.height);
     cx.save();
-    cx.translate(-this.scrollX, -this.scrollY);
+    cx.translate(-this.scrollX + this.viewportOffsetX, -this.scrollY + this.viewportOffsetY);
     cx.scale(this._zoom, this._zoom);
     var offset = this.brushCanvas.width / 2;
     cx.translate(this.cursorX - offset, this.cursorY - offset);
@@ -4785,7 +4787,7 @@
     cx.imageSmoothingEnabled = false;
     cx.clearRect(0, 0, this.elBitmap.width, this.elBitmap.height);
     cx.save();
-    cx.translate(-this.scrollX, -this.scrollY);
+    cx.translate(-this.scrollX + this.viewportOffsetX, -this.scrollY + this.viewportOffsetY);
     var s = this._zoom * this._costume.scale;
     cx.scale(s, s);
     cx.drawImage(this.canvas, 0, 0);
