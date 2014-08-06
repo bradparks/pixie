@@ -4634,8 +4634,8 @@
   };
 
   ImageEditor.prototype.resize = function() {
-    var vw = this.elCanvas.offsetWidth;
-    var vh = this.elCanvas.offsetHeight;
+    var vw = this.viewportWidth = this.elCanvas.offsetWidth;
+    var vh = this.viewportHeight = this.elCanvas.offsetHeight;
     var zoom = this._zoom;
     var size = 4 * zoom;
     this.gridCanvas.width = size * 2;
@@ -4767,11 +4767,22 @@
     this.updateBitmap();
   };
 
+  ImageEditor.prototype.scrollTo = function(x, y) {
+    this.elCanvasScroll.scrollLeft = x;
+    this.elCanvasScroll.scrollTop = y;
+    this.updateScroll();
+  };
+
   def(ImageEditor.prototype, 'zoom', {
     get: function() {return this._zoom},
     set: function(value) {
+      var vw = Math.min(this.viewportWidth, 480 * this._zoom) / 2;
+      var vh = Math.min(this.viewportHeight, 360 * this._zoom) / 2;
+      var sx = Math.max(0, Math.min(480 * value - this.viewportWidth, (this.scrollX + vw) * value / this._zoom - vw));
+      var sy = Math.max(0, Math.min(360 * value - this.viewportHeight, (this.scrollY + vh) * value / this._zoom - vh));
       this._zoom = value;
       this.resize();
+      this.scrollTo(sx, sy);
     }
   });
 
