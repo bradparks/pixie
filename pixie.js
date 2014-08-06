@@ -4530,7 +4530,6 @@
     this.elCanvas.appendChild(this.elCanvasGrid = el('image-editor-canvas-grid'));
     this.gridCanvas = document.createElement('canvas');
     this.gridContext = this.gridCanvas.getContext('2d');
-    this.drawGrid();
 
     this.tools = {};
     this.addBitmapTool('brush', T('Brush'));
@@ -4557,6 +4556,7 @@
     this.foreground = '#000';
     this.background = '#fff';
     this.tool = 'brush';
+    this.zoom = 1;
   }
 
   ImageEditor.prototype.createPalette = function() {
@@ -4605,8 +4605,10 @@
     this.elPalette.appendChild(b);
   };
 
-  ImageEditor.prototype.drawGrid = function() {
-    var zoom = 8;
+  ImageEditor.prototype.resize = function() {
+    var vw = this.elCanvas.offsetWidth;
+    var vh = this.elCanvas.offsetHeight;
+    var zoom = this._zoom;
     var size = 4 * zoom;
     this.gridCanvas.width = size * 2;
     this.gridCanvas.height = size * 2;
@@ -4618,9 +4620,19 @@
     cx.fillRect(size, 0, size, size);
     cx.fillRect(0, size, size, size);
     this.elCanvasGrid.style.backgroundImage = 'url('+JSON.stringify(this.gridCanvas.toDataURL())+')';
+    this.elCanvasGrid.style.left = Math.max(0, (vw - zoom * 480) / 2)+'px';
+    this.elCanvasGrid.style.top = Math.max(0, (vh - zoom * 360) / 2)+'px';
     this.elCanvasGrid.style.width = zoom * 480+'px';
     this.elCanvasGrid.style.height = zoom * 360+'px';
   };
+
+  def(ImageEditor.prototype, 'zoom', {
+    get: function() {return this._zoom},
+    set: function(value) {
+      this._zoom = value;
+      this.resize();
+    }
+  });
 
   ImageEditor.prototype.swatchClick = function(e) {
     if (e.target.className === 'color-picker-palette-color') {
