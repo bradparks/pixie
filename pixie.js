@@ -1674,7 +1674,7 @@
         var icon = costumesPanel.iconFor(this);
         if (icon) icon.updateThumbnail();
         if (this.owner.costume === this.owner.costumes.indexOf(this)) {
-          costumesPanel.imageEditor.updateBitmap();
+          costumesPanel.imageEditor.updateCanvas();
         }
       }
     }
@@ -4526,6 +4526,9 @@
 
 
   function ImageEditor() {
+    this.canvas = document.createElement('canvas');
+    this.context = this.canvas.getContext('2d');
+
     this.el = el('image-editor');
 
     this.el.appendChild(this.elCanvas = el('image-editor-canvas'));
@@ -4716,11 +4719,24 @@
     cx.clearRect(0, 0, this.elBitmap.width, this.elBitmap.height);
     cx.save();
     cx.translate(-this.scrollX, -this.scrollY);
-    cx.scale(this._zoom, this._zoom);
-    cx.translate(240, 180);
-    cx.scale(this._costume.scale, this._costume.scale);
-    cx.drawImage(this._costume.canvas, -this._costume.cx, -this._costume.cy);
+    var s = this._zoom * this._costume.scale;
+    cx.scale(s, s);
+    cx.drawImage(this.canvas, 0, 0);
     cx.restore();
+  };
+
+  ImageEditor.prototype.updateCanvas = function() {
+    var c = this._costume.canvas;
+    var pr = this._costume.pixelRatio;
+    this.canvas.width = 480 * pr;
+    this.canvas.height = 360 * pr;
+    try {
+      this.context.save();
+      this.context.translate(240 * pr, 180 * pr);
+      this.context.drawImage(c, -this._costume.cx, -this._costume.cy);
+      this.context.restore();
+    } catch (e) {}
+    this.updateBitmap();
   };
 
   def(ImageEditor.prototype, 'zoom', {
@@ -4743,7 +4759,7 @@
     get: function() {return this._costume},
     set: function(value) {
       this._costume = value;
-      this.updateBitmap();
+      this.updateCanvas();
     }
   });
 
