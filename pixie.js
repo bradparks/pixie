@@ -4541,8 +4541,16 @@
 
     this.elCanvas.appendChild(this.elCursor = el('canvas', 'image-editor-canvas-layer'));
     this.cursorContext = this.elCursor.getContext('2d');
+    this.brushCanvas = document.createElement('canvas');
+    this.brushCanvas.width = 480 * 2;
+    this.brushCanvas.height = 360 * 2;
+    this.brushContext = this.brushCanvas.getContext('2d');
 
-    this.elCursor.style.cursor = 'none';
+    this.elCanvas.appendChild(this.elCanvasScroll = el('image-editor-canvas-scroll'));
+    this.elCanvasScroll.appendChild(this.elCanvasFill = el('image-editor-canvas-fill'));
+    this.elCanvasScroll.addEventListener('scroll', this.updateScroll.bind(this));
+
+    this.elCanvasScroll.style.cursor = 'none';
 
     this.tools = {};
     this.addBitmapTool('brush', T('Brush'));
@@ -4567,6 +4575,7 @@
     this.createPalette();
 
     this.mouseMove = this.mouseMove.bind(this);
+    this._brushSize = 2.5;
     this.foreground = '#000';
     this.background = '#fff';
     this.tool = 'brush';
@@ -4635,18 +4644,26 @@
     cx.fillRect(0, size, size, size);
     this.elCanvasGrid.style.backgroundImage = 'url('+JSON.stringify(this.gridCanvas.toDataURL())+')';
     this.elCanvasGrid.style.left =
-    this.elBitmap.style.left =
-    this.elCursor.style.left = Math.max(0, (vw - zoom * 480) / 2)+'px';
+    this.elCanvasFill.style.left = Math.max(0, (vw - zoom * 480) / 2)+'px';
     this.elCanvasGrid.style.top =
-    this.elBitmap.style.top =
-    this.elCursor.style.top = Math.max(0, (vh - zoom * 360) / 2)+'px';
+    this.elCanvasFill.style.top = Math.max(0, (vh - zoom * 360) / 2)+'px';
     this.elBitmap.width =
-    this.elCursor.width = zoom * 480;
+    this.elCursor.width = vw;
     this.elBitmap.height =
-    this.elCursor.height = zoom * 360;
+    this.elCursor.height = vh;
+    this.elCanvasGrid.style.width =
+    this.elCanvasFill.style.width = zoom * 480+'px';
+    this.elCanvasGrid.style.height =
+    this.elCanvasFill.style.height = zoom * 360+'px';
+    this.updateScroll();
+  };
+
+  ImageEditor.prototype.updateScroll = function() {
+    this.scrollX = this.elCanvasScroll.scrollLeft;
+    this.scrollY = this.elCanvasScroll.scrollTop;
+    vis.util.setTransform(this.elCanvasGrid, 'translate('+(-this.scrollX)+'px, '+(-this.scrollY)+'px)');
     this.updateBitmap();
-    this.elCanvasGrid.style.width = zoom * 480+'px';
-    this.elCanvasGrid.style.height = zoom * 360+'px';
+    this.updateCursor();
   };
 
   ImageEditor.prototype.install = function() {
@@ -4665,13 +4682,31 @@
 
   ImageEditor.prototype.updateCursor = function() {
     var bb = this.elCursor.getBoundingClientRect();
-    this.cursorX = (this.mouseX - bb.left) / this._zoom | 0;
-    this.cursorY = (this.mouseY - bb.top) / this._zoom | 0;
-    this.cursorContext.clearRect(0, 0, this.elCursor.width, this.elCursor.height);
-    this.cursorContext.save();
-    this.cursorContext.scale(this._zoom, this._zoom);
-    this.cursorContext.fillRect(this.cursorX, this.cursorY, 1, 1);
-    this.cursorContext.restore();
+    this.cursorX = (this.mouseX - bb.left + this.scrollX) / this._zoom | 0;
+    this.cursorY = (this.mouseY - bb.top + this.scrollY) / this._zoom | 0;
+    var size = this._brushSize;
+    var bx = this.brushContext;
+    bx.clearRect(0, 0, this.brushCanvas.width, this.brushCanvas.height);
+    bx.save();
+    bx.translate(this.cursorX, this.cursorY);
+    if (size < 1) {
+      bx.fillRect(0, 0, 1, 1);
+    } else {
+      bx.beginPath();
+      bx.arc(0, 0, size, 0, Math.PI * 2);
+      bx.clip();
+      bx.fillRect(-size, -size, size * 2, size * 2);
+    }
+    bx.restore();
+
+    var cx = this.cursorContext;
+    cx.imageSmoothingEnabled = false;
+    cx.clearRect(0, 0, this.elCursor.width, this.elCursor.height);
+    cx.save();
+    cx.translate(-this.scrollX, -this.scrollY);
+    cx.scale(this._zoom, this._zoom);
+    cx.drawImage(this.brushCanvas, 0, 0);
+    cx.restore();
   };
 
   ImageEditor.prototype.updateBitmap = function() {
@@ -4680,6 +4715,7 @@
     cx.imageSmoothingEnabled = false;
     cx.clearRect(0, 0, this.elBitmap.width, this.elBitmap.height);
     cx.save();
+    cx.translate(-this.scrollX, -this.scrollY);
     cx.scale(this._zoom, this._zoom);
     cx.translate(240, 180);
     cx.scale(this._costume.scale, this._costume.scale);
@@ -4692,6 +4728,14 @@
     set: function(value) {
       this._zoom = value;
       this.resize();
+    }
+  });
+
+  def(ImageEditor.prototype, 'brushSize', {
+    get: function() {return this._brushSize},
+    set: function(value) {
+      this._brushSize = value;
+      this.updateCursor();
     }
   });
 
