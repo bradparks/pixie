@@ -833,6 +833,13 @@ button::-moz-focus-inner {
 .zoom-in {
   background-position: -780px 0;
 }
+.image-editor-zoom-label {
+  position: absolute;
+  top: 31px;
+  right: 4px;
+  width: 70px;
+  color: #5c5d5f;
+}
 .bitmap-tools {
   position: absolute;
   top: 39px;

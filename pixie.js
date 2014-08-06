@@ -4579,6 +4579,8 @@
     this.elZoomDefault.addEventListener('click', this.zoomDefault.bind(this));
     this.elZoomIn.addEventListener('click', this.zoomIn.bind(this));
 
+    this.elSettings.appendChild(this.elZoomLabel = el('image-editor-zoom-label'));
+
     this.elSettings.appendChild(this.elColorPicker = el('color-picker'));
     this.elColorPicker.appendChild(this.elSwatchButton = el('button', 'color-picker-swatch-button wheel'));
     this.elColorPicker.appendChild(this.elColors = el('color-picker-colors'));
@@ -4844,6 +4846,7 @@
       var sx = Math.max(0, Math.min(480 * value - this.viewportWidth, (this.scrollX + vw) * value / this._zoom - vw));
       var sy = Math.max(0, Math.min(360 * value - this.viewportHeight, (this.scrollY + vh) * value / this._zoom - vh));
       this._zoom = value;
+      this.elZoomLabel.textContent = (value * 100 | 0)+'%';
       this.resize();
       this.scrollTo(sx, sy);
     }
