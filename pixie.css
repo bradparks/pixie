@@ -785,6 +785,21 @@ button::-moz-focus-inner {
   height: 12px;
   margin: 0 2px 2px 0;
 }
+.image-editor-bitmap-tools {
+  position: absolute;
+  top: 39px;
+  left: 11px;
+}
+.image-editor-bitmap-tool {
+  border: 1px solid #d0d1d2;
+  background: linear-gradient(#fff, #e6e8e8);
+  margin: 0 0 3px;
+  padding: 0;
+  width: 38px;
+  height: 34px;
+  border-radius: 5px;
+  display: block;
+}
 .backpack-panel {
   position: absolute;
   bottom: -117px;

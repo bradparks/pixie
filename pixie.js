@@ -4524,6 +4524,16 @@
     this.el = el('image-editor');
 
     this.el.appendChild(this.elSettings = el('image-editor-settings'));
+    this.el.appendChild(this.elBitmapTools = el('image-editor-bitmap-tools'));
+    this.addBitmapTool('brush');
+    this.addBitmapTool('line');
+    this.addBitmapTool('rectangle');
+    this.addBitmapTool('ellipse');
+    this.addBitmapTool('text');
+    this.addBitmapTool('fill');
+    this.addBitmapTool('erase');
+    this.addBitmapTool('select');
+    this.addBitmapTool('duplicate');
 
     this.elSettings.appendChild(this.elColorPicker = el('color-picker'));
     this.elColorPicker.appendChild(this.elSwatchButton = el('button', 'color-picker-swatch-button wheel'));
@@ -4551,6 +4561,12 @@
         this.addPaletteColor('hsl('+h+', 100%, '+l+'%)');
       }, this);
     }, this);
+  };
+
+  ImageEditor.prototype.addBitmapTool = function(name) {
+    var b = el('button', 'image-editor-bitmap-tool '+name);
+    this.elBitmapTools.appendChild(b);
+    return b;
   };
 
   ImageEditor.prototype.addPaletteColor = function(color) {
