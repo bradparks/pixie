@@ -4525,15 +4525,15 @@
 
     this.el.appendChild(this.elSettings = el('image-editor-settings'));
     this.el.appendChild(this.elBitmapTools = el('bitmap-tools'));
-    this.addBitmapTool('brush');
-    this.addBitmapTool('line');
-    this.addBitmapTool('rectangle');
-    this.addBitmapTool('ellipse');
-    this.addBitmapTool('text');
-    this.addBitmapTool('fill');
-    this.addBitmapTool('erase');
-    this.addBitmapTool('select');
-    this.addBitmapTool('duplicate');
+    this.addBitmapTool('brush', T('Brush'));
+    this.addBitmapTool('line', T('Line'));
+    this.addBitmapTool('rectangle', T('Rectangle (Shift: Square)'));
+    this.addBitmapTool('ellipse', T('Ellipse (Shift: Circle)'));
+    this.addBitmapTool('text', T('Text'));
+    this.addBitmapTool('fill', T('Fill with color'));
+    this.addBitmapTool('erase', T('Erase'));
+    this.addBitmapTool('select', T('Select'));
+    this.addBitmapTool('duplicate', T('Select and duplicate'));
 
     this.elSettings.appendChild(this.elColorPicker = el('color-picker'));
     this.elColorPicker.appendChild(this.elSwatchButton = el('button', 'color-picker-swatch-button wheel'));
@@ -4563,8 +4563,9 @@
     }, this);
   };
 
-  ImageEditor.prototype.addBitmapTool = function(name) {
+  ImageEditor.prototype.addBitmapTool = function(name, title) {
     var b = el('button', 'bitmap-tool bitmap-tool-'+name);
+    b.title = title;
     this.elBitmapTools.appendChild(b);
     return b;
   };
