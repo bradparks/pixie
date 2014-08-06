@@ -800,8 +800,15 @@ button::-moz-focus-inner {
   border-radius: 5px;
   display: block;
 }
+.bitmap-tool:hover {
+  background-color: rgb(73, 188, 226);
+  background-image: url(assets.png);
+}
 .bitmap-tool-brush {
   background-position: -386px 0, 0 0;
+}
+.bitmap-tool-brush:hover {
+  background-position: -386px -34px;
 }
 .backpack-panel {
   position: absolute;
