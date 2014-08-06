@@ -716,7 +716,7 @@ button::-moz-focus-inner {
   bottom: 137px;
   overflow: auto;
 }
-.image-editor-canvas-grid {
+.image-editor-canvas-layer {
   position: absolute;
 }
 .image-editor-settings {

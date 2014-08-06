@@ -4410,6 +4410,7 @@
     }
     if (this.selectedIcon = icon) {
       icon.select();
+      this.imageEditor.costume = icon.costume;
     }
   };
 
@@ -4527,9 +4528,12 @@
     this.el.appendChild(this.elSettings = el('image-editor-settings'));
     this.el.appendChild(this.elBitmapTools = el('bitmap-tools'));
 
-    this.elCanvas.appendChild(this.elCanvasGrid = el('image-editor-canvas-grid'));
+    this.elCanvas.appendChild(this.elCanvasGrid = el('image-editor-canvas-layer'));
     this.gridCanvas = document.createElement('canvas');
     this.gridContext = this.gridCanvas.getContext('2d');
+
+    this.elCanvas.appendChild(this.elBitmap = el('canvas', 'image-editor-canvas-layer'));
+    this.bitmapContext = this.elBitmap.getContext('2d');
 
     this.tools = {};
     this.addBitmapTool('brush', T('Brush'));
@@ -4620,10 +4624,28 @@
     cx.fillRect(size, 0, size, size);
     cx.fillRect(0, size, size, size);
     this.elCanvasGrid.style.backgroundImage = 'url('+JSON.stringify(this.gridCanvas.toDataURL())+')';
-    this.elCanvasGrid.style.left = Math.max(0, (vw - zoom * 480) / 2)+'px';
-    this.elCanvasGrid.style.top = Math.max(0, (vh - zoom * 360) / 2)+'px';
+    this.elCanvasGrid.style.left =
+    this.elBitmap.style.left = Math.max(0, (vw - zoom * 480) / 2)+'px';
+    this.elCanvasGrid.style.top =
+    this.elBitmap.style.top = Math.max(0, (vh - zoom * 360) / 2)+'px';
+    this.elBitmap.width = zoom * 480;
+    this.elBitmap.height = zoom * 360;
+    this.updateBitmap();
     this.elCanvasGrid.style.width = zoom * 480+'px';
     this.elCanvasGrid.style.height = zoom * 360+'px';
+  };
+
+  ImageEditor.prototype.updateBitmap = function() {
+    if (!this._costume) return;
+    var cx = this.bitmapContext;
+    cx.imageSmoothingEnabled = false;
+    cx.clearRect(0, 0, this.elBitmap.width, this.elBitmap.height);
+    cx.save();
+    cx.scale(this._zoom, this._zoom);
+    cx.translate(240, 180);
+    cx.scale(this._costume.scale, this._costume.scale);
+    cx.drawImage(this._costume.canvas, -this._costume.cx, -this._costume.cy);
+    cx.restore();
   };
 
   def(ImageEditor.prototype, 'zoom', {
@@ -4631,6 +4653,14 @@
     set: function(value) {
       this._zoom = value;
       this.resize();
+    }
+  });
+
+  def(ImageEditor.prototype, 'costume', {
+    get: function() {return this._costume},
+    set: function(value) {
+      this._costume = value;
+      this.updateBitmap();
     }
   });
 
