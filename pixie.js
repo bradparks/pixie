@@ -1670,11 +1670,11 @@
       this.owner.redraw();
       var s = this.owner.stage || this.owner;
       if (s.isStage && s.editor && s.editor.selectedSprite === this.owner) {
-        var costumeEditor = s.editor.tabPanel.costumeEditor;
-        var icon = costumeEditor.iconFor(this);
+        var costumesPanel = s.editor.tabPanel.costumesPanel;
+        var icon = costumesPanel.iconFor(this);
         if (icon) icon.updateThumbnail();
         if (this.owner.costume === this.owner.costumes.indexOf(this)) {
-          costumeEditor.imageEditor.updateBitmap();
+          costumesPanel.imageEditor.updateBitmap();
         }
       }
     }
@@ -4800,9 +4800,9 @@
     this.el.appendChild(this.elContent = el('tab-panel-content'));
 
     this.tabPanels = [
-      this.scriptEditor = new ScriptsPanel(editor),
-      this.costumeEditor = new CostumesPanel(editor),
-      this.soundEditor = new SoundsPanel(editor)];
+      this.scriptsPanel = new ScriptsPanel(editor),
+      this.costumesPanel = new CostumesPanel(editor),
+      this.soundsPanel = new SoundsPanel(editor)];
     this.tabs = [];
 
     var self = this;
@@ -4813,7 +4813,7 @@
     this.costumesTab = this.makeTab(T('Costumes'));
     this.soundsTab = this.makeTab(T('Sounds'));
 
-    this.panel = this.scriptEditor;
+    this.panel = this.scriptsPanel;
   }
 
   TabPanel.prototype.makeTab = function(text) {
