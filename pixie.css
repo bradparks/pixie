@@ -817,6 +817,9 @@ button::-moz-focus-inner {
 .bitmap-tool-ellipse {
   background-position: -500px -1px, 0 0;
 }
+.bitmap-tool-text {
+  background-position: -538px -1px, 0 0;
+}
 .backpack-panel {
   position: absolute;
   bottom: -117px;
