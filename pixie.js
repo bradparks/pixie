@@ -4784,7 +4784,7 @@
   ImageEditor.prototype.updateBitmap = function() {
     if (!this._costume) return;
     var cx = this.bitmapContext;
-    cx.imageSmoothingEnabled = false;
+    cx.imageSmoothingEnabled = this._zoom <= this._costume.pixelRatio;
     cx.clearRect(0, 0, this.elBitmap.width, this.elBitmap.height);
     cx.save();
     cx.translate(-this.scrollX + this.viewportOffsetX, -this.scrollY + this.viewportOffsetY);
