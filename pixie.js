@@ -4523,8 +4523,15 @@
   function ImageEditor() {
     this.el = el('image-editor');
 
+    this.el.appendChild(this.elCanvas = el('image-editor-canvas'));
     this.el.appendChild(this.elSettings = el('image-editor-settings'));
     this.el.appendChild(this.elBitmapTools = el('bitmap-tools'));
+
+    this.elCanvas.appendChild(this.elCanvasGrid = el('image-editor-canvas-grid'));
+    this.gridCanvas = document.createElement('canvas');
+    this.gridContext = this.gridCanvas.getContext('2d');
+    this.drawGrid();
+
     this.tools = {};
     this.addBitmapTool('brush', T('Brush'));
     this.addBitmapTool('line', T('Line'));
@@ -4596,6 +4603,23 @@
       b.style.backgroundImage = 'linear-gradient(-45deg, transparent 7.5px, #f00 7.5px, #f00 9.5px, transparent 9.5px)';
     }
     this.elPalette.appendChild(b);
+  };
+
+  ImageEditor.prototype.drawGrid = function() {
+    var zoom = 8;
+    var size = 4 * zoom;
+    this.gridCanvas.width = size * 2;
+    this.gridCanvas.height = size * 2;
+    var cx = this.gridContext;
+    cx.fillStyle = '#fff';
+    cx.fillRect(0, 0, size, size);
+    cx.fillRect(size, size, size, size);
+    cx.fillStyle = '#e8e8e8';
+    cx.fillRect(size, 0, size, size);
+    cx.fillRect(0, size, size, size);
+    this.elCanvasGrid.style.backgroundImage = 'url('+JSON.stringify(this.gridCanvas.toDataURL())+')';
+    this.elCanvasGrid.style.width = zoom * 480+'px';
+    this.elCanvasGrid.style.height = zoom * 360+'px';
   };
 
   ImageEditor.prototype.swatchClick = function(e) {

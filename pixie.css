@@ -708,6 +708,17 @@ button::-moz-focus-inner {
   background: #f2f2f2;
   box-shadow: 0 0 0 1px #d0d1d2;
 }
+.image-editor-canvas {
+  position: absolute;
+  top: 39px;
+  left: 64px;
+  right: 47px;
+  bottom: 137px;
+  overflow: auto;
+}
+.image-editor-canvas-grid {
+  position: absolute;
+}
 .image-editor-settings {
   position: absolute;
   bottom: 9px;
