@@ -4577,6 +4577,8 @@
     this.elColors.appendChild(this.elBackground = el('color-picker-color background'));
     this.elColors.appendChild(this.elForeground = el('color-picker-color foreground'));
     this.elColorPicker.appendChild(this.elEyedropperButton = el('button', 'color-picker-eyedropper'));
+    this.tools.eyedropper = this.elEyedropperButton
+    this.elEyedropperButton.addEventListener('mousedown', this.setTool.bind(this, 'eyedropper'));
     this.elColorPicker.appendChild(this.elPalette = el('color-picker-palette'));
     this.elPalette.addEventListener('mousedown', this.swatchClick.bind(this));
     this.elColors.addEventListener('mousedown', this.swapColors.bind(this));
@@ -4606,13 +4608,15 @@
 
   ImageEditor.prototype.addBitmapTool = function(name, title) {
     var b = el('button', 'bitmap-tool bitmap-tool-'+name);
-    b.addEventListener('mousedown', function() {
-      this.tool = name;
-    }.bind(this));
+    b.addEventListener('mousedown', this.setTool.bind(this, name));
     b.title = title;
     this.elBitmapTools.appendChild(b);
     this.tools[name] = b;
     return b;
+  };
+
+  ImageEditor.prototype.setTool = function(name) {
+    this.tool = name;
   };
 
   def(ImageEditor.prototype, 'tool', {
