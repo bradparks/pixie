@@ -803,24 +803,19 @@ button::-moz-focus-inner {
 .bitmap-tool:hover {
   background-color: rgb(73, 188, 226);
   background-image: url(assets.png);
+  background-position-y: -35px;
 }
 .bitmap-tool-brush {
   background-position: -387px -1px, 0 0;
 }
-.bitmap-tool-brush:hover {
-  background-position: -387px -35px;
-}
 .bitmap-tool-line {
   background-position: -426px -1px, 0 0;
-}
-.bitmap-tool-line:hover {
-  background-position: -426px -35px;
 }
 .bitmap-tool-rectangle {
   background-position: -462px -1px, 0 0;
 }
-.bitmap-tool-rectangle:hover {
-  background-position: -462px -35px;
+.bitmap-tool-ellipse {
+  background-position: -500px -1px, 0 0;
 }
 .backpack-panel {
   position: absolute;
