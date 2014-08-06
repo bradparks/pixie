@@ -4575,6 +4575,9 @@
     this.elZoom.appendChild(this.elZoomOut = el('button', 'zoom-button zoom-out'));
     this.elZoom.appendChild(this.elZoomDefault = el('button', 'zoom-button zoom-default'));
     this.elZoom.appendChild(this.elZoomIn = el('button', 'zoom-button zoom-in'));
+    this.elZoomOut.addEventListener('click', this.zoomOut.bind(this));
+    this.elZoomDefault.addEventListener('click', this.zoomDefault.bind(this));
+    this.elZoomIn.addEventListener('click', this.zoomIn.bind(this));
 
     this.elSettings.appendChild(this.elColorPicker = el('color-picker'));
     this.elColorPicker.appendChild(this.elSwatchButton = el('button', 'color-picker-swatch-button wheel'));
@@ -4845,6 +4848,18 @@
       this.scrollTo(sx, sy);
     }
   });
+
+  ImageEditor.prototype.zoomOut = function() {
+    if (this.zoom > 1) this.zoom /= 2;
+  };
+
+  ImageEditor.prototype.zoomDefault = function() {
+    this.zoom = 1;
+  };
+
+  ImageEditor.prototype.zoomIn = function() {
+    if (this.zoom < 16) this.zoom *= 2;
+  };
 
   def(ImageEditor.prototype, 'brushSize', {
     get: function() {return this._brushSize},
