@@ -3746,7 +3746,7 @@
     this.el.appendChild(this.backpackPanel.el);
     this.el.appendChild(this.tipsPanel.el);
 
-    this.tabPanel.scriptEditor.category = 1;
+    this.tabPanel.scriptsPanel.category = 1;
 
     window.addEventListener('resize', this.app.resize.bind(this.app));
     document.addEventListener('mousemove', this.mouseMove.bind(this));
@@ -3928,7 +3928,7 @@
   };
 
   Editor.prototype.refreshPalette = function() {
-    this.tabPanel.scriptEditor.refreshPalette();
+    this.tabPanel.scriptsPanel.refreshPalette();
   };
 
   Editor.prototype.newVariable = function() {
@@ -3989,7 +3989,7 @@
     }
     var names = {};
     this.stage.forEachScript(add);
-    this.tabPanel.scriptEditor.palette.scripts.forEach(add.bind(null));
+    this.tabPanel.scriptsPanel.palette.scripts.forEach(add.bind(null));
     return Object.keys(names);
   }});
 
