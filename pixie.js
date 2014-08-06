@@ -4682,17 +4682,18 @@
   };
 
   ImageEditor.prototype.mouseDown = function(e) {
+    e.preventDefault();
     this.mouseMove(e);
     this.isPressed = true;
   };
 
   ImageEditor.prototype.mouseMove = function(e) {
-    var newX = e.clientX;
-    var newY = e.clientY;
-    this.toolMove(this.mouseX, this.mouseY, newX, newY);
-    this.mouseX = newX;
-    this.mouseY = newY;
+    var oldX = this.cursorX;
+    var oldY = this.cursorY;
+    this.mouseX = e.clientX;
+    this.mouseY = e.clientY;
     this.updateCursor();
+    this.toolMove(oldX, oldY, this.cursorX, this.cursorY);
   };
 
   ImageEditor.prototype.toolMove = function(x1, y1, x2, y2) {
@@ -4700,7 +4701,41 @@
       this.context.save();
       this.context.scale(this._costume.pixelRatio, this._costume.pixelRatio);
       this.context.imageSmoothingEnabled = false;
-      this.context.drawImage(this.brushCanvas, 0, 0);
+      var offset = this.brushCanvas.width / 2;
+      this.context.translate(-offset, -offset);
+      var dx = x2 - x1;
+      var dy = y2 - y1;
+      var dx2 = dx * dx;
+      var dy2 = dy * dy;
+      if (dy2 > dx2) {
+        var m = dx / dy;
+        var x = x1;
+        if (dy < 0) {
+          var t = y1;
+          y1 = y2;
+          y2 = t;
+          x = x2;
+        }
+        for (var y = y1; y <= y2; y++) {
+          x += m;
+          this.context.drawImage(this.brushCanvas, x | 0, y);
+        }
+      } else if (dx2) {
+        var m = dy / dx;
+        var y = y1;
+        if (dx < 0) {
+          var t = x1;
+          x1 = x2;
+          x2 = t;
+          y = y2;
+        }
+        for (var x = x1; x <= x2; x++) {
+          y += m;
+          this.context.drawImage(this.brushCanvas, x, y | 0);
+        }
+      } else {
+        this.context.drawImage(this.brushCanvas, x1, y1);
+      }
       this.context.restore();
       this.updateBitmap();
     }
@@ -4718,9 +4753,10 @@
     this.cursorY = (this.mouseY - bb.top + this.scrollY) / this._zoom | 0;
     var size = this._brushSize;
     var bx = this.brushContext;
-    bx.clearRect(0, 0, this.brushCanvas.width, this.brushCanvas.height);
+    this.brushCanvas.width =
+    this.brushCanvas.height = Math.ceil(size) * 2;
     bx.save();
-    bx.translate(this.cursorX, this.cursorY);
+    bx.translate(Math.ceil(size), Math.ceil(size));
     if (size < 1) {
       bx.fillRect(0, 0, 1, 1);
     } else {
@@ -4737,6 +4773,8 @@
     cx.save();
     cx.translate(-this.scrollX, -this.scrollY);
     cx.scale(this._zoom, this._zoom);
+    var offset = this.brushCanvas.width / 2;
+    cx.translate(this.cursorX - offset, this.cursorY - offset);
     cx.drawImage(this.brushCanvas, 0, 0);
     cx.restore();
   };
