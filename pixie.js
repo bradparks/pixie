@@ -4457,9 +4457,9 @@
     parent.remove(this.imageEditor);
   };
 
-  function CostumeIcon(costumeEditor, costume) {
-    this.costumeEditor = costumeEditor;
-    this.sprite = costumeEditor.editor.selectedSprite;
+  function CostumeIcon(costumesPanel, costume) {
+    this.costumesPanel = costumesPanel;
+    this.sprite = costumesPanel.editor.selectedSprite;
     this.costume = costume;
 
     this.el = el('costume-icon');
@@ -4478,7 +4478,7 @@
     this.updateThumbnail();
 
     if (costume === this.sprite.costumes[this.sprite.costume]) {
-      costumeEditor.select(this);
+      costumesPanel.select(this);
     }
   }
 
@@ -4491,7 +4491,7 @@
   };
 
   CostumeIcon.prototype.click = function() {
-    this.costumeEditor.select(this);
+    this.costumesPanel.select(this);
     this.sprite.costume = this.index;
     this.sprite.redraw();
   };
