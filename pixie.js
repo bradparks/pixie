@@ -4688,12 +4688,9 @@
   };
 
   ImageEditor.prototype.mouseMove = function(e) {
-    var oldX = this.cursorX;
-    var oldY = this.cursorY;
     this.mouseX = e.clientX;
     this.mouseY = e.clientY;
     this.updateCursor();
-    this.toolMove(oldX, oldY, this.cursorX, this.cursorY);
   };
 
   ImageEditor.prototype.toolMove = function(x1, y1, x2, y2) {
@@ -4748,6 +4745,8 @@
 
   ImageEditor.prototype.updateCursor = function() {
     if (this.mouseX == null) return;
+    var oldX = this.cursorX;
+    var oldY = this.cursorY;
     var bb = this.elCursor.getBoundingClientRect();
     this.cursorX = (this.mouseX - bb.left + this.scrollX) / this._zoom | 0;
     this.cursorY = (this.mouseY - bb.top + this.scrollY) / this._zoom | 0;
@@ -4777,6 +4776,7 @@
     cx.translate(this.cursorX - offset, this.cursorY - offset);
     cx.drawImage(this.brushCanvas, 0, 0);
     cx.restore();
+    this.toolMove(oldX, oldY, this.cursorX, this.cursorY);
   };
 
   ImageEditor.prototype.updateBitmap = function() {
