@@ -4868,7 +4868,7 @@
     this.costumesTab = this.makeTab(T('Costumes'));
     this.soundsTab = this.makeTab(T('Sounds'));
 
-    this.panel = this.scriptsPanel;
+    this.panel = this.costumesPanel;
   }
 
   TabPanel.prototype.makeTab = function(text) {
