@@ -833,6 +833,9 @@ button::-moz-focus-inner {
   background: url(assets.png), linear-gradient(#fff, #e6e8e8 24px);
   background-position: -690px -1px, 0 0;
 }
+.bitmap-tool-duplicate:hover {
+  background-color: #179fd7;
+}
 .backpack-panel {
   position: absolute;
   bottom: -117px;
