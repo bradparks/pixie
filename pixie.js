@@ -4552,6 +4552,7 @@
     this.elCanvas.appendChild(this.elCanvasScroll = el('image-editor-canvas-scroll'));
     this.elCanvasScroll.appendChild(this.elCanvasFill = el('image-editor-canvas-fill'));
     this.elCanvasScroll.addEventListener('scroll', this.updateScroll.bind(this));
+    this.elCanvasScroll.addEventListener('mousedown', this.mouseDown.bind(this));
 
     this.elCanvasScroll.style.cursor = 'none';
 
@@ -4578,6 +4579,7 @@
     this.createPalette();
 
     this.mouseMove = this.mouseMove.bind(this);
+    this.mouseUp = this.mouseUp.bind(this);
     this._brushSize = 2.5;
     this.foreground = '#000';
     this.background = '#fff';
@@ -4671,16 +4673,42 @@
 
   ImageEditor.prototype.install = function() {
     document.addEventListener('mousemove', this.mouseMove);
+    document.addEventListener('mouseup', this.mouseUp);
   };
 
   ImageEditor.prototype.uninstall = function() {
     document.removeEventListener('mousemove', this.mouseMove);
+    document.addEventListener('mouseup', this.mouseUp);
+  };
+
+  ImageEditor.prototype.mouseDown = function(e) {
+    this.mouseMove(e);
+    this.isPressed = true;
   };
 
   ImageEditor.prototype.mouseMove = function(e) {
-    this.mouseX = e.clientX;
-    this.mouseY = e.clientY;
+    var newX = e.clientX;
+    var newY = e.clientY;
+    this.toolMove(this.mouseX, this.mouseY, newX, newY);
+    this.mouseX = newX;
+    this.mouseY = newY;
     this.updateCursor();
+  };
+
+  ImageEditor.prototype.toolMove = function(x1, y1, x2, y2) {
+    if (this.isPressed) {
+      this.context.save();
+      this.context.scale(this._costume.pixelRatio, this._costume.pixelRatio);
+      this.context.imageSmoothingEnabled = false;
+      this.context.drawImage(this.brushCanvas, 0, 0);
+      this.context.restore();
+      this.updateBitmap();
+    }
+  };
+
+  ImageEditor.prototype.mouseUp = function(e) {
+    this.mouseMove(e);
+    this.isPressed = false;
   };
 
   ImageEditor.prototype.updateCursor = function() {
