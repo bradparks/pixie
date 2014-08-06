@@ -4648,8 +4648,8 @@
     cx.fillRect(size, 0, size, size);
     cx.fillRect(0, size, size, size);
     this.elCanvasGrid.style.backgroundImage = 'url('+JSON.stringify(this.gridCanvas.toDataURL())+')';
-    this.viewportOffsetX = Math.max(0, (vw - zoom * 480) / 2);
-    this.viewportOffsetY = Math.max(0, (vh - zoom * 360) / 2);
+    this.viewportOffsetX = Math.max(0, (vw - zoom * 480) / 2 | 0);
+    this.viewportOffsetY = Math.max(0, (vh - zoom * 360) / 2 | 0);
     this.elCanvasGrid.style.left =
     this.elCanvasFill.style.left = this.viewportOffsetX+'px';
     this.elCanvasGrid.style.top =
