@@ -808,6 +808,31 @@ button::-moz-focus-inner {
   height: 12px;
   margin: 0 2px 2px 0;
 }
+.image-editor-zoom {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+}
+.zoom-button {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  width: 25px;
+  height: 22px;
+  background: url(assets.png);
+}
+.zoom-button:hover {
+  background-position-y: -23px;
+}
+.zoom-out {
+  background-position: -728px 0;
+}
+.zoom-default {
+  background-position: -754px 0;
+}
+.zoom-in {
+  background-position: -780px 0;
+}
 .bitmap-tools {
   position: absolute;
   top: 39px;

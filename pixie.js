@@ -4571,6 +4571,11 @@
     this.addBitmapTool('select', T('Select'));
     this.addBitmapTool('duplicate', T('Select and duplicate'));
 
+    this.elSettings.appendChild(this.elZoom = el('image-editor-zoom'));
+    this.elZoom.appendChild(this.elZoomOut = el('button', 'zoom-button zoom-out'));
+    this.elZoom.appendChild(this.elZoomDefault = el('button', 'zoom-button zoom-default'));
+    this.elZoom.appendChild(this.elZoomIn = el('button', 'zoom-button zoom-in'));
+
     this.elSettings.appendChild(this.elColorPicker = el('color-picker'));
     this.elColorPicker.appendChild(this.elSwatchButton = el('button', 'color-picker-swatch-button wheel'));
     this.elColorPicker.appendChild(this.elColors = el('color-picker-colors'));
