@@ -1670,8 +1670,12 @@
       this.owner.redraw();
       var s = this.owner.stage || this.owner;
       if (s.isStage && s.editor && s.editor.selectedSprite === this.owner) {
-        var icon = s.editor.tabPanel.costumeEditor.iconFor(this);
+        var costumeEditor = s.editor.tabPanel.costumeEditor;
+        var icon = costumeEditor.iconFor(this);
         if (icon) icon.updateThumbnail();
+        if (this.owner.costume === this.owner.costumes.indexOf(this)) {
+          costumeEditor.imageEditor.updateBitmap();
+        }
       }
     }
   };
