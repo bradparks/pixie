@@ -816,6 +816,12 @@ button::-moz-focus-inner {
 .bitmap-tool-line:hover {
   background-position: -425px -34px;
 }
+.bitmap-tool-rectangle {
+  background-position: -461px 0, 0 0;
+}
+.bitmap-tool-rectangle:hover {
+  background-position: -461px -34px;
+}
 .backpack-panel {
   position: absolute;
   bottom: -117px;
