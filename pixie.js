@@ -4567,6 +4567,9 @@
 
   ImageEditor.prototype.addBitmapTool = function(name, title) {
     var b = el('button', 'bitmap-tool bitmap-tool-'+name);
+    b.addEventListener('click', function() {
+      this.tool = name;
+    }.bind(this));
     b.title = title;
     this.elBitmapTools.appendChild(b);
     this.tools[name] = b;
