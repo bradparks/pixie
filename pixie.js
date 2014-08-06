@@ -4558,8 +4558,6 @@
     this.elCanvasScroll.addEventListener('scroll', this.updateScroll.bind(this));
     this.elCanvasScroll.addEventListener('mousedown', this.mouseDown.bind(this));
 
-    this.elCanvasScroll.style.cursor = 'none';
-
     this.toolButtons = {};
     this.addBitmapTool('brush', T('Brush'));
     this.addBitmapTool('line', T('Line'));
@@ -4636,6 +4634,9 @@
       this._tool = value;
       this._toolHandler = this.tools[value];
       this.toolData = {};
+      if (this._toolHandler) {
+        this.elCanvasScroll.style.cursor = this._toolHandler.cursor || 'default';
+      }
       if (this._selectedTool) {
         this._selectedTool.classList.remove('selected');
       }
@@ -4748,12 +4749,14 @@
 
   ImageEditor.prototype.tools = {
     brush: {
+      cursor: 'none',
       drag: function(x, y) {
         this.stroke(this.toolData.lastX, this.toolData.lastY, x, y);
         this.updateBitmap();
       }
     },
     eyedropper: {
+      cursor: 'crosshair',
       drag: function(x, y) {
         var d = this.context.getImageData(x, y, 1, 1).data;
         if (!d[3]) return;
@@ -4831,15 +4834,17 @@
     bx.restore();
 
     var cx = this.cursorContext;
-    cx.imageSmoothingEnabled = false;
     cx.clearRect(0, 0, this.elCursor.width, this.elCursor.height);
-    cx.save();
-    cx.translate(-this.scrollX + this.viewportOffsetX, -this.scrollY + this.viewportOffsetY);
-    cx.scale(this._zoom, this._zoom);
-    var offset = this.brushCanvas.width / 2;
-    cx.translate(this.cursorX - offset, this.cursorY - offset);
-    cx.drawImage(this.brushCanvas, 0, 0);
-    cx.restore();
+    if (this._toolHandler && this._toolHandler.cursor === 'none') {
+      cx.save();
+      cx.imageSmoothingEnabled = false;
+      cx.translate(-this.scrollX + this.viewportOffsetX, -this.scrollY + this.viewportOffsetY);
+      cx.scale(this._zoom, this._zoom);
+      var offset = this.brushCanvas.width / 2;
+      cx.translate(this.cursorX - offset, this.cursorY - offset);
+      cx.drawImage(this.brushCanvas, 0, 0);
+      cx.restore();
+    }
     if (!ignore) this.toolMove(this.cursorX, this.cursorY);
   };
 
