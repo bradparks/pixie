@@ -4577,6 +4577,7 @@
     this.elColors.appendChild(this.elBackground = el('color-picker-color background'));
     this.elColors.appendChild(this.elForeground = el('color-picker-color foreground'));
     this.elColorPicker.appendChild(this.elEyedropperButton = el('button', 'color-picker-eyedropper'));
+    this.elEyedropperButton.title = T('Pick up color');
     this.tools.eyedropper = this.elEyedropperButton;
     this.elEyedropperButton.addEventListener('mousedown', this.setTool.bind(this, 'eyedropper'));
     this.elColorPicker.appendChild(this.elPalette = el('color-picker-palette'));
