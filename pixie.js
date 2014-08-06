@@ -4596,6 +4596,7 @@
       el.style.backgroundImage = 'linear-gradient(-45deg, transparent 15.5px, #f00 15.5px, #f00 17.5px, transparent 17.5px)';
     } else {
       el.style.backgroundColor = color;
+      el.style.backgroundImage = 'none';
     }
   };
 
