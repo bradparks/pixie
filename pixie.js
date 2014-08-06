@@ -4839,7 +4839,10 @@
       if (value) {
         this._tab.className = 'tab selected';
         this.elContent.appendChild(value.el);
-        if (this.parent) this.parent.add(value);
+        if (this.parent) {
+          this.parent.add(value);
+          this.parent.resize(); // TODO could resize fewer objects
+        }
       }
     }
   });
