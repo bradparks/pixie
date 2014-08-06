@@ -4524,7 +4524,7 @@
     this.el = el('image-editor');
 
     this.el.appendChild(this.elSettings = el('image-editor-settings'));
-    this.el.appendChild(this.elBitmapTools = el('image-editor-bitmap-tools'));
+    this.el.appendChild(this.elBitmapTools = el('bitmap-tools'));
     this.addBitmapTool('brush');
     this.addBitmapTool('line');
     this.addBitmapTool('rectangle');
@@ -4564,7 +4564,7 @@
   };
 
   ImageEditor.prototype.addBitmapTool = function(name) {
-    var b = el('button', 'image-editor-bitmap-tool '+name);
+    var b = el('button', 'bitmap-tool bitmap-tool-'+name);
     this.elBitmapTools.appendChild(b);
     return b;
   };
