@@ -1666,6 +1666,10 @@
   Costume.prototype.imageLoaded = function() {
     this.loaded = true;
     this.updateSize();
+    this.changed();
+  };
+
+  Costume.prototype.changed = function(fromEditor) {
     if (this.owner) {
       this.owner.redraw();
       var s = this.owner.stage || this.owner;
@@ -1673,7 +1677,7 @@
         var costumesPanel = s.editor.tabPanel.costumesPanel;
         var icon = costumesPanel.iconFor(this);
         if (icon) icon.updateThumbnail();
-        if (this.owner.costume === this.owner.costumes.indexOf(this)) {
+        if (!fromEditor && this.owner.costume === this.owner.costumes.indexOf(this)) {
           costumesPanel.imageEditor.updateCanvas();
         }
       }
@@ -4580,7 +4584,7 @@
 
     this.mouseMove = this.mouseMove.bind(this);
     this.mouseUp = this.mouseUp.bind(this);
-    this._brushSize = 2.5;
+    this._brushSize = 1.5;
     this.foreground = '#000';
     this.background = '#fff';
     this.tool = 'brush';
