@@ -800,7 +800,8 @@ button::-moz-focus-inner {
   border-radius: 5px;
   display: block;
 }
-.bitmap-tool:hover {
+.bitmap-tool:hover,
+.bitmap-tool.selected {
   background-color: rgb(73, 188, 226);
   background-image: url(assets.png);
   background-position-y: -35px;
@@ -833,7 +834,8 @@ button::-moz-focus-inner {
   background: url(assets.png), linear-gradient(#fff, #e6e8e8 24px);
   background-position: -690px -1px, 0 0;
 }
-.bitmap-tool-duplicate:hover {
+.bitmap-tool-duplicate:hover,
+.bitmap-tool-duplicate.selected {
   background-color: #179fd7;
 }
 .backpack-panel {

@@ -4525,6 +4525,7 @@
 
     this.el.appendChild(this.elSettings = el('image-editor-settings'));
     this.el.appendChild(this.elBitmapTools = el('bitmap-tools'));
+    this.tools = {};
     this.addBitmapTool('brush', T('Brush'));
     this.addBitmapTool('line', T('Line'));
     this.addBitmapTool('rectangle', T('Rectangle (Shift: Square)'));
@@ -4548,6 +4549,7 @@
 
     this.foreground = '#000';
     this.background = '#fff';
+    this.tool = 'brush';
   }
 
   ImageEditor.prototype.createPalette = function() {
@@ -4567,8 +4569,22 @@
     var b = el('button', 'bitmap-tool bitmap-tool-'+name);
     b.title = title;
     this.elBitmapTools.appendChild(b);
+    this.tools[name] = b;
     return b;
   };
+
+  def(ImageEditor.prototype, 'tool', {
+    get: function() {return this._tool},
+    set: function(value) {
+      this._tool = value;
+      if (this._selectedTool) {
+        this._selectedTool.classList.remove('selected');
+      }
+      if (this._selectedTool = this.tools[value]) {
+        this._selectedTool.classList.add('selected');
+      }
+    }
+  });
 
   ImageEditor.prototype.addPaletteColor = function(color) {
     var b = el('color-picker-palette-color');
