@@ -4560,7 +4560,7 @@
 
     this.elCanvasScroll.style.cursor = 'none';
 
-    this.tools = {};
+    this.toolButtons = {};
     this.addBitmapTool('brush', T('Brush'));
     this.addBitmapTool('line', T('Line'));
     this.addBitmapTool('rectangle', T('Rectangle (Shift: Square)'));
@@ -4588,7 +4588,7 @@
     this.elColors.appendChild(this.elForeground = el('color-picker-color foreground'));
     this.elColorPicker.appendChild(this.elEyedropperButton = el('button', 'color-picker-eyedropper'));
     this.elEyedropperButton.title = T('Pick up color');
-    this.tools.eyedropper = this.elEyedropperButton;
+    this.toolButtons.eyedropper = this.elEyedropperButton;
     this.elEyedropperButton.addEventListener('mousedown', this.setTool.bind(this, 'eyedropper'));
     this.elColorPicker.appendChild(this.elPalette = el('color-picker-palette'));
     this.elPalette.addEventListener('mousedown', this.swatchClick.bind(this));
@@ -4622,7 +4622,7 @@
     b.addEventListener('mousedown', this.setTool.bind(this, name));
     b.title = title;
     this.elBitmapTools.appendChild(b);
-    this.tools[name] = b;
+    this.toolButtons[name] = b;
     return b;
   };
 
@@ -4634,10 +4634,12 @@
     get: function() {return this._tool},
     set: function(value) {
       this._tool = value;
+      this._toolHandler = this.tools[value];
+      this.toolData = {};
       if (this._selectedTool) {
         this._selectedTool.classList.remove('selected');
       }
-      if (this._selectedTool = this.tools[value]) {
+      if (this._selectedTool = this.toolButtons[value]) {
         this._selectedTool.classList.add('selected');
       }
     }
@@ -4705,6 +4707,13 @@
   ImageEditor.prototype.mouseDown = function(e) {
     e.preventDefault();
     this.mouseMove(e);
+    this.toolData.startX =
+    this.toolData.lastX =
+    this.toolData.x = this.cursorX;
+    this.toolData.startY =
+    this.toolData.lastY =
+    this.toolData.y = this.cursorY;
+    this.handleTool('down', this.cursorX, this.cursorY);
     this.isPressed = true;
   };
 
@@ -4714,64 +4723,93 @@
     this.updateCursor();
   };
 
-  ImageEditor.prototype.toolMove = function(x1, y1, x2, y2) {
+  ImageEditor.prototype.mouseUp = function(e) {
+    this.mouseMove(e, true);
+    this.isPressed = false;
+    this.handleTool('up', this.cursorX, this.cursorY);
+  };
+
+  ImageEditor.prototype.handleTool = function(name) {
+    if (!this._toolHandler) return;
+    var handler = this._toolHandler[name];
+    if (handler) handler.apply(this, [].slice.call(arguments, 1));
+  };
+
+  ImageEditor.prototype.toolMove = function(x, y) {
+    this.toolData.lastX = this.toolData.x;
+    this.toolData.lastY = this.toolData.y;
+    this.toolData.x = this.cursorX;
+    this.toolData.y = this.cursorY;
+    this.handleTool('move', x, y);
     if (this.isPressed) {
-      this.context.save();
-      var d = this._costume.scale;
-      if (this._foreground === 'transparent') {
-        this.context.globalCompositeOperation = 'destination-out';
-      }
-      this.context.scale(this._costume.pixelRatio, this._costume.pixelRatio);
-      this.context.imageSmoothingEnabled = false;
-      var offset = this.brushCanvas.width / 2;
-      this.context.translate(-offset, -offset);
-      var dx = x2 - x1;
-      var dy = y2 - y1;
-      var dx2 = dx * dx;
-      var dy2 = dy * dy;
-      if (dy2 > dx2) {
-        var m = d * dx / dy;
-        var x = x1;
-        if (dy < 0) {
-          var t = y1;
-          y1 = y2;
-          y2 = t;
-          x = x2;
-        }
-        for (var y = y1; y <= y2; y += d) {
-          x += m;
-          this.context.drawImage(this.brushCanvas, (x / d | 0) * d, y);
-        }
-      } else if (dx2) {
-        var m = d * dy / dx;
-        var y = y1;
-        if (dx < 0) {
-          var t = x1;
-          x1 = x2;
-          x2 = t;
-          y = y2;
-        }
-        for (var x = x1; x <= x2; x += d) {
-          y += m;
-          this.context.drawImage(this.brushCanvas, x, (y / d | 0) * d);
-        }
-      } else {
-        this.context.drawImage(this.brushCanvas, x1, y1);
-      }
-      this.context.restore();
-      this.updateBitmap();
+      this.handleTool('drag', x, y);
     }
   };
 
-  ImageEditor.prototype.mouseUp = function(e) {
-    this.mouseMove(e);
-    this.isPressed = false;
+  ImageEditor.prototype.tools = {
+    brush: {
+      drag: function(x, y) {
+        this.stroke(this.toolData.lastX, this.toolData.lastY, x, y);
+        this.updateBitmap();
+      }
+    },
+    eyedropper: {
+      drag: function(x, y) {
+        var d = this.context.getImageData(x, y, 1, 1).data;
+        if (!d[3]) return;
+        this.foreground = 'rgb('+d[0]+','+d[1]+','+d[2]+')';
+      }
+    }
   };
 
-  ImageEditor.prototype.updateCursor = function() {
+  ImageEditor.prototype.stroke = function(x1, y1, x2, y2) {
+    this.context.save();
+    var d = this._costume.scale;
+    if (this._foreground === 'transparent') {
+      this.context.globalCompositeOperation = 'destination-out';
+    }
+    this.context.scale(this._costume.pixelRatio, this._costume.pixelRatio);
+    this.context.imageSmoothingEnabled = false;
+    var offset = this.brushCanvas.width / 2;
+    this.context.translate(-offset, -offset);
+    var dx = x2 - x1;
+    var dy = y2 - y1;
+    var dx2 = dx * dx;
+    var dy2 = dy * dy;
+    if (dy2 > dx2) {
+      var m = d * dx / dy;
+      var x = x1;
+      if (dy < 0) {
+        var t = y1;
+        y1 = y2;
+        y2 = t;
+        x = x2;
+      }
+      for (var y = y1; y <= y2; y += d) {
+        x += m;
+        this.context.drawImage(this.brushCanvas, (x / d | 0) * d, y);
+      }
+    } else if (dx2) {
+      var m = d * dy / dx;
+      var y = y1;
+      if (dx < 0) {
+        var t = x1;
+        x1 = x2;
+        x2 = t;
+        y = y2;
+      }
+      for (var x = x1; x <= x2; x += d) {
+        y += m;
+        this.context.drawImage(this.brushCanvas, x, (y / d | 0) * d);
+      }
+    } else {
+      this.context.drawImage(this.brushCanvas, x1, y1);
+    }
+    this.context.restore();
+  };
+
+  ImageEditor.prototype.updateCursor = function(ignore) {
     if (this.mouseX == null) return;
-    var oldX = this.cursorX;
-    var oldY = this.cursorY;
     var bb = this.elCursor.getBoundingClientRect();
     this.cursorX = (this.mouseX - bb.left + this.scrollX - this.viewportOffsetX) / this._zoom | 0;
     this.cursorY = (this.mouseY - bb.top + this.scrollY - this.viewportOffsetY) / this._zoom | 0;
@@ -4802,7 +4840,7 @@
     cx.translate(this.cursorX - offset, this.cursorY - offset);
     cx.drawImage(this.brushCanvas, 0, 0);
     cx.restore();
-    this.toolMove(oldX, oldY, this.cursorX, this.cursorY);
+    if (!ignore) this.toolMove(this.cursorX, this.cursorY);
   };
 
   ImageEditor.prototype.updateBitmap = function() {
@@ -4868,7 +4906,7 @@
     get: function() {return this._brushSize},
     set: function(value) {
       this._brushSize = value;
-      this.updateCursor();
+      this.updateCursor(true);
     }
   });
 
@@ -4898,7 +4936,7 @@
       this._foreground = value;
       this._cursorColor = value === 'transparent' ? '#000' : value;
       this.setSwatchColor(this.elForeground, value);
-      this.updateCursor();
+      this.updateCursor(true);
     }
   });
 
