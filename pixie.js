@@ -4712,6 +4712,7 @@
   };
 
   ImageEditor.prototype.updateCursor = function() {
+    if (this.mouseX == null) return;
     var bb = this.elCursor.getBoundingClientRect();
     this.cursorX = (this.mouseX - bb.left + this.scrollX) / this._zoom | 0;
     this.cursorY = (this.mouseY - bb.top + this.scrollY) / this._zoom | 0;
