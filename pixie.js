@@ -4750,8 +4750,22 @@
   ImageEditor.prototype.tools = {
     brush: {
       cursor: 'none',
+      move: function() {this.brushCursor()},
       drag: function(x, y) {
         this.stroke(this.toolData.lastX, this.toolData.lastY, x, y);
+        this.updateBitmap();
+      }
+    },
+    line: {
+      drag: function(x, y) {
+        this.clearCursor();
+        this.cursorContext.save();
+        this.strokeOn(this.cursorContext, this.toolData.startX, this.toolData.startY, x, y);
+        this.cursorContext.restore();
+      },
+      up: function(x, y) {
+        this.clearCursor();
+        this.stroke(this.toolData.startX, this.toolData.startY, x, y);
         this.updateBitmap();
       }
     },
@@ -4765,16 +4779,36 @@
     }
   };
 
+  ImageEditor.prototype.copyCanvas = function() {
+    var c = document.createElement('canvas');
+    c.width = this.canvas.width;
+    c.height = this.canvas.height;
+    c.getContext('2d').drawImage(this.canvas, 0, 0);
+    return c;
+  };
+
+  ImageEditor.prototype.clearCursor = function() {
+    this.elCursor.width = this.elCursor.width;
+    this.cursorContext.translate(-this.scrollX + this.viewportOffsetX, -this.scrollY + this.viewportOffsetY);
+    this.cursorContext.scale(this._zoom, this._zoom);
+  };
+
   ImageEditor.prototype.stroke = function(x1, y1, x2, y2) {
     this.context.save();
-    var d = this._costume.scale;
     if (this._foreground === 'transparent') {
       this.context.globalCompositeOperation = 'destination-out';
     }
     this.context.scale(this._costume.pixelRatio, this._costume.pixelRatio);
-    this.context.imageSmoothingEnabled = false;
+    this.strokeOn(this.context, x1, y1, x2, y2);
+    this.context.restore();
+  };
+
+  ImageEditor.prototype.strokeOn = function(cx, x1, y1, x2, y2) {
+    var d = this._costume.scale;
+    cx.save();
+    cx.imageSmoothingEnabled = false;
     var offset = this.brushCanvas.width / 2;
-    this.context.translate(-offset, -offset);
+    cx.translate(-offset, -offset);
     var dx = x2 - x1;
     var dy = y2 - y1;
     var dx2 = dx * dx;
@@ -4790,7 +4824,7 @@
       }
       for (var y = y1; y <= y2; y += d) {
         x += m;
-        this.context.drawImage(this.brushCanvas, (x / d | 0) * d, y);
+        cx.drawImage(this.brushCanvas, (x / d | 0) * d, y);
       }
     } else if (dx2) {
       var m = d * dy / dx;
@@ -4803,12 +4837,12 @@
       }
       for (var x = x1; x <= x2; x += d) {
         y += m;
-        this.context.drawImage(this.brushCanvas, x, (y / d | 0) * d);
+        cx.drawImage(this.brushCanvas, x, (y / d | 0) * d);
       }
     } else {
-      this.context.drawImage(this.brushCanvas, x1, y1);
+      cx.drawImage(this.brushCanvas, x1, y1);
     }
-    this.context.restore();
+    cx.restore();
   };
 
   ImageEditor.prototype.updateCursor = function(ignore) {
@@ -4833,19 +4867,18 @@
     }
     bx.restore();
 
-    var cx = this.cursorContext;
-    cx.clearRect(0, 0, this.elCursor.width, this.elCursor.height);
-    if (this._toolHandler && this._toolHandler.cursor === 'none') {
-      cx.save();
-      cx.imageSmoothingEnabled = false;
-      cx.translate(-this.scrollX + this.viewportOffsetX, -this.scrollY + this.viewportOffsetY);
-      cx.scale(this._zoom, this._zoom);
-      var offset = this.brushCanvas.width / 2;
-      cx.translate(this.cursorX - offset, this.cursorY - offset);
-      cx.drawImage(this.brushCanvas, 0, 0);
-      cx.restore();
-    }
     if (!ignore) this.toolMove(this.cursorX, this.cursorY);
+  };
+
+  ImageEditor.prototype.brushCursor = function() {
+    this.clearCursor();
+    var cx = this.cursorContext;
+    cx.save();
+    cx.imageSmoothingEnabled = false;
+    var offset = this.brushCanvas.width / 2;
+    cx.translate(this.cursorX - offset, this.cursorY - offset);
+    cx.drawImage(this.brushCanvas, 0, 0);
+    cx.restore();
   };
 
   ImageEditor.prototype.updateBitmap = function() {
