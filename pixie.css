@@ -810,6 +810,12 @@ button::-moz-focus-inner {
 .bitmap-tool-brush:hover {
   background-position: -386px -34px;
 }
+.bitmap-tool-line {
+  background-position: -425px 0, 0 0;
+}
+.bitmap-tool-line:hover {
+  background-position: -425px -34px;
+}
 .backpack-panel {
   position: absolute;
   bottom: -117px;
