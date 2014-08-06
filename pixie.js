@@ -4698,6 +4698,7 @@
   ImageEditor.prototype.toolMove = function(x1, y1, x2, y2) {
     if (this.isPressed) {
       this.context.save();
+      var d = this._costume.scale;
       this.context.scale(this._costume.pixelRatio, this._costume.pixelRatio);
       this.context.imageSmoothingEnabled = false;
       var offset = this.brushCanvas.width / 2;
@@ -4707,7 +4708,7 @@
       var dx2 = dx * dx;
       var dy2 = dy * dy;
       if (dy2 > dx2) {
-        var m = dx / dy;
+        var m = d * dx / dy;
         var x = x1;
         if (dy < 0) {
           var t = y1;
@@ -4715,12 +4716,12 @@
           y2 = t;
           x = x2;
         }
-        for (var y = y1; y <= y2; y++) {
+        for (var y = y1; y <= y2; y += d) {
           x += m;
-          this.context.drawImage(this.brushCanvas, x | 0, y);
+          this.context.drawImage(this.brushCanvas, (x / d | 0) * d, y);
         }
       } else if (dx2) {
-        var m = dy / dx;
+        var m = d * dy / dx;
         var y = y1;
         if (dx < 0) {
           var t = x1;
@@ -4728,9 +4729,9 @@
           x2 = t;
           y = y2;
         }
-        for (var x = x1; x <= x2; x++) {
+        for (var x = x1; x <= x2; x += d) {
           y += m;
-          this.context.drawImage(this.brushCanvas, x, y | 0);
+          this.context.drawImage(this.brushCanvas, x, (y / d | 0) * d);
         }
       } else {
         this.context.drawImage(this.brushCanvas, x1, y1);
