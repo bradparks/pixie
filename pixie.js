@@ -4708,6 +4708,9 @@
     if (this.isPressed) {
       this.context.save();
       var d = this._costume.scale;
+      if (this._foreground === 'transparent') {
+        this.context.globalCompositeOperation = 'destination-out';
+      }
       this.context.scale(this._costume.pixelRatio, this._costume.pixelRatio);
       this.context.imageSmoothingEnabled = false;
       var offset = this.brushCanvas.width / 2;
