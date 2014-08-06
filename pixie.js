@@ -4539,6 +4539,11 @@
     this.elCanvas.appendChild(this.elBitmap = el('canvas', 'image-editor-canvas-layer'));
     this.bitmapContext = this.elBitmap.getContext('2d');
 
+    this.elCanvas.appendChild(this.elCursor = el('canvas', 'image-editor-canvas-layer'));
+    this.cursorContext = this.elCursor.getContext('2d');
+
+    this.elCursor.style.cursor = 'none';
+
     this.tools = {};
     this.addBitmapTool('brush', T('Brush'));
     this.addBitmapTool('line', T('Line'));
@@ -4561,6 +4566,7 @@
     this.elColors.addEventListener('mousedown', this.swapColors.bind(this));
     this.createPalette();
 
+    this.mouseMove = this.mouseMove.bind(this);
     this.foreground = '#000';
     this.background = '#fff';
     this.tool = 'brush';
@@ -4629,14 +4635,43 @@
     cx.fillRect(0, size, size, size);
     this.elCanvasGrid.style.backgroundImage = 'url('+JSON.stringify(this.gridCanvas.toDataURL())+')';
     this.elCanvasGrid.style.left =
-    this.elBitmap.style.left = Math.max(0, (vw - zoom * 480) / 2)+'px';
+    this.elBitmap.style.left =
+    this.elCursor.style.left = Math.max(0, (vw - zoom * 480) / 2)+'px';
     this.elCanvasGrid.style.top =
-    this.elBitmap.style.top = Math.max(0, (vh - zoom * 360) / 2)+'px';
-    this.elBitmap.width = zoom * 480;
-    this.elBitmap.height = zoom * 360;
+    this.elBitmap.style.top =
+    this.elCursor.style.top = Math.max(0, (vh - zoom * 360) / 2)+'px';
+    this.elBitmap.width =
+    this.elCursor.width = zoom * 480;
+    this.elBitmap.height =
+    this.elCursor.height = zoom * 360;
     this.updateBitmap();
     this.elCanvasGrid.style.width = zoom * 480+'px';
     this.elCanvasGrid.style.height = zoom * 360+'px';
+  };
+
+  ImageEditor.prototype.install = function() {
+    document.addEventListener('mousemove', this.mouseMove);
+  };
+
+  ImageEditor.prototype.uninstall = function() {
+    document.removeEventListener('mousemove', this.mouseMove);
+  };
+
+  ImageEditor.prototype.mouseMove = function(e) {
+    this.mouseX = e.clientX;
+    this.mouseY = e.clientY;
+    this.updateCursor();
+  };
+
+  ImageEditor.prototype.updateCursor = function() {
+    var bb = this.elCursor.getBoundingClientRect();
+    this.cursorX = (this.mouseX - bb.left) / this._zoom | 0;
+    this.cursorY = (this.mouseY - bb.top) / this._zoom | 0;
+    this.cursorContext.clearRect(0, 0, this.elCursor.width, this.elCursor.height);
+    this.cursorContext.save();
+    this.cursorContext.scale(this._zoom, this._zoom);
+    this.cursorContext.fillRect(this.cursorX, this.cursorY, 1, 1);
+    this.cursorContext.restore();
   };
 
   ImageEditor.prototype.updateBitmap = function() {
