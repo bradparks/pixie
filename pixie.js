@@ -4634,9 +4634,7 @@
       this._tool = value;
       this._toolHandler = this.tools[value];
       this.toolData = {};
-      if (this._toolHandler) {
-        this.elCanvasScroll.style.cursor = this._toolHandler.cursor || 'default';
-      }
+      this.elCanvasScroll.style.cursor = this._toolHandler && this._toolHandler.cursor || 'default';
       if (this._selectedTool) {
         this._selectedTool.classList.remove('selected');
       }
