@@ -4784,18 +4784,17 @@
     },
     fill: {
       down: function(x, y) {
-        function check(tx, ty) {
-          if (tx < 0 || tx >= w || ty < 0 || ty >= h) return;
-          var offset = (ty * w + tx) * 4;
-          if (data[offset] === targetR &&
-            data[offset + 1] === targetG &&
-            data[offset + 2] === targetB &&
-            data[offset + 3] === targetA) {
-            data[offset] = foregroundR;
-            data[offset + 1] = foregroundG;
-            data[offset + 2] = foregroundB;
-            data[offset + 3] = foregroundA;
-            queue.push([tx, ty]);
+        function check(i) {
+          if (i < 0 || i >= length) return;
+          if (data[i] === targetR &&
+            data[i + 1] === targetG &&
+            data[i + 2] === targetB &&
+            data[i + 3] === targetA) {
+            data[i] = foregroundR;
+            data[i + 1] = foregroundG;
+            data[i + 2] = foregroundB;
+            data[i + 3] = foregroundA;
+            queue.push(i);
           }
         }
         colorContext.fillStyle = this._foreground;
@@ -4806,22 +4805,24 @@
         var foregroundB = foreground[2];
         var foregroundA = foreground[3];
         var pr = this._costume.pixelRatio;
-        var queue = [[x * pr, y * pr]];
         var w = 480 * pr;
         var h = 360 * pr;
+        var length = w * h * 4;
+        var stride = w * 4;
         var id = this.context.getImageData(0, 0, w, 360 * pr);
         var data = id.data;
-        var offset = (y * pr * w + x * pr) * 4;
+        var offset = (y * w + x) * pr * 4;
+        var queue = [offset];
         var targetR = data[offset];
         var targetG = data[offset + 1];
         var targetB = data[offset + 2];
         var targetA = data[offset + 3];
         while (queue.length) {
           var q = queue.pop();
-          check(q[0] - 1, q[1]);
-          check(q[0] + 1, q[1]);
-          check(q[0], q[1] - 1);
-          check(q[0], q[1] + 1);
+          check(q - stride);
+          check(q + stride);
+          check(q - 4);
+          check(q + 4);
         }
         this.context.putImageData(id, 0, 0);
         this.updateBitmap();
