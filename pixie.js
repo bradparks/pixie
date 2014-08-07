@@ -4818,6 +4818,10 @@
         var targetG = data[offset + 1];
         var targetB = data[offset + 2];
         var targetA = data[offset + 3];
+        if (targetR === foregroundR &&
+          targetG === foregroundG &&
+          targetB === foregroundB &&
+          targetA === foregroundA) return;
         while (queue.length) {
           var q = queue.pop();
           check(q - stride);
