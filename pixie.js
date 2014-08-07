@@ -4798,6 +4798,7 @@
           }
         }
         colorContext.fillStyle = this._foreground;
+        colorContext.clearRect(0, 0, 1, 1);
         colorContext.fillRect(0, 0, 1, 1);
         var foreground = colorContext.getImageData(0, 0, 1, 1).data;
         var foregroundR = foreground[0];
