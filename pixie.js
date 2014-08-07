@@ -4754,6 +4754,10 @@
     return {x: this.toolData.startX, y: y};
   };
 
+  var colorCanvas = document.createElement('canvas');
+  colorCanvas.width = colorCanvas.height = 1;
+  var colorContext = colorCanvas.getContext('2d');
+
   ImageEditor.prototype.tools = {
     brush: {
       cursor: 'none',
@@ -4775,6 +4779,51 @@
         this.clearCursor();
         var point = this.fixPoint(x, y);
         this.stroke(this.toolData.startX, this.toolData.startY, point.x, point.y);
+        this.updateBitmap();
+      }
+    },
+    fill: {
+      down: function(x, y) {
+        function check(tx, ty) {
+          if (tx < 0 || tx >= w || ty < 0 || ty >= h) return;
+          var offset = (ty * w + tx) * 4;
+          if (data[offset] === targetR &&
+            data[offset + 1] === targetG &&
+            data[offset + 2] === targetB &&
+            data[offset + 3] === targetA) {
+            data[offset] = foregroundR;
+            data[offset + 1] = foregroundG;
+            data[offset + 2] = foregroundB;
+            data[offset + 3] = foregroundA;
+            queue.push([tx, ty]);
+          }
+        }
+        colorContext.fillStyle = this._foreground;
+        colorContext.fillRect(0, 0, 1, 1);
+        var foreground = colorContext.getImageData(0, 0, 1, 1).data;
+        var foregroundR = foreground[0];
+        var foregroundG = foreground[1];
+        var foregroundB = foreground[2];
+        var foregroundA = foreground[3];
+        var pr = this._costume.pixelRatio;
+        var queue = [[x * pr, y * pr]];
+        var w = 480 * pr;
+        var h = 360 * pr;
+        var id = this.context.getImageData(0, 0, w, 360 * pr);
+        var data = id.data;
+        var offset = (y * pr * w + x * pr) * 4;
+        var targetR = data[offset];
+        var targetG = data[offset + 1];
+        var targetB = data[offset + 2];
+        var targetA = data[offset + 3];
+        while (queue.length) {
+          var q = queue.pop();
+          check(q[0] - 1, q[1]);
+          check(q[0] + 1, q[1]);
+          check(q[0], q[1] - 1);
+          check(q[0], q[1] + 1);
+        }
+        this.context.putImageData(id, 0, 0);
         this.updateBitmap();
       }
     },
