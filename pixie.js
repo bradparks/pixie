@@ -4702,7 +4702,7 @@
 
   ImageEditor.prototype.uninstall = function() {
     document.removeEventListener('mousemove', this.mouseMove);
-    document.addEventListener('mouseup', this.mouseUp);
+    document.removeEventListener('mouseup', this.mouseUp);
   };
 
   ImageEditor.prototype.mouseDown = function(e) {
