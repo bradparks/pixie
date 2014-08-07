@@ -4705,6 +4705,7 @@
 
   ImageEditor.prototype.mouseDown = function(e) {
     e.preventDefault();
+    this.isPressed = true;
     this.mouseMove(e);
     this.toolData.startX =
     this.toolData.lastX =
@@ -4713,7 +4714,6 @@
     this.toolData.lastY =
     this.toolData.y = this.cursorY;
     this.handleTool('down', this.cursorX, this.cursorY);
-    this.isPressed = true;
   };
 
   ImageEditor.prototype.mouseMove = function(e) {
