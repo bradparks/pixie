@@ -4721,6 +4721,7 @@
   ImageEditor.prototype.mouseMove = function(e) {
     this.mouseX = e.clientX;
     this.mouseY = e.clientY;
+    this.toolData.shiftKey = e.shiftKey;
     this.updateCursor();
   };
 
@@ -4747,6 +4748,14 @@
     }
   };
 
+  ImageEditor.prototype.fixPoint = function(x, y) {
+    if (!this.toolData.shiftKey) return {x: x, y: y};
+    var dx = Math.abs(x - this.toolData.startX);
+    var dy = Math.abs(y - this.toolData.startY);
+    if (dx > dy) return {x: x, y: this.toolData.startY};
+    return {x: this.toolData.startX, y: y};
+  };
+
   ImageEditor.prototype.tools = {
     brush: {
       cursor: 'none',
@@ -4760,12 +4769,14 @@
       drag: function(x, y) {
         this.clearCursor();
         this.cursorContext.save();
-        this.strokeOn(this.cursorContext, this.toolData.startX, this.toolData.startY, x, y);
+        var point = this.fixPoint(x, y);
+        this.strokeOn(this.cursorContext, this.toolData.startX, this.toolData.startY, point.x, point.y);
         this.cursorContext.restore();
       },
       up: function(x, y) {
         this.clearCursor();
-        this.stroke(this.toolData.startX, this.toolData.startY, x, y);
+        var point = this.fixPoint(x, y);
+        this.stroke(this.toolData.startX, this.toolData.startY, point.x, point.y);
         this.updateBitmap();
       }
     },
