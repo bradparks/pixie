@@ -4881,6 +4881,9 @@
           var dx = x - this.toolData.selectionX;
           var dy = y - this.toolData.selectionY;
           this.toolData.selectionRotation = this.toolData.startRotation + (Math.atan2(dy, dx) - this.toolData.mouseRotation);
+          if (this.toolData.shiftKey) {
+            this.toolData.selectionRotation = Math.round(this.toolData.selectionRotation / (Math.PI * .25)) * Math.PI * .25;
+          }
           this.showSelection();
         } else if (this.toolData.selection) {
           this.toolData.selectionX += x - this.toolData.lastX;
