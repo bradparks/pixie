@@ -4894,17 +4894,18 @@
             this.clearCursor();
             return;
           }
+          var pr = this._costume.pixelRatio;
           d.selection = document.createElement('canvas');
-          d.selection.width = w;
-          d.selection.height = h;
+          d.selection.width = w * pr;
+          d.selection.height = h * pr;
           var cx = d.selection.getContext('2d');
-          cx.drawImage(this.canvas, -x1, -y1);
+          cx.drawImage(this.canvas, -x1 * pr, -y1 * pr);
           d.selectionWidth = w;
           d.selectionHeight = h;
           d.selectionX = x1;
           d.selectionY = y1;
           this.showSelection();
-          this.context.clearRect(x1, y1, w, h);
+          this.context.clearRect(x1 * pr, y1 * pr, w * pr, h * pr);
           this.updateBitmap();
         }
       }
@@ -5066,25 +5067,32 @@
     var d = this.toolData;
     this.clearCursor();
     var cx = this.cursorContext;
-    this.drawSelection(cx);
-    cx.save();
-    cx.beginPath();
-    cx.rect(d.selectionX, d.selectionY, d.selectionWidth, d.selectionHeight);
-    cx.strokeStyle = 'rgba(0, 0, 255, .6)';
-    cx.lineWidth = 2;
-    cx.stroke();
-    cx.restore();
+    this.drawSelection(cx, true);
   };
 
   ImageEditor.prototype.dropSelection = function() {
     var d = this.toolData;
+    this.context.save();
+    var pr = this._costume.pixelRatio;
+    this.context.scale(pr, pr);
     this.drawSelection(this.context);
+    this.context.restore();
     d.selection = null;
   };
 
-  ImageEditor.prototype.drawSelection = function(cx) {
+  ImageEditor.prototype.drawSelection = function(cx, frame) {
     var d = this.toolData;
-    cx.drawImage(d.selection, d.selectionX, d.selectionY, d.selectionWidth, d.selectionHeight);
+    cx.save();
+    cx.translate(d.selectionX, d.selectionY);
+    cx.drawImage(d.selection, 0, 0, d.selectionWidth, d.selectionHeight);
+    if (frame) {
+      cx.beginPath();
+      cx.rect(0, 0, d.selectionWidth, d.selectionHeight);
+      cx.strokeStyle = 'rgba(0, 0, 255, .6)';
+      cx.lineWidth = 2;
+      cx.stroke();
+    }
+    cx.restore();
   };
 
   ImageEditor.prototype.updateCursor = function(ignore) {
