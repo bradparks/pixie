@@ -4725,8 +4725,10 @@
 
   ImageEditor.prototype.mouseUp = function(e) {
     this.mouseMove(e, true);
-    this.isPressed = false;
-    this.handleTool('up', this.cursorX, this.cursorY);
+    if (this.isPressed) {
+      this.isPressed = false;
+      this.handleTool('up', this.cursorX, this.cursorY);
+    }
   };
 
   ImageEditor.prototype.handleTool = function(name) {
@@ -4770,15 +4772,24 @@
     line: {
       drag: function(x, y) {
         this.clearCursor();
-        this.cursorContext.save();
         var point = this.fixPoint(x, y);
         this.strokeOn(this.cursorContext, this.toolData.startX, this.toolData.startY, point.x, point.y);
-        this.cursorContext.restore();
       },
       up: function(x, y) {
         this.clearCursor();
         var point = this.fixPoint(x, y);
         this.stroke(this.toolData.startX, this.toolData.startY, point.x, point.y);
+        this.updateBitmap();
+      }
+    },
+    rectangle: {
+      drag: function(x, y) {
+        this.clearCursor();
+        this.rectOn(this.cursorContext, this.toolData.startX, this.toolData.startY, x, y);
+      },
+      up: function(x, y) {
+        this.clearCursor();
+        this.rectOn(this.context, this.toolData.startX, this.toolData.startY, x, y);
         this.updateBitmap();
       }
     },
@@ -4873,6 +4884,15 @@
       cx.drawImage(this.brushCanvas, x1, y1);
     }
     cx.restore();
+  };
+
+  ImageEditor.prototype.rectOn = function(cx, sx, sy, ex, ey) {
+    // var point = this.fixPoint(x, y);
+    var x1 = Math.min(sx, ex);
+    var y1 = Math.min(sy, ey);
+    var x2 = Math.max(sx, ex);
+    var y2 = Math.max(sy, ey);
+    cx.fillRect(x1, y1, x2 - x1, y2 - y1);
   };
 
   ImageEditor.prototype.floodFill = function(x, y) {
