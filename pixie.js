@@ -4836,7 +4836,8 @@
     eyedropper: {
       cursor: 'crosshair',
       drag: function(x, y) {
-        var d = this.context.getImageData(x, y, 1, 1).data;
+        var pr = this._costume.pixelRatio;
+        var d = this.context.getImageData(x * pr, y * pr, 1, 1).data;
         if (!d[3]) return;
         this.foreground = 'rgb('+d[0]+','+d[1]+','+d[2]+')';
       }
