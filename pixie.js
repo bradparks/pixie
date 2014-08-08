@@ -4898,6 +4898,9 @@
 
   ImageEditor.prototype.rect = function(sx, sy, ex, ey) {
     this.context.save();
+    if (this._foreground === 'transparent') {
+      this.context.globalCompositeOperation = 'destination-out';
+    }
     var pr = this._costume.pixelRatio;
     this.context.scale(pr, pr);
     this.rectOn(this.context, sx, sy, ex, ey);
