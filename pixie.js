@@ -4870,11 +4870,12 @@
           var cx = this.cursorContext;
           var sx = this.toolData.startX;
           var sy = this.toolData.startY;
+          var p = this.fixAspect(x, y);
           cx.beginPath();
           cx.moveTo(sx + .5, sy + .5);
-          cx.lineTo(sx + .5, y + .5);
-          cx.lineTo(x + .5, y + .5);
-          cx.lineTo(x + .5, sy + .5);
+          cx.lineTo(sx + .5, p.y + .5);
+          cx.lineTo(p.x + .5, p.y + .5);
+          cx.lineTo(p.x + .5, sy + .5);
           cx.closePath();
           cx.stroke();
         }
@@ -4882,13 +4883,17 @@
       up: function(x, y) {
         var d = this.toolData;
         if (!this.toolData.selection) {
-          var x1 = Math.min(d.startX, x);
-          var y1 = Math.min(d.startY, y);
-          var x2 = Math.max(d.startX, x);
-          var y2 = Math.max(d.startY, y);
+          var point = this.fixAspect(x, y);
+          var x1 = Math.min(d.startX, point.x);
+          var y1 = Math.min(d.startY, point.y);
+          var x2 = Math.max(d.startX, point.x);
+          var y2 = Math.max(d.startY, point.y);
           var w = x2 - x1;
           var h = y2 - y1;
-          if (!w || !h) return;
+          if (!w || !h) {
+            this.clearCursor();
+            return;
+          }
           d.selection = document.createElement('canvas');
           d.selection.width = w;
           d.selection.height = h;
