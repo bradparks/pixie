@@ -4775,7 +4775,7 @@
       cursor: 'none',
       move: function() {this.brushCursor()},
       drag: function(x, y) {
-        this.stroke(this.toolData.lastX, this.toolData.lastY, x, y);
+        this.commit('strokeOn', this.toolData.lastX, this.toolData.lastY, x, y);
         this.updateBitmap();
       }
     },
