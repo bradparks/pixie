@@ -5087,6 +5087,8 @@
     d.selection = null;
   };
 
+  var HANDLE_RADIUS = 4;
+  var ROTATION_HANDLE_OFFSET = 20;
   ImageEditor.prototype.drawSelection = function(cx, frame) {
     var d = this.toolData;
     var sw = d.selectionWidth;
@@ -5099,7 +5101,7 @@
       cx.beginPath();
       cx.rect(-sw/2, -sh/2, sw, sh);
       cx.moveTo(0, -sh/2);
-      cx.lineTo(0, -sh/2 - 20);
+      cx.lineTo(0, -sh/2 - ROTATION_HANDLE_OFFSET);
       cx.strokeStyle = 'rgba(0, 0, 255, .6)';
       cx.lineWidth = 2;
       cx.stroke();
@@ -5111,12 +5113,12 @@
       for (var x = -1; x <= 1; x++) {
         for (var y = -1; y <= 1; y++) {
           if (x || y) {
-            cx.rect(sw/2 * x - 3, sh/2 * y - 3, 6, 6);
+            cx.rect(sw/2 * x - HANDLE_RADIUS, sh/2 * y - HANDLE_RADIUS, HANDLE_RADIUS * 2, HANDLE_RADIUS * 2);
           }
         }
       }
-      cx.moveTo(4, -sh/2 - 20);
-      cx.arc(0, -sh/2 - 20, 4, 0, Math.PI * 2);
+      cx.moveTo(HANDLE_RADIUS, -sh/2 - ROTATION_HANDLE_OFFSET);
+      cx.arc(0, -sh/2 - ROTATION_HANDLE_OFFSET, HANDLE_RADIUS, 0, Math.PI * 2);
       cx.fill();
       cx.stroke();
     }
