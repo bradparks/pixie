@@ -5098,6 +5098,8 @@
     if (frame) {
       cx.beginPath();
       cx.rect(-sw/2, -sh/2, sw, sh);
+      cx.moveTo(0, -sh/2);
+      cx.lineTo(0, -sh/2 - 20);
       cx.strokeStyle = 'rgba(0, 0, 255, .6)';
       cx.lineWidth = 2;
       cx.stroke();
@@ -5113,6 +5115,8 @@
           }
         }
       }
+      cx.moveTo(4, -sh/2 - 20);
+      cx.arc(0, -sh/2 - 20, 4, 0, Math.PI * 2);
       cx.fill();
       cx.stroke();
     }
