@@ -4788,7 +4788,7 @@
       up: function(x, y) {
         this.clearCursor();
         var point = this.fixPoint(x, y);
-        this.stroke(this.toolData.startX, this.toolData.startY, point.x, point.y);
+        this.commit('strokeOn', this.toolData.startX, this.toolData.startY, point.x, point.y);
         this.updateBitmap();
       }
     },
@@ -4799,7 +4799,7 @@
       },
       up: function(x, y) {
         this.clearCursor();
-        this.rect(this.toolData.startX, this.toolData.startY, x, y);
+        this.commit('rectOn', this.toolData.startX, this.toolData.startY, x, y);
         this.updateBitmap();
       }
     },
@@ -4844,16 +4844,6 @@
     this.cursorContext.scale(this._zoom, this._zoom);
   };
 
-  ImageEditor.prototype.stroke = function(x1, y1, x2, y2) {
-    this.context.save();
-    if (this._foreground === 'transparent') {
-      this.context.globalCompositeOperation = 'destination-out';
-    }
-    this.context.scale(this._costume.pixelRatio, this._costume.pixelRatio);
-    this.strokeOn(this.context, x1, y1, x2, y2);
-    this.context.restore();
-  };
-
   ImageEditor.prototype.strokeOn = function(cx, x1, y1, x2, y2) {
     var d = this._costume.scale;
     cx.save();
@@ -4896,14 +4886,14 @@
     cx.restore();
   };
 
-  ImageEditor.prototype.rect = function(sx, sy, ex, ey) {
+  ImageEditor.prototype.commit = function(fn) {
     this.context.save();
     if (this._foreground === 'transparent') {
       this.context.globalCompositeOperation = 'destination-out';
     }
     var pr = this._costume.pixelRatio;
     this.context.scale(pr, pr);
-    this.rectOn(this.context, sx, sy, ex, ey);
+    this[fn].apply(this, [this.context].concat([].slice.call(arguments, 1)));
     this.context.restore();
   };
 
