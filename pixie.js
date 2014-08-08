@@ -4803,6 +4803,17 @@
         this.updateBitmap();
       }
     },
+    ellipse: {
+      drag: function(x, y) {
+        this.clearCursor();
+        this.ellipseOn(this.cursorContext, this.toolData.startX, this.toolData.startY, x, y, true);
+      },
+      up: function(x, y) {
+        this.clearCursor();
+        this.commit('ellipseOn', this.toolData.startX, this.toolData.startY, x, y);
+        this.updateBitmap();
+      }
+    },
     fill: {
       down: function(x, y) {
         this.toolData.initialImage = this.copyCanvas();
@@ -4904,6 +4915,30 @@
     var x2 = Math.max(sx, point.x);
     var y2 = Math.max(sy, point.y);
     cx.fillRect(x1, y1, x2 - x1, y2 - y1);
+  };
+
+  ImageEditor.prototype.ellipseOn = function(cx, sx, sy, ex, ey, antialias) {
+    var point = this.fixAspect(ex, ey);
+    var x = (sx + point.x) / 2;
+    var y = (sy + point.y) / 2;
+    var rx = Math.abs(x - sx);
+    var ry = Math.abs(y - sy);
+    cx.save();
+    cx.translate(x, y);
+    cx.scale(rx, ry);
+    cx.beginPath();
+    cx.arc(0, 0, 1, 0, Math.PI * 2, false);
+    if (antialias) {
+      cx.fill();
+    } else {
+      cx.clip();
+      var x1 = Math.min(sx, point.x);
+      var y1 = Math.min(sy, point.y);
+      var x2 = Math.max(sx, point.x);
+      var y2 = Math.max(sy, point.y);
+      cx.fillRect(-1, -1, 2, 2);
+    }
+    cx.restore();
   };
 
   ImageEditor.prototype.floodFill = function(x, y) {
