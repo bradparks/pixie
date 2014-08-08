@@ -4712,8 +4712,8 @@
     this.toolData.startY =
     this.toolData.lastY =
     this.toolData.y = this.cursorY;
-    this.mouseMove(e);
     this.handleTool('down', this.cursorX, this.cursorY);
+    this.mouseMove(e);
   };
 
   ImageEditor.prototype.mouseMove = function(e) {
@@ -4784,53 +4784,18 @@
     },
     fill: {
       down: function(x, y) {
-        function check(i) {
-          if (i < 0 || i >= length) return;
-          if (data[i] === targetR &&
-            data[i + 1] === targetG &&
-            data[i + 2] === targetB &&
-            data[i + 3] === targetA) {
-            data[i] = foregroundR;
-            data[i + 1] = foregroundG;
-            data[i + 2] = foregroundB;
-            data[i + 3] = foregroundA;
-            queue.push(i);
-          }
-        }
-        colorContext.fillStyle = this._foreground;
-        colorContext.clearRect(0, 0, 1, 1);
-        colorContext.fillRect(0, 0, 1, 1);
-        var foreground = colorContext.getImageData(0, 0, 1, 1).data;
-        var foregroundR = foreground[0];
-        var foregroundG = foreground[1];
-        var foregroundB = foreground[2];
-        var foregroundA = foreground[3];
-        var pr = this._costume.pixelRatio;
-        var w = 480 * pr;
-        var h = 360 * pr;
-        var length = w * h * 4;
-        var stride = w * 4;
-        var id = this.context.getImageData(0, 0, w, 360 * pr);
-        var data = id.data;
-        var offset = (y * w + x) * pr * 4;
-        var queue = [offset];
-        var targetR = data[offset];
-        var targetG = data[offset + 1];
-        var targetB = data[offset + 2];
-        var targetA = data[offset + 3];
-        if (targetR === foregroundR &&
-          targetG === foregroundG &&
-          targetB === foregroundB &&
-          targetA === foregroundA) return;
-        while (queue.length) {
-          var q = queue.pop();
-          check(q - stride);
-          check(q + stride);
-          check(q - 4);
-          check(q + 4);
-        }
-        this.context.putImageData(id, 0, 0);
+        this.toolData.initialImage = this.copyCanvas();
+      },
+      drag: function(x, y) {
+        this.context.save();
+        this.context.globalCompositeOperation = 'copy';
+        this.context.drawImage(this.toolData.initialImage, 0, 0);
+        this.context.restore();
+        this.floodFill(x, y);
         this.updateBitmap();
+      },
+      up: function() {
+        this.toolData.initialImage = null;
       }
     },
     eyedropper: {
@@ -4908,6 +4873,55 @@
       cx.drawImage(this.brushCanvas, x1, y1);
     }
     cx.restore();
+  };
+
+  ImageEditor.prototype.floodFill = function(x, y) {
+    function check(i) {
+      if (i < 0 || i >= length) return;
+      if (data[i] === targetR &&
+        data[i + 1] === targetG &&
+        data[i + 2] === targetB &&
+        data[i + 3] === targetA) {
+        data[i] = foregroundR;
+        data[i + 1] = foregroundG;
+        data[i + 2] = foregroundB;
+        data[i + 3] = foregroundA;
+        queue.push(i);
+      }
+    }
+    colorContext.fillStyle = this._foreground;
+    colorContext.clearRect(0, 0, 1, 1);
+    colorContext.fillRect(0, 0, 1, 1);
+    var foreground = colorContext.getImageData(0, 0, 1, 1).data;
+    var foregroundR = foreground[0];
+    var foregroundG = foreground[1];
+    var foregroundB = foreground[2];
+    var foregroundA = foreground[3];
+    var pr = this._costume.pixelRatio;
+    var w = 480 * pr;
+    var h = 360 * pr;
+    var length = w * h * 4;
+    var stride = w * 4;
+    var id = this.context.getImageData(0, 0, w, 360 * pr);
+    var data = id.data;
+    var offset = (y * w + x) * pr * 4;
+    var queue = [offset];
+    var targetR = data[offset];
+    var targetG = data[offset + 1];
+    var targetB = data[offset + 2];
+    var targetA = data[offset + 3];
+    if (targetR === foregroundR &&
+      targetG === foregroundG &&
+      targetB === foregroundB &&
+      targetA === foregroundA) return;
+    while (queue.length) {
+      var q = queue.pop();
+      check(q - stride);
+      check(q + stride);
+      check(q - 4);
+      check(q + 4);
+    }
+    this.context.putImageData(id, 0, 0);
   };
 
   ImageEditor.prototype.updateCursor = function(ignore) {
