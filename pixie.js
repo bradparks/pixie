@@ -4854,7 +4854,13 @@
           var sy = this.toolData.selectionY;
           var sw = this.toolData.selectionWidth;
           var sh = this.toolData.selectionHeight;
-          if (x < sx || x >= sx + sw || y < sy || y >= sy + sh) {
+          var dx = x - (sx + sw/2);
+          var dy = y - (sy + sh/2);
+          var sin = -Math.sin(this.toolData.selectionRotation);
+          var cos = Math.cos(this.toolData.selectionRotation);
+          var dx2 = cos * dx - sin * dy;
+          var dy2 = sin * dx + cos * dy;
+          if (dx2 < -sw/2 || dx2 >= sw/2 || dy2 < -sh/2 || dy2 >= sh/2) {
             this.dropSelection();
             this.updateBitmap();
           }
