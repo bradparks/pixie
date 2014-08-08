@@ -4860,6 +4860,8 @@
             for (var j = -1; j <= 1; j++) {
               if ((i || j) && Math.abs(dx - sw/2 * i) <= HANDLE_RADIUS && Math.abs(dy - sh/2 * j) <= HANDLE_RADIUS) {
                 this.toolData.handle = [i, j];
+                this.toolData.initialX = dx;
+                this.toolData.initialY = dy;
                 this.toolData.baseX = this.toolData.selectionX;
                 this.toolData.baseY = this.toolData.selectionY;
                 this.toolData.baseWidth = this.toolData.selectionWidth;
@@ -4891,11 +4893,15 @@
           }
           this.showSelection();
         } else if (d.handle) {
-          var point = this.selectionPoint(x, y);
-          d.selectionX = d.baseX + (d.handle[0] ? 1 : 0) * (x - d.startX) / 2;
-          d.selectionY = d.baseY + (d.handle[1] ? 1 : 0) * (y - d.startY) / 2;
-          d.selectionWidth = d.baseWidth + d.handle[0] * (x - d.startX);
-          d.selectionHeight = d.baseHeight + d.handle[1] * (y - d.startY);
+          var point = this.selectionPoint(x, y, d.baseX, d.baseY);
+          var dx = (d.handle[0] ? 1 : 0) * (point.x - d.initialX) / 2;
+          var dy = (d.handle[1] ? 1 : 0) * (point.y - d.initialY) / 2;
+          var sin = Math.sin(d.selectionRotation);
+          var cos = Math.cos(d.selectionRotation);
+          d.selectionX = d.baseX + cos * dx - sin * dy;
+          d.selectionY = d.baseY + sin * dx + cos * dy;
+          d.selectionWidth = d.baseWidth + d.handle[0] * (point.x - d.initialX);
+          d.selectionHeight = d.baseHeight + d.handle[1] * (point.y - d.initialY);
           this.showSelection();
         } else if (d.selection) {
           d.selectionX += x - d.lastX;
@@ -4949,9 +4955,9 @@
     }
   };
 
-  ImageEditor.prototype.selectionPoint = function(x, y) {
-    var sx = this.toolData.selectionX;
-    var sy = this.toolData.selectionY;
+  ImageEditor.prototype.selectionPoint = function(x, y, sx, sy) {
+    if (sx == null) sx = this.toolData.selectionX;
+    if (sy == null) sy = this.toolData.selectionY;
     var dx = x - sx;
     var dy = y - sy;
     var sin = -Math.sin(this.toolData.selectionRotation);
@@ -5139,6 +5145,7 @@
     cx.save();
     cx.translate(d.selectionX, d.selectionY);
     cx.rotate(d.selectionRotation);
+    cx.imageSmoothingEnabled = false;
     cx.drawImage(d.selection, -sw/2, -sh/2, sw, sh);
     if (frame) {
       cx.beginPath();
