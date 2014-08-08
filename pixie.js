@@ -4860,6 +4860,15 @@
           var cos = Math.cos(this.toolData.selectionRotation);
           var dx2 = cos * dx - sin * dy;
           var dy2 = sin * dx + cos * dy;
+          this.toolData.handle = null;
+          for (var i = -1; i <= 1; i++) {
+            for (var j = -1; j <= 1; j++) {
+              if ((i || j) && Math.abs(dx2 - sw/2 * i) <= HANDLE_RADIUS && Math.abs(dy2 - sh/2 * j) <= HANDLE_RADIUS) {
+                this.toolData.handle = [i, j];
+                return;
+              }
+            }
+          }
           if (dx2 < -sw/2 || dx2 >= sw/2 || dy2 < -sh/2 || dy2 >= sh/2) {
             this.dropSelection();
             this.updateBitmap();
