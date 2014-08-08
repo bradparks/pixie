@@ -4799,7 +4799,7 @@
       },
       up: function(x, y) {
         this.clearCursor();
-        this.rectOn(this.context, this.toolData.startX, this.toolData.startY, x, y);
+        this.rect(this.toolData.startX, this.toolData.startY, x, y);
         this.updateBitmap();
       }
     },
@@ -4894,6 +4894,14 @@
       cx.drawImage(this.brushCanvas, x1, y1);
     }
     cx.restore();
+  };
+
+  ImageEditor.prototype.rect = function(sx, sy, ex, ey) {
+    this.context.save();
+    var pr = this._costume.pixelRatio;
+    this.context.scale(pr, pr);
+    this.rectOn(this.context, sx, sy, ex, ey);
+    this.context.restore();
   };
 
   ImageEditor.prototype.rectOn = function(cx, sx, sy, ex, ey) {
