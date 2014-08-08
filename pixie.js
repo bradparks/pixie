@@ -5061,8 +5061,8 @@
     var d = this.toolData;
     this.clearCursor();
     var cx = this.cursorContext;
+    this.drawSelection(cx);
     cx.save();
-    cx.drawImage(d.selection, d.selectionX, d.selectionY, d.selectionWidth, d.selectionHeight);
     cx.beginPath();
     cx.rect(d.selectionX, d.selectionY, d.selectionWidth, d.selectionHeight);
     cx.strokeStyle = 'rgba(0, 0, 255, .6)';
@@ -5073,8 +5073,13 @@
 
   ImageEditor.prototype.dropSelection = function() {
     var d = this.toolData;
-    this.context.drawImage(d.selection, d.selectionX, d.selectionY, d.selectionWidth, d.selectionHeight);
+    this.drawSelection(this.context);
     d.selection = null;
+  };
+
+  ImageEditor.prototype.drawSelection = function(cx) {
+    var d = this.toolData;
+    cx.drawImage(d.selection, d.selectionX, d.selectionY, d.selectionWidth, d.selectionHeight);
   };
 
   ImageEditor.prototype.updateCursor = function(ignore) {
