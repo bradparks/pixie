@@ -4850,33 +4850,39 @@
     select: {
       down: function(x, y) {
         if (this.toolData.selection) {
-          var sx = this.toolData.selectionX;
-          var sy = this.toolData.selectionY;
           var sw = this.toolData.selectionWidth;
           var sh = this.toolData.selectionHeight;
-          var dx = x - (sx + sw/2);
-          var dy = y - (sy + sh/2);
-          var sin = -Math.sin(this.toolData.selectionRotation);
-          var cos = Math.cos(this.toolData.selectionRotation);
-          var dx2 = cos * dx - sin * dy;
-          var dy2 = sin * dx + cos * dy;
+          var point = this.selectionPoint(x, y);
+          var dx = point.x;
+          var dy = point.y;
           this.toolData.handle = null;
           for (var i = -1; i <= 1; i++) {
             for (var j = -1; j <= 1; j++) {
-              if ((i || j) && Math.abs(dx2 - sw/2 * i) <= HANDLE_RADIUS && Math.abs(dy2 - sh/2 * j) <= HANDLE_RADIUS) {
+              if ((i || j) && Math.abs(dx - sw/2 * i) <= HANDLE_RADIUS && Math.abs(dy - sh/2 * j) <= HANDLE_RADIUS) {
                 this.toolData.handle = [i, j];
                 return;
               }
             }
           }
-          if (dx2 < -sw/2 || dx2 >= sw/2 || dy2 < -sh/2 || dy2 >= sh/2) {
+          if (Math.abs(dx) <= HANDLE_RADIUS && Math.abs(dy + sh/2 + ROTATION_HANDLE_OFFSET) <= HANDLE_RADIUS) {
+            this.toolData.handle = 'rotation';
+            this.toolData.startRotation = this.toolData.selectionRotation;
+            this.toolData.mouseRotation = this.toolData.selectionRotation + Math.atan2(dy, dx);
+            return;
+          }
+          if (dx < -sw/2 || dx >= sw/2 || dy < -sh/2 || dy >= sh/2) {
             this.dropSelection();
             this.updateBitmap();
           }
         }
       },
       drag: function(x, y) {
-        if (this.toolData.selection) {
+        if (this.toolData.handle === 'rotation') {
+          var dx = x - (this.toolData.selectionX + this.toolData.selectionWidth/2);
+          var dy = y - (this.toolData.selectionY + this.toolData.selectionHeight/2);
+          this.toolData.selectionRotation = this.toolData.startRotation + (Math.atan2(dy, dx) - this.toolData.mouseRotation);
+          this.showSelection();
+        } else if (this.toolData.selection) {
           this.toolData.selectionX += x - this.toolData.lastX;
           this.toolData.selectionY += y - this.toolData.lastY;
           this.showSelection();
@@ -4919,13 +4925,28 @@
           d.selectionHeight = h;
           d.selectionX = x1;
           d.selectionY = y1;
-          d.selectionRotation = Math.PI * .2;
+          d.selectionRotation = 0;
           this.showSelection();
           this.context.clearRect(x1 * pr, y1 * pr, w * pr, h * pr);
           this.updateBitmap();
         }
       }
     }
+  };
+
+  ImageEditor.prototype.selectionPoint = function(x, y) {
+    var sx = this.toolData.selectionX;
+    var sy = this.toolData.selectionY;
+    var sw = this.toolData.selectionWidth;
+    var sh = this.toolData.selectionHeight;
+    var dx = x - (sx + sw/2);
+    var dy = y - (sy + sh/2);
+    var sin = -Math.sin(this.toolData.selectionRotation);
+    var cos = Math.cos(this.toolData.selectionRotation);
+    return {
+      x: cos * dx - sin * dy,
+      y: sin * dx + cos * dy
+    };
   };
 
   ImageEditor.prototype.copyCanvas = function() {
