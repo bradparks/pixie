@@ -4830,6 +4830,14 @@
         this.toolData.initialImage = null;
       }
     },
+    erase: {
+      cursor: 'none',
+      move: function() {this.brushCursor()},
+      drag: function(x, y) {
+        this.commit('strokeOn', this.toolData.lastX, this.toolData.lastY, x, y);
+        this.updateBitmap();
+      }
+    },
     eyedropper: {
       cursor: 'crosshair',
       drag: function(x, y) {
@@ -4899,7 +4907,7 @@
 
   ImageEditor.prototype.commit = function(fn) {
     this.context.save();
-    if (this._foreground === 'transparent') {
+    if (this._tool === 'erase' || this._foreground === 'transparent') {
       this.context.globalCompositeOperation = 'destination-out';
     }
     var pr = this._costume.pixelRatio;
@@ -5002,7 +5010,7 @@
     this.brushCanvas.width =
     this.brushCanvas.height = Math.ceil(size) * 2;
     bx.save();
-    bx.fillStyle = this._cursorColor;
+    bx.fillStyle = this._tool === 'erase' ? '#000' : this._cursorColor;
     bx.translate(Math.ceil(size), Math.ceil(size));
     if (size < 1) {
       bx.fillRect(0, 0, 1, 1);
