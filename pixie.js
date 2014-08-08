@@ -4832,7 +4832,7 @@
     },
     erase: {
       cursor: 'none',
-      move: function() {this.brushCursor()},
+      move: function() {this.eraseCursor()},
       drag: function(x, y) {
         this.commit('strokeOn', this.toolData.lastX, this.toolData.lastY, x, y);
         this.updateBitmap();
@@ -5034,6 +5034,15 @@
     cx.translate(this.cursorX - offset, this.cursorY - offset);
     cx.drawImage(this.brushCanvas, 0, 0);
     cx.restore();
+  };
+
+  ImageEditor.prototype.eraseCursor = function() {
+    this.clearCursor();
+    var cx = this.cursorContext;
+    cx.lineWidth = .5;
+    cx.beginPath();
+    cx.arc(this.cursorX, this.cursorY, this._brushSize - .5, 0, Math.PI * 2);
+    cx.stroke();
   };
 
   ImageEditor.prototype.updateBitmap = function() {
