@@ -4860,6 +4860,10 @@
             for (var j = -1; j <= 1; j++) {
               if ((i || j) && Math.abs(dx - sw/2 * i) <= HANDLE_RADIUS && Math.abs(dy - sh/2 * j) <= HANDLE_RADIUS) {
                 this.toolData.handle = [i, j];
+                this.toolData.baseX = this.toolData.selectionX;
+                this.toolData.baseY = this.toolData.selectionY;
+                this.toolData.baseWidth = this.toolData.selectionWidth;
+                this.toolData.baseHeight = this.toolData.selectionHeight;
                 return;
               }
             }
@@ -4877,23 +4881,31 @@
         }
       },
       drag: function(x, y) {
-        if (this.toolData.handle === 'rotation') {
-          var dx = x - this.toolData.selectionX;
-          var dy = y - this.toolData.selectionY;
-          this.toolData.selectionRotation = this.toolData.startRotation + (Math.atan2(dy, dx) - this.toolData.mouseRotation);
-          if (this.toolData.shiftKey) {
-            this.toolData.selectionRotation = Math.round(this.toolData.selectionRotation / (Math.PI * .25)) * Math.PI * .25;
+        var d = this.toolData;
+        if (d.handle === 'rotation') {
+          var dx = x - d.selectionX;
+          var dy = y - d.selectionY;
+          d.selectionRotation = d.startRotation + (Math.atan2(dy, dx) - d.mouseRotation);
+          if (d.shiftKey) {
+            d.selectionRotation = Math.round(d.selectionRotation / (Math.PI * .25)) * Math.PI * .25;
           }
           this.showSelection();
-        } else if (this.toolData.selection) {
-          this.toolData.selectionX += x - this.toolData.lastX;
-          this.toolData.selectionY += y - this.toolData.lastY;
+        } else if (d.handle) {
+          var point = this.selectionPoint(x, y);
+          d.selectionX = d.baseX + (d.handle[0] ? 1 : 0) * (x - d.startX) / 2;
+          d.selectionY = d.baseY + (d.handle[1] ? 1 : 0) * (y - d.startY) / 2;
+          d.selectionWidth = d.baseWidth + d.handle[0] * (x - d.startX);
+          d.selectionHeight = d.baseHeight + d.handle[1] * (y - d.startY);
+          this.showSelection();
+        } else if (d.selection) {
+          d.selectionX += x - d.lastX;
+          d.selectionY += y - d.lastY;
           this.showSelection();
         } else {
           this.clearCursor();
           var cx = this.cursorContext;
-          var sx = this.toolData.startX;
-          var sy = this.toolData.startY;
+          var sx = d.startX;
+          var sy = d.startY;
           var p = this.fixAspect(x, y); // NS
           cx.beginPath();
           cx.moveTo(sx + .5, sy + .5);
@@ -5118,7 +5130,7 @@
     d.selection = null;
   };
 
-  var HANDLE_RADIUS = 4;
+  var HANDLE_RADIUS = 3.5;
   var ROTATION_HANDLE_OFFSET = 20;
   ImageEditor.prototype.drawSelection = function(cx, frame) {
     var d = this.toolData;
