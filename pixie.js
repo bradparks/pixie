@@ -4846,6 +4846,41 @@
         if (!d[3]) return;
         this.foreground = 'rgb('+d[0]+','+d[1]+','+d[2]+')';
       }
+    },
+    select: {
+      drag: function(x, y) {
+        if (this.toolData.selection) {
+          this.toolData.selectionX += x - this.toolData.lastX;
+          this.toolData.selectionY += y - this.toolData.lastY;
+          this.showSelection();
+        } else {
+          this.clearCursor();
+          var cx = this.cursorContext;
+          var sx = this.toolData.startX;
+          var sy = this.toolData.startY;
+          cx.beginPath();
+          cx.moveTo(sx + .5, sy + .5);
+          cx.lineTo(sx + .5, y + .5);
+          cx.lineTo(x + .5, y + .5);
+          cx.lineTo(x + .5, sy + .5);
+          cx.closePath();
+          cx.stroke();
+        }
+      },
+      up: function(x, y) {
+        if (!this.toolData.selection) {
+          var x1 = Math.min(this.toolData.startX, x);
+          var y1 = Math.min(this.toolData.startY, y);
+          var x2 = Math.max(this.toolData.startX, x);
+          var y2 = Math.max(this.toolData.startY, y);
+          this.toolData.selection = this.context.getImageData(x1, y1, x2 - x1, y2 - y1);
+          this.toolData.selectionX = x1;
+          this.toolData.selectionY = y1;
+          this.showSelection();
+          this.context.clearRect(x1, y1, x2 - x1, y2 - y1);
+          this.updateBitmap();
+        }
+      }
     }
   };
 
@@ -4998,6 +5033,19 @@
       check(q + 4);
     }
     this.context.putImageData(id, 0, 0);
+  };
+
+  ImageEditor.prototype.showSelection = function() {
+    this.clearCursor();
+    var cx = this.cursorContext;
+    cx.save();
+    cx.putImageData(this.toolData.selection, this.toolData.selectionX + this.viewportOffsetX - this.scrollX, this.toolData.selectionY + this.viewportOffsetY - this.scrollY);
+    cx.beginPath();
+    cx.rect(this.toolData.selectionX, this.toolData.selectionY, this.toolData.selection.width, this.toolData.selection.height);
+    cx.strokeStyle = 'rgba(0, 0, 255, .6)';
+    cx.lineWidth = 2;
+    cx.stroke();
+    cx.restore();
   };
 
   ImageEditor.prototype.updateCursor = function(ignore) {
