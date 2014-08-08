@@ -4878,8 +4878,8 @@
       },
       drag: function(x, y) {
         if (this.toolData.handle === 'rotation') {
-          var dx = x - (this.toolData.selectionX + this.toolData.selectionWidth/2);
-          var dy = y - (this.toolData.selectionY + this.toolData.selectionHeight/2);
+          var dx = x - this.toolData.selectionX;
+          var dy = y - this.toolData.selectionY;
           this.toolData.selectionRotation = this.toolData.startRotation + (Math.atan2(dy, dx) - this.toolData.mouseRotation);
           this.showSelection();
         } else if (this.toolData.selection) {
@@ -4923,8 +4923,8 @@
           cx.drawImage(this.canvas, -x1 * pr, -y1 * pr);
           d.selectionWidth = w;
           d.selectionHeight = h;
-          d.selectionX = x1;
-          d.selectionY = y1;
+          d.selectionX = x1 + w/2;
+          d.selectionY = y1 + h/2;
           d.selectionRotation = 0;
           this.showSelection();
           this.context.clearRect(x1 * pr, y1 * pr, w * pr, h * pr);
@@ -4937,10 +4937,8 @@
   ImageEditor.prototype.selectionPoint = function(x, y) {
     var sx = this.toolData.selectionX;
     var sy = this.toolData.selectionY;
-    var sw = this.toolData.selectionWidth;
-    var sh = this.toolData.selectionHeight;
-    var dx = x - (sx + sw/2);
-    var dy = y - (sy + sh/2);
+    var dx = x - sx;
+    var dy = y - sy;
     var sin = -Math.sin(this.toolData.selectionRotation);
     var cos = Math.cos(this.toolData.selectionRotation);
     return {
@@ -5124,7 +5122,7 @@
     var sw = d.selectionWidth;
     var sh = d.selectionHeight;
     cx.save();
-    cx.translate(d.selectionX + sw/2, d.selectionY + sh/2);
+    cx.translate(d.selectionX, d.selectionY);
     cx.rotate(d.selectionRotation);
     cx.drawImage(d.selection, -sw/2, -sh/2, sw, sh);
     if (frame) {
