@@ -4914,6 +4914,7 @@
     var y1 = Math.min(sy, point.y);
     var x2 = Math.max(sx, point.x);
     var y2 = Math.max(sy, point.y);
+    cx.fillStyle = this._cursorColor;
     cx.fillRect(x1, y1, x2 - x1, y2 - y1);
   };
 
@@ -4928,6 +4929,7 @@
     cx.scale(rx, ry);
     cx.beginPath();
     cx.arc(0, 0, 1, 0, Math.PI * 2, false);
+    cx.fillStyle = this._cursorColor;
     if (antialias) {
       cx.fill();
     } else {
