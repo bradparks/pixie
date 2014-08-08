@@ -4756,6 +4756,16 @@
     return {x: this.toolData.startX, y: y};
   };
 
+  ImageEditor.prototype.fixAspect = function(x, y) {
+    if (!this.toolData.shiftKey) return {x: x, y: y};
+    var dx = x - this.toolData.startX;
+    var dy = y - this.toolData.startY;
+    var sx = dx < 0 ? -1 : 1;
+    var sy = dy < 0 ? -1 : 1;
+    var d = Math.max(Math.abs(dx), Math.abs(dy));
+    return {x: this.toolData.startX + sx * d, y: this.toolData.startY + sy * d};
+  };
+
   var colorCanvas = document.createElement('canvas');
   colorCanvas.width = colorCanvas.height = 1;
   var colorContext = colorCanvas.getContext('2d');
@@ -4887,11 +4897,11 @@
   };
 
   ImageEditor.prototype.rectOn = function(cx, sx, sy, ex, ey) {
-    // var point = this.fixPoint(x, y);
-    var x1 = Math.min(sx, ex);
-    var y1 = Math.min(sy, ey);
-    var x2 = Math.max(sx, ex);
-    var y2 = Math.max(sy, ey);
+    var point = this.fixAspect(ex, ey);
+    var x1 = Math.min(sx, point.x);
+    var y1 = Math.min(sy, point.y);
+    var x2 = Math.max(sx, point.x);
+    var y2 = Math.max(sy, point.y);
     cx.fillRect(x1, y1, x2 - x1, y2 - y1);
   };
 
