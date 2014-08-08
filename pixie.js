@@ -4852,8 +4852,8 @@
         if (this.toolData.selection) {
           var sx = this.toolData.selectionX;
           var sy = this.toolData.selectionY;
-          var sw = this.toolData.selection.width;
-          var sh = this.toolData.selection.height;
+          var sw = this.toolData.selectionWidth;
+          var sh = this.toolData.selectionHeight;
           if (x < sx || x >= sx + sw || y < sy || y >= sy + sh) {
             this.dropSelection();
             this.updateBitmap();
@@ -4880,17 +4880,24 @@
         }
       },
       up: function(x, y) {
+        var d = this.toolData;
         if (!this.toolData.selection) {
-          var x1 = Math.min(this.toolData.startX, x);
-          var y1 = Math.min(this.toolData.startY, y);
-          var x2 = Math.max(this.toolData.startX, x);
-          var y2 = Math.max(this.toolData.startY, y);
+          var x1 = Math.min(d.startX, x);
+          var y1 = Math.min(d.startY, y);
+          var x2 = Math.max(d.startX, x);
+          var y2 = Math.max(d.startY, y);
           var w = x2 - x1;
           var h = y2 - y1;
           if (!w || !h) return;
-          this.toolData.selection = this.context.getImageData(x1, y1, w, h);
-          this.toolData.selectionX = x1;
-          this.toolData.selectionY = y1;
+          d.selection = document.createElement('canvas');
+          d.selection.width = w;
+          d.selection.height = h;
+          var cx = d.selection.getContext('2d');
+          cx.drawImage(this.canvas, -x1, -y1);
+          d.selectionWidth = w;
+          d.selectionHeight = h;
+          d.selectionX = x1;
+          d.selectionY = y1;
           this.showSelection();
           this.context.clearRect(x1, y1, w, h);
           this.updateBitmap();
@@ -5051,12 +5058,13 @@
   };
 
   ImageEditor.prototype.showSelection = function() {
+    var d = this.toolData;
     this.clearCursor();
     var cx = this.cursorContext;
     cx.save();
-    cx.putImageData(this.toolData.selection, this.toolData.selectionX + this.viewportOffsetX - this.scrollX, this.toolData.selectionY + this.viewportOffsetY - this.scrollY);
+    cx.drawImage(d.selection, d.selectionX, d.selectionY, d.selectionWidth, d.selectionHeight);
     cx.beginPath();
-    cx.rect(this.toolData.selectionX, this.toolData.selectionY, this.toolData.selection.width, this.toolData.selection.height);
+    cx.rect(d.selectionX, d.selectionY, d.selectionWidth, d.selectionHeight);
     cx.strokeStyle = 'rgba(0, 0, 255, .6)';
     cx.lineWidth = 2;
     cx.stroke();
@@ -5064,8 +5072,9 @@
   };
 
   ImageEditor.prototype.dropSelection = function() {
-    this.context.putImageData(this.toolData.selection, this.toolData.selectionX, this.toolData.selectionY);
-    this.toolData.selection = null;
+    var d = this.toolData;
+    this.context.drawImage(d.selection, d.selectionX, d.selectionY, d.selectionWidth, d.selectionHeight);
+    d.selection = null;
   };
 
   ImageEditor.prototype.updateCursor = function(ignore) {
