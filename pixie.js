@@ -4706,13 +4706,13 @@
   ImageEditor.prototype.mouseDown = function(e) {
     e.preventDefault();
     this.isPressed = true;
-    this.mouseMove(e);
     this.toolData.startX =
     this.toolData.lastX =
     this.toolData.x = this.cursorX;
     this.toolData.startY =
     this.toolData.lastY =
     this.toolData.y = this.cursorY;
+    this.mouseMove(e);
     this.handleTool('down', this.cursorX, this.cursorY);
   };
 
