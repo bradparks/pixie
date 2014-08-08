@@ -4870,7 +4870,7 @@
           var cx = this.cursorContext;
           var sx = this.toolData.startX;
           var sy = this.toolData.startY;
-          var p = this.fixAspect(x, y);
+          var p = this.fixAspect(x, y); // NS
           cx.beginPath();
           cx.moveTo(sx + .5, sy + .5);
           cx.lineTo(sx + .5, p.y + .5);
@@ -4883,7 +4883,7 @@
       up: function(x, y) {
         var d = this.toolData;
         if (!this.toolData.selection) {
-          var point = this.fixAspect(x, y);
+          var point = this.fixAspect(x, y); // NS
           var x1 = Math.min(d.startX, point.x);
           var y1 = Math.min(d.startY, point.y);
           var x2 = Math.max(d.startX, point.x);
@@ -4969,7 +4969,7 @@
 
   ImageEditor.prototype.commit = function(fn) {
     this.context.save();
-    if (this._tool === 'erase' || this._foreground === 'transparent') {
+    if (this._tool === 'erase' || this._foreground === 'transparent') { // NS
       this.context.globalCompositeOperation = 'destination-out';
     }
     var pr = this._costume.pixelRatio;
