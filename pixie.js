@@ -5102,15 +5102,14 @@
       cx.lineWidth = 2;
       cx.stroke();
 
-      cx.fillStyle = '#fff';
+      cx.fillStyle = 'rgba(255, 255, 255, .5)';
       cx.strokeStyle = '#000';
       cx.lineWidth = 1;
       cx.beginPath();
       for (var x = -1; x <= 1; x++) {
         for (var y = -1; y <= 1; y++) {
           if (x || y) {
-            cx.moveTo(sw/2 * x + 4, sh/2 * y);
-            cx.arc(sw/2 * x, sh/2 * y, 4, 0, Math.PI * 2);
+            cx.rect(sw/2 * x - 3, sh/2 * y - 3, 6, 6);
           }
         }
       }
