@@ -4904,6 +4904,7 @@
           d.selectionHeight = h;
           d.selectionX = x1;
           d.selectionY = y1;
+          d.selectionRotation = Math.PI * .2;
           this.showSelection();
           this.context.clearRect(x1 * pr, y1 * pr, w * pr, h * pr);
           this.updateBitmap();
@@ -5082,12 +5083,15 @@
 
   ImageEditor.prototype.drawSelection = function(cx, frame) {
     var d = this.toolData;
+    var sw = d.selectionWidth;
+    var sh = d.selectionHeight;
     cx.save();
-    cx.translate(d.selectionX, d.selectionY);
-    cx.drawImage(d.selection, 0, 0, d.selectionWidth, d.selectionHeight);
+    cx.translate(d.selectionX + sw/2, d.selectionY + sh/2);
+    cx.rotate(d.selectionRotation);
+    cx.drawImage(d.selection, -sw/2, -sh/2, sw, sh);
     if (frame) {
       cx.beginPath();
-      cx.rect(0, 0, d.selectionWidth, d.selectionHeight);
+      cx.rect(-sw/2, -sh/2, sw, sh);
       cx.strokeStyle = 'rgba(0, 0, 255, .6)';
       cx.lineWidth = 2;
       cx.stroke();
