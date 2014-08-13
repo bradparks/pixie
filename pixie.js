@@ -4361,11 +4361,11 @@
 
   CostumesPanel.prototype.addNewButton = function(name, title, fn, file, multiple) {
     var button = el(file ? 'div' : 'button', 'new-button '+name);
-    button.title = title;
     if (file) {
       var form = el('form', 'new-button-form');
       var input = el('input', 'new-button-input');
       input.type = 'file';
+      input.title = title;
       if (typeof file === 'string') input.accept = file;
       if (multiple) input.multiple = true;
       form.appendChild(input);
@@ -4376,6 +4376,7 @@
         form.reset();
       });
     } else {
+      button.title = title;
       if (fn) button.addEventListener('click', fn.bind(this));
     }
     this.elNewGroup.appendChild(button);
