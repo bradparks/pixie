@@ -451,7 +451,7 @@ button::-moz-focus-inner {
   left: -4px;
   width: 18px;
   height: 18px;
-  background: url(assets.png) -211px 0;
+  background: url(assets.svg) -211px 0;
 }
 .sprite-icon-button:hover {
   background-position: -211px -18px;
@@ -847,7 +847,7 @@ button::-moz-focus-inner {
 }
 .bitmap-tool {
   border: 1px solid #d0d1d2;
-  background: url(assets.png), linear-gradient(#fff, #e6e8e8);
+  background: url(assets.svg), linear-gradient(#fff, #e6e8e8);
   margin: 0 0 3px;
   padding: 0;
   width: 38px;
@@ -858,7 +858,7 @@ button::-moz-focus-inner {
 .bitmap-tool:hover,
 .bitmap-tool.selected {
   background-color: rgb(73, 188, 226);
-  background-image: url(assets.png);
+  background-image: url(assets.svg);
   background-position-y: -35px;
 }
 .bitmap-tool-brush {
@@ -886,12 +886,7 @@ button::-moz-focus-inner {
   background-position: -652px -1px, 0 0;
 }
 .bitmap-tool-duplicate {
-  background: url(assets.png), linear-gradient(#fff, #e6e8e8 24px);
   background-position: -690px -1px, 0 0;
-}
-.bitmap-tool-duplicate:hover,
-.bitmap-tool-duplicate.selected {
-  background-color: #179fd7;
 }
 .backpack-panel {
   position: absolute;
