@@ -73,7 +73,7 @@ body {
   position: relative;
   top: -1px;
   margin: 0 3px 0 0;
-  background: url(assets.png) -86px 0;
+  background: url(assets.svg) -86px 0;
 }
 .flip-back {
   position: absolute;
@@ -963,7 +963,7 @@ button::-moz-focus-inner {
   left: 0;
   width: 18px;
   height: 15px;
-  background: url(assets.png) -86px -23px no-repeat;
+  background: url(assets.svg) -86px -23px no-repeat;
 }
 .tips-label:hover {
   color: #1aa0d8;
