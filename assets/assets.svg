@@ -4,7 +4,37 @@
     <title>assets</title>
     <desc>Created with Sketch.</desc>
     <defs>
-        <path d="M0,0 L695,0 L695,69 L0,69 L0,0 Z M96,0 L114,0 L114,69 L96,69 L96,0 Z M150,0 L192,0 L192,69 L150,69 L150,0 Z M270,0 L612,0 L612,69 L270,69 L270,0 Z" id="path-1"></path>
+        <path d="M0,0 L695,0 L695,69 L0,69 L0,0 Z M96,0 L114,0 L114,69 L96,69 L96,0 Z M150,0 L192,0 L192,69 L150,69 L150,0 Z M270,0 L612,0 L612,69 L270,69 L270,0 Z M192,0 L208,0 L208,25 L192,25 L192,0 Z" id="path-1"></path>
+        <rect id="path-3" x="0.904925594" y="0" width="12" height="10.8961232"></rect>
+        <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-5">
+            <feOffset dx="-0.5" dy="-0.5" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="0.25" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.19544837 0" in="shadowBlurOuter1" type="matrix" result="shadowMatrixOuter1"></feColorMatrix>
+            <feOffset dx="1" dy="2" in="SourceAlpha" result="shadowOffsetInner1"></feOffset>
+            <feGaussianBlur stdDeviation="1" in="shadowOffsetInner1" result="shadowBlurInner1"></feGaussianBlur>
+            <feComposite in="shadowBlurInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.429950747 0" in="shadowInnerInner1" type="matrix" result="shadowMatrixInner1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+                <feMergeNode in="shadowMatrixInner1"></feMergeNode>
+            </feMerge>
+        </filter>
+        <rect id="path-6" x="0.904925594" y="0" width="12" height="10.8961232"></rect>
+        <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-8">
+            <feOffset dx="-0.5" dy="-0.5" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="0.25" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.19544837 0" in="shadowBlurOuter1" type="matrix" result="shadowMatrixOuter1"></feColorMatrix>
+            <feOffset dx="1" dy="2" in="SourceAlpha" result="shadowOffsetInner1"></feOffset>
+            <feGaussianBlur stdDeviation="1" in="shadowOffsetInner1" result="shadowBlurInner1"></feGaussianBlur>
+            <feComposite in="shadowBlurInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.429950747 0" in="shadowInnerInner1" type="matrix" result="shadowMatrixInner1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+                <feMergeNode in="shadowMatrixInner1"></feMergeNode>
+            </feMerge>
+        </filter>
     </defs>
     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
         <g id="assets" sketch:type="MSArtboardGroup">
@@ -124,11 +154,26 @@
                 <path d="M19,4.83917382 L19,0 L14,0 L14,-1.11022302e-16 L14,2 L17,2 L17,3.92268641 C17.1552099,3.93070272 17.3216402,3.95541004 17.5,4 C18.240079,4.18501974 18.7062995,4.50696869 19,4.83917382 Z M10.3288765,19 L7,19 L7,17 L8.46577528,17 L10.3288765,19 Z M0,12 L0,7 L1.11022302e-15,7 L2,7 L2,12 L-1.66533454e-16,12 L0,12 Z M0,14 L0,19 L5,19 L5,17 L2,17 L2,14 L1.11022302e-15,14 L0,14 Z M0,5 L0,0 L5,0 L5,-1.16573418e-15 L5,2 L2,2 L2,5 L-1.66533454e-16,5 L0,5 Z M12,0 L7,0 L7,-1.11022302e-16 L7,2 L12,2 L12,-1.16573418e-15 L12,0 Z" id="Rectangle-18" fill="#FAFAFA" sketch:type="MSShapeGroup"></path>
                 <path d="M11.5,20 L11.5,18.5 C11.5,18.5 8,14.5 7.00000002,13 C6.00000004,11.5 7.49999996,9.99999999 8.99999995,11 C10.4999999,12 10.5000001,13 10.5000001,13 C10.5,10.5 8.99999991,8.49999998 8.49999995,6.99999999 C8,5.5 10,5 11,6 C12,7 12.5,9.99999999 12.5,9.99999999 C12.5,9.99999999 12.5,8.50000003 12.5,6 C12.5,3.49999998 15.5,3.99999999 15.5,5.49999999 C15.5,6.99999999 15.5,9.99999999 15.5,9.99999999 C15.5,9.99999999 15.5,6.49999995 15.5,6.5 C16,4.49999999 18.4999999,4.99999998 18.5,6.99999999 C18.5,9 18.5,9.99999999 18.5,11 C18.5,7.99999999 21,6.00000001 21.5,8.5 C22,11 18.5,17.5 18.5,17.5 L18.5,20" id="Path-42" stroke="#FAFAFA" sketch:type="MSShapeGroup"></path>
             </g>
-            <g id="Stamp-(off)" sketch:type="MSLayerGroup" transform="translate(698.000000, 7.000000)" fill="#5D5D5D">
+            <g id="Stamp-(off)" sketch:type="MSLayerGroup" transform="translate(698.000000, 7.000000)" fill="#414141">
                 <path d="M7.5,6.87265536 L7.5,12.5 L2.50591905,12.5 C1.39808055,12.5 0.5,13.3890552 0.5,14.4999717 L0.5,17 L2.5,17 L2.5,20 L16.4859457,20 L16.4859453,17 L18.5,17 L18.5,14.4999717 C18.5,13.3954178 17.6134452,12.5 16.4940809,12.5 L11.5,12.5 L11.5,6.87265536 C12.406742,6.24018229 13,5.18937256 13,4 C13,2.06700338 11.4329966,0.5 9.5,0.5 C7.56700338,0.5 6,2.06700338 6,4 C6,5.18937256 6.59325795,6.24018229 7.5,6.87265536 Z" id="Path-46" sketch:type="MSShapeGroup"></path>
             </g>
-            <g id="Stamp-(on)" sketch:type="MSLayerGroup" transform="translate(698.000000, 41.000000)" fill="#FFFFFF">
-                <path d="M7.5,6.44949137 L7.5,12.5 L2.50591905,12.5 C1.39808055,12.5 0.5,13.3890552 0.5,14.4999717 L0.5,17 L2.5,17 L2.5,19 L16.5000004,19 L16.5,17 L19.5,17 L19.5,14.4999717 C19.5,13.3954178 18.6101995,12.5 17.4901376,12.5 L12,12.5 L12,6.87265536 C12.906742,6.24018229 13.5,5.18937256 13.5,4 C13.5,2.06700338 11.9329966,0.5 10,0.5 C8.06700338,0.5 6.5,2.06700338 6.5,4 C6.5,4.95365254 6.88140649,5.81822282 7.5,6.44949137 Z" id="Path-46" sketch:type="MSShapeGroup"></path>
+            <g id="Stamp-(on)" sketch:type="MSLayerGroup" transform="translate(698.000000, 41.000000)" fill="#FAFAFA">
+                <path d="M7.5,6.87265536 L7.5,12.5 L2.50591905,12.5 C1.39808055,12.5 0.5,13.3890552 0.5,14.4999717 L0.5,17 L2.5,17 L2.5,20 L16.4859457,20 L16.4859453,17 L18.5,17 L18.5,14.4999717 C18.5,13.3954178 17.6134452,12.5 16.4940809,12.5 L11.5,12.5 L11.5,6.87265536 C12.406742,6.24018229 13,5.18937256 13,4 C13,2.06700338 11.4329966,0.5 9.5,0.5 C7.56700338,0.5 6,2.06700338 6,4 C6,5.18937256 6.59325795,6.24018229 7.5,6.87265536 Z" id="Path-46" sketch:type="MSShapeGroup"></path>
+            </g>
+            <g id="Checkbox-(off)" sketch:type="MSLayerGroup" transform="translate(308.095074, 0.103877)">
+                <mask id="mask-4" sketch:name="Rectangle 31" fill="white">
+                    <use xlink:href="#path-3"></use>
+                </mask>
+                <use id="Rectangle-31" sketch:type="MSShapeGroup" xlink:href="#path-3"></use>
+                <rect id="Rectangle-30" fill="#CECBCE" filter="url(#filter-5)" sketch:type="MSShapeGroup" mask="url(#mask-4)" x="1.90492559" y="0.896123238" width="12" height="10"></rect>
+            </g>
+            <g id="Checkbox-(on)" sketch:type="MSLayerGroup" transform="translate(308.095074, 12.000000)">
+                <mask id="mask-7" sketch:name="Rectangle 31" fill="white">
+                    <use xlink:href="#path-6"></use>
+                </mask>
+                <use id="Rectangle-31" sketch:type="MSShapeGroup" xlink:href="#path-6"></use>
+                <rect id="Rectangle-30" fill="#CECBCE" filter="url(#filter-8)" sketch:type="MSShapeGroup" mask="url(#mask-7)" x="1.90492559" y="0.896123238" width="12" height="10"></rect>
+                <path d="M3.40492559,8 C3.40492559,8 5.40492559,8 7.40492559,10.5 C9.40492559,6.5 10.9049256,5.5 11.9049256,5 L11.9049256,2 C9.90492559,3 7.90492559,6.5 7.40492559,8 C6.90492559,7 5.40492559,6 5.40492559,6 L3.40492559,8 Z" id="Path-48" fill="#000000" sketch:type="MSShapeGroup" mask="url(#mask-7)"></path>
             </g>
         </g>
     </g>
