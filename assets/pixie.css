@@ -560,7 +560,7 @@ button::-moz-focus-inner {
   width: 202px;
   padding: 8px 7px 8px 0;
   top: 0;
-  height: 98px;
+  height: 88px;
 }
 .palette-buttons::before {
   content: '';
@@ -577,15 +577,16 @@ button::-moz-focus-inner {
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   width: 99px;
-  height: 18px;
+  height: 17px;
   padding: 0 0 0 8px;
   border: 0;
   background: 0;
-  margin: 0 2px 2px 0;
+  margin: 0 2px 1px 0;
   text-align: left;
   white-space: nowrap;
   overflow: hidden;
   font: inherit;
+  vertical-align: top;
 }
 .palette-button div {
   border-left: 7px solid;
@@ -609,7 +610,7 @@ button::-moz-focus-inner {
 }
 .palette-contents {
   width: 209px;
-  top: 114px;
+  top: 104px;
   bottom: 0;
 }
 .palette-label {
