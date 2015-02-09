@@ -413,7 +413,7 @@ button::-moz-focus-inner {
 }
 .new-library:hover {background-position: -115px -19px}
 .new-backdrop-library {background-position: -192px 0}
-.new-backdrop-library:hover {background-position: -192px -19px}
+.new-backdrop-library:hover {background-position: -192px -19px} /* NS */
 .new-paint {
   background-position: -134px 0;
   top: 4px;
