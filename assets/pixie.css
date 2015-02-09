@@ -755,10 +755,10 @@ button::-moz-focus-inner {
   position: absolute;
   left: 7px;
   bottom: 4px;
-  background: url(assets.png) -323px 0;
+  background: url(assets.svg) -323px 0;
 }
 .color-picker-swatch-button.wheel {
-  background: url(assets.png) -323px -33px;
+  background: url(assets.svg) -323px -33px;
 }
 .color-picker-color {
   position: absolute;
