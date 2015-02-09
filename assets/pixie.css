@@ -787,11 +787,11 @@ button::-moz-focus-inner {
   height: 25px;
   border: 1px solid #d0d1d2;
   border-radius: 5px;
-  background: url(assets.png) -362px -1px, linear-gradient(#fff, #e6e8e8);
+  background: url(assets.svg) -362px -1px, linear-gradient(#fff, #e6e8e8);
 }
 .color-picker-eyedropper:hover,
 .color-picker-eyedropper.selected {
-  background: rgb(96, 183, 227) url(assets.png) -362px -25px;
+  background: rgb(96, 183, 227) url(assets.svg) -362px -25px;
 }
 .color-picker-palette {
   position: absolute;
@@ -819,7 +819,7 @@ button::-moz-focus-inner {
   border: 0;
   width: 25px;
   height: 22px;
-  background: url(assets.png);
+  background: url(assets.svg);
 }
 .zoom-button:hover {
   background-position-y: -23px;
