@@ -819,18 +819,12 @@ button::-moz-focus-inner {
   height: 22px;
   background: url(assets.svg);
 }
-.zoom-button:hover {
-  background-position-y: -23px;
-}
-.zoom-out {
-  background-position: -728px 0;
-}
-.zoom-default {
-  background-position: -754px 0;
-}
-.zoom-in {
-  background-position: -780px 0;
-}
+.zoom-out {background-position: -728px 0}
+.zoom-out:hover {background-position: -728px -23px}
+.zoom-default {background-position: -754px 0}
+.zoom-default:hover {background-position: -754px -23px}
+.zoom-in {background-position: -780px 0}
+.zoom-in:hover {background-position: -780px -23px}
 .image-editor-zoom-label {
   position: absolute;
   top: 31px;
@@ -857,35 +851,35 @@ button::-moz-focus-inner {
 .bitmap-tool.selected {
   background-color: rgb(73, 188, 226);
   background-image: url(assets.svg);
-  background-position-y: -35px;
 }
-.bitmap-tool-brush {
-  background-position: -387px -1px, 0 0;
-}
-.bitmap-tool-line {
-  background-position: -426px -1px, 0 0;
-}
-.bitmap-tool-rectangle {
-  background-position: -462px -1px, 0 0;
-}
-.bitmap-tool-ellipse {
-  background-position: -500px -1px, 0 0;
-}
-.bitmap-tool-text {
-  background-position: -538px -1px, 0 0;
-}
-.bitmap-tool-fill {
-  background-position: -576px -1px, 0 0;
-}
-.bitmap-tool-erase {
-  background-position: -614px -1px, 0 0;
-}
-.bitmap-tool-select {
-  background-position: -652px -1px, 0 0;
-}
-.bitmap-tool-duplicate {
-  background-position: -690px -1px, 0 0;
-}
+.bitmap-tool-brush {background-position: -387px -1px, 0 0}
+.bitmap-tool-brush:hover,
+.bitmap-tool-brush.selected {background-position: -387px -35px}
+.bitmap-tool-line {background-position: -426px -1px, 0 0}
+.bitmap-tool-line:hover,
+.bitmap-tool-line.selected {background-position: -426px -35px}
+.bitmap-tool-rectangle {background-position: -462px -1px, 0 0}
+.bitmap-tool-rectangle:hover,
+.bitmap-tool-rectangle.selected {background-position: -462px -35px}
+.bitmap-tool-ellipse {background-position: -500px -1px, 0 0}
+.bitmap-tool-ellipse:hover,
+.bitmap-tool-ellipse.selected {background-position: -500px -35px}
+.bitmap-tool-text {background-position: -538px -1px, 0 0}
+.bitmap-tool-text:hover,
+.bitmap-tool-text.selected {background-position: -538px -35px}
+.bitmap-tool-fill {background-position: -576px -1px, 0 0}
+.bitmap-tool-fill:hover,
+.bitmap-tool-fill.selected {background-position: -576px -35px}
+.bitmap-tool-erase {background-position: -614px -1px, 0 0}
+.bitmap-tool-erase:hover,
+.bitmap-tool-erase.selected {background-position: -614px -35px}
+.bitmap-tool-select {background-position: -652px -1px, 0 0}
+.bitmap-tool-select:hover,
+.bitmap-tool-select.selected {background-position: -652px -35px}
+.bitmap-tool-duplicate {background-position: -690px -1px, 0 0}
+.bitmap-tool-duplicate:hover,
+.bitmap-tool-duplicate.selected {background-position: -690px -35px}
+
 .backpack-panel {
   position: absolute;
   bottom: -117px;
