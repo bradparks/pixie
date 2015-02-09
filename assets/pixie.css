@@ -389,8 +389,6 @@ button::-moz-focus-inner {
 }
 .new-camera:hover {
   background-position: -172px -19px;
-  width: 20px;
-  margin-right: -1px;
 }
 .stage-section {
   position: absolute;
