@@ -334,6 +334,9 @@ button::-moz-focus-inner {
   width: 243px;
   top: 271px;
 }
+.small-stage .new-group-label {
+  width: 0;
+}
 .small-stage .mouse-coords {
   top: 221px;
 }
@@ -407,6 +410,18 @@ button::-moz-focus-inner {
   height: 29px;
   padding-right: 11px;
   line-height: 30px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.new-group-label {
+  display: inline-block;
+  -webkit-transition: width .2s;
+  -moz-transition: width .2s;
+  transition: width .2s;
+  width: 80px;
+  text-align: right;
+  overflow: hidden;
+  white-space: nowrap;
 }
 .new-button {
   width: 19px;
