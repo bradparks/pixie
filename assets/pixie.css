@@ -342,7 +342,7 @@ button::-moz-focus-inner {
   position: relative;
   top: 3px;
   vertical-align: top;
-  background: url(assets.png);
+  background: url(assets.svg);
 }
 .new-button-input {
   position: absolute;
