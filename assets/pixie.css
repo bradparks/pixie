@@ -147,6 +147,30 @@ button::-moz-focus-inner {
   display: inline-block;
 }
 
+.top-tools {
+  position: absolute;
+  top: 0;
+  left: 427px;
+}
+.top-tool {
+  width: 23px;
+  height: 24px;
+  border-radius: 4px;
+  border: 0;
+  padding: 0;
+  margin: 2px 3px 2px 0;
+  background: url(assets.svg);
+}
+.top-tool:hover,
+.top-tool.selected {
+  background-color: rgb(0, 158, 217);
+}
+.top-tool-duplicate {background-position: 0 -54px}
+.top-tool-delete {background-position: -25px -54px}
+.top-tool-grow {background-position: -50px -54px}
+.top-tool-shrink {background-position: -75px -54px}
+.top-tool-help {background-position: -100px -54px}
+
 
 /* Stage panel */
 
