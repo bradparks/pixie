@@ -1131,6 +1131,40 @@ button::-moz-focus-inner {
   border-top: 0;
   font-size: 14px;
 }
+.dialog-content article {
+  text-align: left;
+  max-width: 300px;
+}
+.dialog-content h1 {
+  margin: 0 0 14px;
+  font-size: 24px;
+}
+.dialog-content p {
+  margin: 0 0 14px;
+}
+.dialog-content a {
+  text-decoration: none;
+  color: #05c;
+  margin: -1px -3px;
+  padding: 1px 3px;
+  border-radius: 3px;
+}
+.dialog-content a:hover {
+  text-decoration: underline;
+}
+.dialog-content a:active {
+  text-decoration: none;
+  color: #fff;
+  background: #47d;
+}
+.dialog-content .links {
+  list-style: none;
+  margin: 0 0 14px;
+  padding: 0 0 0 14px;
+}
+.dialog-content .links li::before {
+  content: '– ';
+}
 .dialog-label {
   display: block;
   margin-bottom: 14px;
