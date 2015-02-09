@@ -12,6 +12,17 @@ body {
     overflow: hidden;
   }
 }
+
+button {
+  outline: 0;
+}
+button::-moz-focus-inner {
+  border: 0;
+}
+
+
+/* Main objects */
+
 .editor {
   position: absolute;
   top: 0;
@@ -40,6 +51,10 @@ body {
 .player .project-author {
   display: none;
 }
+
+
+/* Project buttons */
+
 .project-buttons {
   position: absolute;
   top: 33px;
@@ -59,6 +74,7 @@ body {
   background: #9c9ea2;
   margin-left: 5px;
 }
+
 .flip,
 .flip-back {
   padding: 0 7px 0 5px;
@@ -81,12 +97,10 @@ body {
   right: 5px;
   bottom: 5px;
 }
-button {
-  outline: 0;
-}
-button::-moz-focus-inner {
-  border: 0;
-}
+
+
+/* Top bar */
+
 .top-bar {
   position: absolute;
   top: 0;
@@ -96,6 +110,7 @@ button::-moz-focus-inner {
   background: #9c9ea2;
   padding: 0 0 0 82px;
 }
+
 .top-button {
   vertical-align: middle;
   border: 0;
@@ -119,9 +134,7 @@ button::-moz-focus-inner {
   border-width: 4px 0 5px;
   background: url(assets.svg) -67px 0;
 }
-.top-button.language:hover {
-  background-position: -67px -19px;
-}
+.top-button.language:hover {background-position: -67px -19px}
 .arrow {
   vertical-align: middle;
   margin: -2px 0 0 3px;
@@ -133,6 +146,10 @@ button::-moz-focus-inner {
 .top-button:hover .arrow.hovered {
   display: inline-block;
 }
+
+
+/* Stage panel */
+
 .stage-panel {
   position: absolute;
   top: 33px;
@@ -146,6 +163,7 @@ button::-moz-focus-inner {
   top: 0;
   left: 0;
 }
+
 .mouse-coords {
   position: absolute;
   right: 9px;
@@ -168,6 +186,7 @@ button::-moz-focus-inner {
   font-size: 10px;
   width: 27px;
 }
+
 .title-bar {
   position: absolute;
   top: 0;
@@ -218,6 +237,7 @@ button::-moz-focus-inner {
 .running .title-button.run {
   background-position: -26px -21px;
 }
+
 .version {
   position: absolute;
   top: 29px;
@@ -260,6 +280,7 @@ button::-moz-focus-inner {
   line-height: 12px;
   color: #5c5d5f;
 }
+
 .stage {
   position: absolute;
   top: 39px;
@@ -276,6 +297,9 @@ button::-moz-focus-inner {
   transition: transform .2s, box-shadow .2s;
   overflow: hidden;
 }
+
+/* Small stage layout */
+
 .small-stage .stage-panel {
   width: 242px;
 }
@@ -302,6 +326,10 @@ button::-moz-focus-inner {
   transform: scale(.5);
   box-shadow: 0 0 0 2px #d0d1d2;
 }
+
+
+/* Sprite panel */
+
 .sprite-panel {
   position: absolute;
   top: 451px;
@@ -320,6 +348,31 @@ button::-moz-focus-inner {
   color: #5c5d5f;
   font-size: 14px;
 }
+.stage-section {
+  position: absolute;
+  top: 31px;
+  left: 0;
+  width: 76px;
+  bottom: 0;
+  border: 1px solid #d0d1d2;
+  border-top: 0;
+  background: #e6e8e8;
+  text-align: center;
+  color: #5c5d5f;
+}
+.sprite-section {
+  position: absolute;
+  top: 31px;
+  right: 0;
+  left: 78px;
+  bottom: 0;
+  border: 1px solid #d0d1d2;
+  border-top: 0;
+  border-left: 0;
+  padding: 1px;
+  overflow: auto;
+}
+
 .new-group {
   position: absolute;
   right: 0;
@@ -358,50 +411,27 @@ button::-moz-focus-inner {
   background-position: -115px 0;
   margin-left: 8px;
 }
-.new-library:hover {
-  background-position: -115px -19px;
-}
-.new-backdrop-library {
-  background-position: -192px 0;
-}
-.new-backdrop-library:hover {
-  background-position: -192px -19px;
-}
+.new-library:hover {background-position: -115px -19px}
+.new-backdrop-library {background-position: -192px 0}
+.new-backdrop-library:hover {background-position: -192px -19px}
 .new-paint {
   background-position: -134px 0;
   top: 4px;
   margin-left: 3px;
 }
-.new-paint:hover {
-  background-position: -134px -19px;
-}
+.new-paint:hover {background-position: -134px -19px}
 .new-import {
   background-position: -153px 0;
   margin-left: 4px;
 }
-.new-import:hover {
-  background-position: -153px -19px;
-}
+.new-import:hover {background-position: -153px -19px}
 .new-camera {
   background-position: -172px 0;
   top: 5px;
   margin-left: 8px;
 }
-.new-camera:hover {
-  background-position: -172px -19px;
-}
-.stage-section {
-  position: absolute;
-  top: 31px;
-  left: 0;
-  width: 76px;
-  bottom: 0;
-  border: 1px solid #d0d1d2;
-  border-top: 0;
-  background: #e6e8e8;
-  text-align: center;
-  color: #5c5d5f;
-}
+.new-camera:hover {background-position: -172px -19px}
+
 .sprite-icon {
   position: relative;
   display: inline-block;
@@ -461,18 +491,10 @@ button::-moz-focus-inner {
   margin-top: 11px;
   font-size: 10px;
 }
-.sprite-section {
-  position: absolute;
-  top: 31px;
-  right: 0;
-  left: 78px;
-  bottom: 0;
-  border: 1px solid #d0d1d2;
-  border-top: 0;
-  border-left: 0;
-  padding: 1px;
-  overflow: auto;
-}
+
+
+/* Tabs */
+
 .tab-panel {
   position: absolute;
   left: 492px;
@@ -524,6 +546,10 @@ button::-moz-focus-inner {
   width: 100%;
   height: 100%;
 }
+
+
+/* Scripts: palette */
+
 .palette-buttons,
 .palette-contents {
   position: absolute;
@@ -612,6 +638,10 @@ button::-moz-focus-inner {
   background: #179fd7;
   color: #ffffff;
 }
+
+
+/* Scripts: workspace */
+
 .editor-workspace {
   position: absolute;
   top: 5px;
@@ -621,6 +651,10 @@ button::-moz-focus-inner {
   background: rgb(221, 222, 222);
   box-shadow: 0 0 0 1px #bcbdbe;
 }
+
+
+/* Costume list */
+
 .costume-new-label {
   position: absolute;
   left: 8px;
@@ -644,6 +678,7 @@ button::-moz-focus-inner {
 .costume-new-group .new-camera {
   margin-left: 9px;
 }
+
 .costume-list {
   position: absolute;
   top: 57px;
@@ -697,6 +732,10 @@ button::-moz-focus-inner {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+
+/* Image editor */
+
 .image-editor {
   position: absolute;
   top: 5px;
@@ -706,6 +745,7 @@ button::-moz-focus-inner {
   background: #f2f2f2;
   box-shadow: 0 0 0 1px #d0d1d2;
 }
+
 .image-editor-canvas {
   position: absolute;
   top: 39px;
@@ -728,6 +768,7 @@ button::-moz-focus-inner {
 .image-editor-canvas-layer {
   position: absolute;
 }
+
 .image-editor-settings {
   position: absolute;
   bottom: 9px;
@@ -738,6 +779,10 @@ button::-moz-focus-inner {
   background: #f6f6f6;
   text-align: center;
 }
+
+
+/* Color picker */
+
 .color-picker {
   display: inline-block;
   position: relative;
@@ -758,6 +803,7 @@ button::-moz-focus-inner {
 .color-picker-swatch-button.wheel {
   background: url(assets.svg) -323px -33px;
 }
+
 .color-picker-color {
   position: absolute;
   background: #fff;
@@ -774,6 +820,7 @@ button::-moz-focus-inner {
   top: 16px;
   left: 17px;
 }
+
 .color-picker-eyedropper {
   position: absolute;
   top: 5px;
@@ -791,6 +838,7 @@ button::-moz-focus-inner {
 .color-picker-eyedropper.selected {
   background: rgb(96, 183, 227) url(assets.svg) -362px -25px;
 }
+
 .color-picker-palette {
   position: absolute;
   top: 5px;
@@ -806,6 +854,10 @@ button::-moz-focus-inner {
   height: 12px;
   margin: 0 2px 2px 0;
 }
+
+
+/* Bitmap editor: tools */
+
 .image-editor-zoom {
   position: absolute;
   top: 4px;
@@ -825,6 +877,7 @@ button::-moz-focus-inner {
 .zoom-default:hover {background-position: -754px -23px}
 .zoom-in {background-position: -780px 0}
 .zoom-in:hover {background-position: -780px -23px}
+
 .image-editor-zoom-label {
   position: absolute;
   top: 31px;
@@ -832,6 +885,7 @@ button::-moz-focus-inner {
   width: 70px;
   color: #5c5d5f;
 }
+
 .bitmap-tools {
   position: absolute;
   top: 39px;
@@ -851,6 +905,8 @@ button::-moz-focus-inner {
 .bitmap-tool.selected {
   background-color: rgb(73, 188, 226);
   background-image: url(assets.svg);
+  /* NS */
+  /* (for duplicate tool) */
 }
 .bitmap-tool-brush {background-position: -387px -1px, 0 0}
 .bitmap-tool-brush:hover,
@@ -876,9 +932,12 @@ button::-moz-focus-inner {
 .bitmap-tool-select {background-position: -652px -1px, 0 0}
 .bitmap-tool-select:hover,
 .bitmap-tool-select.selected {background-position: -652px -35px}
-.bitmap-tool-duplicate {background-position: -690px -1px, 0 0}
+.bitmap-tool-duplicate {background-position: -690px -1px, 0 0} /* NS */
 .bitmap-tool-duplicate:hover,
-.bitmap-tool-duplicate.selected {background-position: -690px -35px}
+.bitmap-tool-duplicate.selected {background-position: -690px -35px} /* NS */
+
+
+/* Backpack */
 
 .backpack-panel {
   position: absolute;
@@ -912,6 +971,10 @@ button::-moz-focus-inner {
 .backpack-open .backpack-panel {
   bottom: 1px;
 }
+
+
+/* Tips */
+
 .tips-panel {
   position: absolute;
   top: 60px;
@@ -1036,6 +1099,10 @@ button::-moz-focus-inner {
 .tips-open .tips-panel {
   width: 321px;
 }
+
+
+/* Dialogs */
+
 .dialog {
   position: fixed;
   left: 0;
@@ -1139,10 +1206,17 @@ button::-moz-focus-inner {
   border-bottom: 1px solid #909090;
   margin: -3px 0 10px;
 }
+
+
+/* Bubbles */
+
 .bubble {
   position: fixed;
   z-index: 3;
 }
+
+
+/* List watchers */
 
 .list-watcher {
   position: absolute;
