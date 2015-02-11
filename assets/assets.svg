@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg width="810px" height="100px" viewBox="0 0 810 100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+<svg width="810px" height="120px" viewBox="0 0 810 120" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
     <!-- Generator: bin/sketchtool 1.3 (252) - http://www.bohemiancoding.com/sketch -->
     <title>assets</title>
     <desc>Created with bin/sketchtool.</desc>
@@ -439,6 +439,12 @@
             </g>
             <g id="Help-tool" sketch:type="MSLayerGroup" transform="translate(100.000000, 54.000000)" fill="#FFFFFF">
                 <path d="M11.5,19 C15.6421356,19 19,15.6421356 19,11.5 C19,7.35786438 15.6421356,4 11.5,4 C7.35786438,4 4,7.35786438 4,11.5 C4,15.6421356 7.35786438,19 11.5,19 Z M11.5,18 C12.3284271,18 13,17.3284271 13,16.5 C13,15.6715729 12.3284271,15 11.5,15 C10.6715729,15 10,15.6715729 10,16.5 C10,17.3284271 10.6715729,18 11.5,18 Z M13.3849476,11.5355683 C13.4546597,11.4860851 13.525123,11.4385699 13.6891025,11.3288487 C14.3582284,10.8771887 14.720395,10.5010925 14.9486833,9.81622777 C15.6547259,7.69810008 13.9611858,5.5 11.788491,5.5 C10.3292587,5.5 9.25977362,6.16205734 8.60509159,7.22589531 C8.22738729,7.83965308 8.05794024,8.44039493 8.00659239,8.8853644 L9.99340761,9.1146356 C10.0141825,8.93460507 10.1091695,8.59784692 10.3083993,8.27410469 C10.6152741,7.77544266 11.0602232,7.5 11.788491,7.5 C12.6275854,7.5 13.3151175,8.39236993 13.0513167,9.18377223 C12.9952912,9.35184863 12.9063219,9.44423987 12.5701568,9.67115133 C12.4136525,9.7757158 12.3198453,9.83897236 12.2272973,9.9046649 C11.0585197,10.7342884 10.5,11.8613012 10.5,14 L12.5,14 C12.5,12.4972993 12.7550208,11.9827039 13.3849476,11.5355683 Z" id="Oval-37" sketch:type="MSShapeGroup"></path>
+            </g>
+            <g id="Arrow-(off)" sketch:type="MSLayerGroup" transform="translate(0.000000, 87.000000)" fill="#FFFFFF">
+                <path d="M0,0 L4,6 L8,0 L0,0 Z" id="Path-104" sketch:type="MSShapeGroup"></path>
+            </g>
+            <g id="Arrow-(on)" sketch:type="MSLayerGroup" transform="translate(12.000000, 87.000000)" fill="#FBA939">
+                <path d="M0,0 L4,6 L8,0 L0,0 Z" id="Path-104" sketch:type="MSShapeGroup"></path>
             </g>
         </g>
     </g>

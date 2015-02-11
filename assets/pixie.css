@@ -136,15 +136,15 @@ button::-moz-focus-inner {
 }
 .top-button.language:hover {background-position: -67px -19px}
 .arrow {
+  display: inline-block;
   vertical-align: middle;
   margin: -2px 0 0 3px;
+  width: 8px;
+  height: 6px;
+  background: url(assets.svg) 0 -87px;
 }
-.arrow.hovered,
-.top-button:hover .arrow.normal {
-  display: none
-}
-.top-button:hover .arrow.hovered {
-  display: inline-block;
+.top-button:hover .arrow {
+  background-position: -12px -87px;
 }
 
 .top-tools {
