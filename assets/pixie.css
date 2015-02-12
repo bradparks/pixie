@@ -1392,6 +1392,7 @@ button::-moz-focus-inner {
   bottom: 19px;
   text-align: center;
   font-size: 11px;
+  display: none;
 }
 .list-watcher-filler {
   position: absolute;
