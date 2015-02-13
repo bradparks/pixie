@@ -446,6 +446,14 @@
             <g id="Arrow-(on)" sketch:type="MSLayerGroup" transform="translate(12.000000, 87.000000)" fill="#FBA939">
                 <path d="M0,0 L4,6 L8,0 L0,0 Z" id="Path-104" sketch:type="MSShapeGroup"></path>
             </g>
+            <g id="Small-stage-toggle" sketch:type="MSLayerGroup" transform="translate(25.000000, 87.000000)">
+                <path d="M11,0.5 L3.5,0.5 L0.5,3.5 L0.5,13.5 L3.5,15.5 L11,15.5" id="Path-106" stroke="#D0D1D2" fill="#E6E8E8" sketch:type="MSShapeGroup"></path>
+                <path d="M9,12 L3,8 L9,4 L9,12 Z" id="Path-107" fill="#A6A8AC" sketch:type="MSShapeGroup"></path>
+            </g>
+            <g id="Large-stage-toggle" sketch:type="MSLayerGroup" transform="translate(38.000000, 87.000000)">
+                <path d="M11,0.5 L3.5,0.5 L0.5,3.5 L0.5,13.5 L3.5,15.5 L11,15.5" id="Path-106" stroke="#D0D1D2" fill="#E6E8E8" sketch:type="MSShapeGroup"></path>
+                <path d="M10,12 L4,8 L10,4 L10,12 Z" id="Path-107" fill="#A6A8AC" sketch:type="MSShapeGroup" transform="translate(7.000000, 8.000000) scale(-1, 1) translate(-7.000000, -8.000000) "></path>
+            </g>
         </g>
     </g>
 </svg>

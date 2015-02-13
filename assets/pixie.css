@@ -211,6 +211,18 @@ button::-moz-focus-inner {
   width: 27px;
 }
 
+.stage-toggle {
+  position: absolute;
+  top: 402px;
+  right: -6px;
+  width: 11px;
+  height: 16px;
+  background: url(assets.svg) -25px -87px;
+  -webkit-transition: top .2s;
+  -moz-transition: top .2s;
+  transition: top .2s;
+}
+
 .title-bar {
   position: absolute;
   top: 0;
@@ -339,6 +351,10 @@ button::-moz-focus-inner {
 }
 .small-stage .mouse-coords {
   top: 221px;
+}
+.small-stage .stage-toggle {
+  top: 222px;
+  background-position: -38px -87px;
 }
 .small-stage .tab-panel,
 .small-stage .backpack-panel {
