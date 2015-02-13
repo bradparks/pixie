@@ -1174,6 +1174,7 @@ button::-moz-focus-inner {
 .dialog-content article {
   text-align: left;
   max-width: 300px;
+  margin-bottom: 14px;
 }
 .dialog-content h1 {
   margin: 0 0 14px;
