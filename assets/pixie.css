@@ -1350,6 +1350,9 @@ button::-moz-focus-inner {
   text-align: center;
   font-size: 12px;
   font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .list-watcher-length {
   position: absolute;
