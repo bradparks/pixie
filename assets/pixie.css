@@ -197,9 +197,9 @@ button::-moz-focus-inner {
   overflow: hidden;
   -webkit-transform: translateZ(0);
   color: #5c5d5f;
-  -webkit-transition: top .2s;
-  -moz-transition: top .2s;
-  transition: top .2s;
+  -webkit-transition: -webkit-transform .2s;
+  -moz-transition: -moz-transform .2s;
+  transition: transform .2s;
 }
 .mouse-label {
   display: inline-block;
@@ -354,7 +354,9 @@ button::-moz-focus-inner {
   width: 0;
 }
 .small-stage .mouse-coords {
-  top: 221px;
+  -webkit-transform: translate3d(-240px,-180px,0);
+  -moz-transform: translate3d(-240px,-180px,0);
+  transform: translate3d(-240px,-180px,0);
 }
 .small-stage .stage-toggle {
   top: 222px;
