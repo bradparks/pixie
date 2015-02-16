@@ -1440,6 +1440,7 @@ button::-moz-focus-inner {
   /*padding: 3px 4px 4px;*/
   resize: none;
   outline: 0;
+  margin: 0;
   cursor: text;
   overflow: hidden;
   text-rendering: geometricPrecision;
