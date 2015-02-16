@@ -190,8 +190,12 @@ button::-moz-focus-inner {
 
 .mouse-coords {
   position: absolute;
-  right: 9px;
+  left: 386px;
   top: 401px;
+  width: 87px;
+  height: 14px;
+  overflow: hidden;
+  -webkit-transform: translateZ(0);
   color: #5c5d5f;
   -webkit-transition: top .2s;
   -moz-transition: top .2s;
