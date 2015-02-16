@@ -214,11 +214,11 @@ button::-moz-focus-inner {
 .stage-toggle {
   position: absolute;
   top: 402px;
-  right: -6px;
+  left: 477px;
   width: 11px;
   height: 16px;
   background: url(assets.svg) -25px -87px;
-  transition: top .2s;
+  transition: transform .2s;
 }
 
 .title-bar {
@@ -343,8 +343,8 @@ button::-moz-focus-inner {
   transform: translate3d(-240px,-180px,0);
 }
 .small-stage .stage-toggle {
-  top: 222px;
   background-position: -38px -87px;
+  transform: translate(-240px, -180px);
 }
 .small-stage .tab-panel,
 .small-stage .backpack-panel {
