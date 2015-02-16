@@ -1,0 +1,26 @@
+{
+  "eqeqeq": true,
+  "strict": true,
+  "forin": true,
+  "funcscope": true,
+  "latedef": true,
+  "noarg": true,
+  "nonbsp": true,
+  "unused": "vars",
+
+  "shadow": true,
+  "eqnull": true,
+  "lastsemic": true,
+  "validthis": true,
+  "sub": true,
+  "boss": true,
+  "supernew": true,
+  "newcap": false,
+
+  "undef": true,
+  "browser": true,
+  "devel": true,
+  "globals": {"JSZip": false, "Visual": false, "chrome": false, "innerWidth": false, "innerHeight": false},
+
+  "-W008": true // A leading decimal point can be confused with a dot: '…'.
+}
