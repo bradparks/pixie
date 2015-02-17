@@ -1414,8 +1414,7 @@ button::-moz-focus-inner {
 .list-cell-index {
   position: absolute;
   top: 0;
-  left: -6px;
-  /*left: -3px;*/
+  left: -4px; /* NS */
   text-align: right;
 }
 .list-cell-contents {
