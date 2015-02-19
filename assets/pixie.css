@@ -1272,6 +1272,10 @@ button::-moz-focus-inner {
   display: block;
   margin-bottom: 14px;
 }
+.dialog-label.video-error {
+  text-align: center;
+  margin: 0;
+}
 .dialog-buttons {
   margin-top: 14px;
 }
