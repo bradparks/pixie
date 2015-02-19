@@ -280,7 +280,8 @@ button::-moz-focus-inner {
   line-height: 9px;
   color: #909090;
 }
-.project-name {
+.project-name,
+.sprite-info-name {
   position: absolute;
   top: 2px;
   left: 50px;
@@ -561,6 +562,12 @@ button::-moz-focus-inner {
 }
 .sprite-info-back:hover {
   background-position: -211px -56px;
+}
+.sprite-info-name {
+  top: 6px;
+  left: 151px;
+  width: 221px;
+  color: #929497;
 }
 
 
