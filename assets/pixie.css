@@ -828,6 +828,17 @@ button::-moz-focus-inner {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.costume-delete {
+  position: absolute;
+  top: 1px;
+  right: -9px;
+  width: 12px;
+  height: 12px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: url(assets.svg) -308px -77px;
+}
 
 
 /* Image editor */
