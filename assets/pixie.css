@@ -554,6 +554,7 @@ button::-moz-focus-inner {
   background: #fff;
   display: none;
   padding: 6px 0 0 151px;
+  color: #a6a8ab;
 }
 .sprite-info-back {
   position: absolute;
@@ -570,6 +571,20 @@ button::-moz-focus-inner {
   display: block;
   width: 221px;
   color: #929497;
+}
+
+.sprite-info-motion {
+  margin: 11px 0 0 1px;
+}
+.sprite-info-motion > strong {
+  margin-right: 5px;
+}
+.sprite-info-direction {
+  margin-left: 16px;
+}
+.sprite-info-value {
+  display: inline-block;
+  width: 31px;
 }
 
 
