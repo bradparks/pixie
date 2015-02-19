@@ -282,10 +282,6 @@ button::-moz-focus-inner {
 }
 .project-name,
 .sprite-info-name {
-  position: absolute;
-  top: 2px;
-  left: 50px;
-  width: 350px;
   margin: 0;
   outline: 0;
   font: inherit;
@@ -303,6 +299,12 @@ button::-moz-focus-inner {
     inset 1px 1px 1px -1px rgba(0, 0, 0, .5);
   -webkit-appearance: none;
   transition: width .2s;
+}
+.project-name {
+  position: absolute;
+  top: 2px;
+  left: 50px;
+  width: 350px;
 }
 .project-author {
   position: absolute;
@@ -551,6 +553,7 @@ button::-moz-focus-inner {
 .sprite-info {
   background: #fff;
   display: none;
+  padding: 6px 0 0 151px;
 }
 .sprite-info-back {
   position: absolute;
@@ -564,8 +567,7 @@ button::-moz-focus-inner {
   background-position: -211px -56px;
 }
 .sprite-info-name {
-  top: 6px;
-  left: 151px;
+  display: block;
   width: 221px;
   color: #929497;
 }
