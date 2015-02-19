@@ -436,6 +436,11 @@ button::-moz-focus-inner {
   vertical-align: top;
   background: url(assets.svg);
 }
+.new-backdrop .new-button {
+  width: 18px;
+  height: 17px;
+  top: 6px;
+}
 .new-button-input {
   position: absolute;
   vertical-align: top;
@@ -470,6 +475,14 @@ button::-moz-focus-inner {
   margin-left: 8px;
 }
 .new-camera:hover {background-position: -172px -19px}
+.new-small-backdrop-library {background-position: -135px -43px}
+.new-small-backdrop-library:hover {background-position: -135px -61px}
+.new-small-paint {background-position: -153px -43px}
+.new-small-paint:hover {background-position: -153px -61px}
+.new-small-import {background-position: -171px -43px}
+.new-small-import:hover {background-position: -171px -61px}
+.new-small-camera {background-position: -189px -43px}
+.new-small-camera:hover {background-position: -189px -61px}
 
 .sprite-icon {
   position: relative;
