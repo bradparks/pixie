@@ -549,6 +549,7 @@ button::-moz-focus-inner {
 
 .sprite-info {
   background: #fff;
+  display: none;
 }
 .sprite-info-back {
   position: absolute;
