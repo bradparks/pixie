@@ -389,7 +389,8 @@ button::-moz-focus-inner {
   text-align: center;
   color: #5c5d5f;
 }
-.sprite-section {
+.sprite-section,
+.sprite-info {
   position: absolute;
   top: 31px;
   right: 0;
@@ -542,6 +543,23 @@ button::-moz-focus-inner {
 .new-backdrop {
   margin-top: 11px;
   font-size: 10px;
+}
+
+/* Sprite Info */
+
+.sprite-info {
+  background: #fff;
+}
+.sprite-info-back {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 18px;
+  height: 18px;
+  background: url(assets.svg) -211px -37px;
+}
+.sprite-info-back:hover {
+  background-position: -211px -56px;
 }
 
 
