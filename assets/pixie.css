@@ -838,6 +838,10 @@ button::-moz-focus-inner {
   padding: 0;
   border: 0;
   background: url(assets.svg) -308px -77px;
+  display: none;
+}
+.costume-icon.selected > .costume-delete {
+  display: block;
 }
 
 
