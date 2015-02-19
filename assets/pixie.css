@@ -571,12 +571,13 @@ button::-moz-focus-inner {
   display: block;
   width: 221px;
   color: #929497;
+  margin-bottom: 11px;
 }
 
-.sprite-info-motion {
-  margin: 11px 0 0 1px;
+.sprite-info-row {
+  margin: 8px 0 0 1px;
 }
-.sprite-info-motion > strong {
+.sprite-info-row > strong {
   margin-right: 5px;
 }
 .sprite-info-direction {
