@@ -281,6 +281,20 @@ button::-moz-focus-inner {
   background-position: -26px -21px;
 }
 
+.turbo-indicator {
+  position: absolute;
+  top: 24px;
+  right: 73px;
+  color: #fba939;
+  font-size: 11px;
+  font-weight: bold;
+  line-height: 11px;
+  display: none;
+}
+.turbo .turbo-indicator {
+  display: block;
+}
+
 .version {
   position: absolute;
   top: 29px;
