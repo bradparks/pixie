@@ -351,6 +351,9 @@ button::-moz-focus-inner {
   transition: transform .2s, box-shadow .2s;
   overflow: hidden;
 }
+.stage > canvas {
+  transform-origin: 0 0;
+}
 
 
 /* Small stage layout */
