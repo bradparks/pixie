@@ -33,7 +33,6 @@ button::-moz-focus-inner {
   height: 100%;
   background: #fff;
   z-index: 1;
-  box-shadow: 0 0 0 1px #888;
   min-width: 960px;
   min-height: 600px;
   overflow: hidden;
@@ -68,6 +67,7 @@ button::-moz-focus-inner {
   top: 33px;
   right: 5px;
   z-index: 1;
+  transition: opacity 1.2s;
 }
 .project-button {
   height: 22px;
@@ -117,6 +117,7 @@ button::-moz-focus-inner {
   height: 28px;
   background: #9c9ea2;
   padding: 0 0 0 82px;
+  transition: opacity 1.2s;
 }
 
 .top-button {
@@ -187,6 +188,8 @@ button::-moz-focus-inner {
   top: 33px;
   left: 5px;
   width: 482px;
+  height: 400px;
+  z-index: 1;
   transition: width .2s;
 }
 .player .stage-panel {
@@ -203,7 +206,7 @@ button::-moz-focus-inner {
   overflow: hidden;
   color: #5c5d5f;
   transform: translateZ(0);
-  transition: transform .2s;
+  transition: transform .2s, opacity 1.2s;
 }
 .mouse-label {
   display: inline-block;
@@ -226,7 +229,7 @@ button::-moz-focus-inner {
   width: 11px;
   height: 16px;
   background: url(assets.svg) -25px -87px;
-  transition: transform .2s;
+  transition: transform .2s, opacity 1.2s;
 }
 
 .title-bar {
@@ -335,6 +338,7 @@ button::-moz-focus-inner {
   overflow: hidden;
 }
 
+
 /* Small stage layout */
 
 .small-stage .stage-panel {
@@ -370,6 +374,20 @@ button::-moz-focus-inner {
 }
 
 
+/* Stage-only layout */
+
+.stage-only .sprite-panel,
+.stage-only .top-bar,
+.stage-only .project-buttons,
+.stage-only .mouse-coords,
+.stage-only .stage-toggle,
+.stage-only .tab-panel,
+.stage-only .backpack-panel,
+.stage-only .tips-panel {
+  opacity: 0;
+}
+
+
 /* Sprite panel */
 
 .sprite-panel {
@@ -378,7 +396,7 @@ button::-moz-focus-inner {
   left: 5px;
   bottom: 0;
   width: 483px;
-  transition: top .2s, width .2s;
+  transition: top .2s, width .2s, opacity 1.2s;
 }
 .sprite-panel .title-bar {
   position: relative;
@@ -608,7 +626,7 @@ button::-moz-focus-inner {
   top: 33px;
   bottom: 22px;
   right: 22px;
-  transition: left .2s, bottom .2s, right .2s;
+  transition: left .2s, bottom .2s, right .2s, opacity 1.2s;
 }
 .tab {
   display: inline-block;
@@ -1064,7 +1082,7 @@ button::-moz-focus-inner {
   left: 492px;
   right: 22px;
   height: 136px;
-  transition: bottom .2s, right .2s, left .2s;
+  transition: bottom .2s, right .2s, left .2s, opacity 1.2s;
 }
 .backpack-title {
   background: linear-gradient(#ffffff, #e6e8e8);
@@ -1098,7 +1116,7 @@ button::-moz-focus-inner {
   right: 0;
   bottom: 0;
   width: 19px;
-  transition: width .2s;
+  transition: width .2s, opacity 1.2s;
 }
 .tips-title {
   width: 100%;
