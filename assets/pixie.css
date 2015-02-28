@@ -351,10 +351,7 @@ button::-moz-focus-inner {
   transition: transform .2s, box-shadow .2s;
   overflow: hidden;
 }
-.sprite {
-  transform-origin: 0 0;
-}
-.stage canvas {
+.stage > canvas {
   transform-origin: 0 0;
 }
 
