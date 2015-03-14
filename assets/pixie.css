@@ -539,6 +539,7 @@ button::-moz-focus-inner {
   padding: 1px;
   width: 68px;
   border-radius: 4px;
+  background: #fff;
   color: #5c5d5f;
   text-align: center;
 }
