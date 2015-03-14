@@ -545,6 +545,7 @@ button::-moz-focus-inner {
 }
 .for-stage {
   display: block;
+  background: 0;
 }
 .sprite-thumbnail {
   position: relative;
