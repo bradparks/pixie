@@ -548,6 +548,8 @@ button::-moz-focus-inner {
   background: 0;
 }
 .sprite-thumbnail {
+  width: 72px;
+  height: 55px;
   position: relative;
   display: block;
   margin: -2px;
@@ -857,6 +859,8 @@ button::-moz-focus-inner {
   position: absolute;
   top: 11px;
   left: 5px;
+  width: 68px;
+  height: 51px;
 }
 .costume-name {
   position: absolute;
