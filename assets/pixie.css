@@ -548,6 +548,8 @@ button::-moz-focus-inner {
   background: 0;
 }
 .sprite-thumbnail {
+  width: 72px;
+  height: 55px;
   position: relative;
   display: block;
   margin: -2px;
