@@ -443,6 +443,7 @@ button::-moz-focus-inner {
   left: 78px;
   bottom: 0;
   border: 1px solid #d0d1d2;
+  background: #e6e8e8;
   border-top: 0;
   border-left: 0;
   padding: 1px;
@@ -534,15 +535,17 @@ button::-moz-focus-inner {
 .sprite-icon {
   position: relative;
   display: inline-block;
-  margin: 3px;
-  padding: 1px;
+  margin: 2px;
+  padding: 2px;
   width: 68px;
   border-radius: 4px;
+  background: #fff;
   color: #5c5d5f;
   text-align: center;
 }
 .for-stage {
   display: block;
+  background: 0;
 }
 .sprite-thumbnail {
   position: relative;
@@ -563,6 +566,8 @@ button::-moz-focus-inner {
 .sprite-icon.selected {
   box-shadow: 0 0 0 3px #179fd7;
   background: #d0d0d0;
+  margin: 3px;
+  padding: 1px;
 }
 .sprite-icon.feedback {
   box-shadow: 0 0 0 3px rgba(0, 0, 0, .3);
