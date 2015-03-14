@@ -535,8 +535,8 @@ button::-moz-focus-inner {
 .sprite-icon {
   position: relative;
   display: inline-block;
-  margin: 3px;
-  padding: 1px;
+  margin: 2px;
+  padding: 2px;
   width: 68px;
   border-radius: 4px;
   background: #fff;
