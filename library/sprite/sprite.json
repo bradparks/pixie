@@ -1,0 +1,257 @@
+[
+ {
+   "FILE": "AiharaRingo.png",
+   "CLASS": "All spriteActive Fantasy",
+   "NAME": "Ringo Aihara "
+ },
+ {
+   "FILE": "anime_sitting.png",
+   "CLASS": "All Fantasy",
+   "NAME": "Anime sitting"
+ },
+ {
+   "FILE": "boybluehair.png",
+   "CLASS": "All Fantasy Walking",
+   "NAME": "Boy blue hair"
+ },
+ {
+   "FILE": "boygreenhair.png",
+   "CLASS": "All Fantasy",
+   "NAME": "Boy green hair"
+ },
+ {
+   "FILE": "cat_girl.png",
+   "CLASS": "All Fantasy",
+   "NAME": "Cat girl"
+ },
+ {
+   "FILE": "chibi_anime_boy_school_uniform.png",
+   "CLASS": "All Fantasy",
+   "NAME": "Chibi anime boy"
+ },
+ {
+   "FILE": "chibi_warlock.png",
+   "CLASS": "All Fantasy",
+   "NAME": "Chibi warlock"
+ },
+ {
+   "FILE": "formal1.png",
+   "CLASS": "All People Dress-Up",
+   "NAME": "Formal 1"
+ },
+ {
+   "FILE": "formal2.png",
+   "CLASS": "All People Dress-Up",
+   "NAME": "Formal 2"
+ },
+ {
+   "FILE": "formal4.png",
+   "CLASS": "All People Dress-Up",
+   "NAME": "Formal 4"
+ },
+ {
+   "FILE": "formal5.png",
+   "CLASS": "All People Dress-Up",
+   "NAME": "Formal 5"
+ },
+ {
+   "FILE": "formal6.png",
+   "CLASS": "All People Dress-Up",
+   "NAME": "Formal 6"
+ },
+ {
+   "FILE": "formal7.png",
+   "CLASS": "All People Dress-Up",
+   "NAME": "Formal 7"
+ },
+ {
+   "FILE": "HouraisenRuna.png",
+   "CLASS": "All Fantasy",
+   "NAME": "Runa Houraisen"
+ },
+ {
+   "FILE": "Kirishima.png",
+   "CLASS": "All Fantasy",
+   "NAME": "Kirishima"
+ },
+ {
+   "FILE": "KitajimaKaede.png",
+   "CLASS": "All Fantasy",
+   "NAME": "Kaede Kitajima"
+ },
+ {
+   "FILE": "OdaNanami.png",
+   "CLASS": "All Fantasy",
+   "NAME": "Nanami Oda"
+ },
+ {
+   "FILE": "Pac-Man POP 1.png",
+   "CLASS": "All Fantasy Things",
+   "NAME": "Pacman POP 1"
+ },
+ {
+   "FILE": "Pac-Man POP 1 flip.png",
+   "CLASS": "All Fantasy Things",
+   "NAME": "Pacman POP 1 flip"
+ },
+ {
+   "FILE": "Pac-Man POP 2.png",
+   "CLASS": "All Fantasy Things",
+   "NAME": "Pacman POP 2"
+ },
+ {
+   "FILE": "Pac-Man POP 3.png",
+   "CLASS": "All Fantasy Things",
+   "NAME": "Pacman POP 3"
+ },
+ {
+   "FILE": "Pac-Man POP dog.png",
+   "CLASS": "All Fantasy Walking Animals",
+   "NAME": "Pacman POP dog"
+ },
+ {
+   "FILE": "Pac-Man POP ghost.png",
+   "CLASS": "All Fantasy Things",
+   "NAME": "Pacman POP ghost"
+ },
+ {
+   "FILE": "Pac-Man POP ghost flip.png",
+   "CLASS": "All Fantasy Things",
+   "NAME": "Pacman POP ghost flip"
+ },
+ {
+   "FILE": "punk.png",
+   "CLASS": "All People",
+   "NAME": "Punk"
+ },
+ {
+   "FILE": "SuminoeTakako.png",
+   "CLASS": "All Fantasy",
+   "NAME": "Takako Suminoe"
+ },
+ {
+   "FILE": "Hanahira - Amane Yuuki.png",
+   "CLASS": "All Fantasy",
+   "NAME": "Amane Yuuki"
+ },
+ {
+   "FILE": "Hanahira - Kaori Hanemura.png",
+   "CLASS": "All Fantasy",
+   "NAME": "Kaori Hanemura"
+ },
+ {
+   "FILE": "cat.png",
+   "CLASS": "All Bitmap Fantasy Walking Animals",
+   "NAME": "Scratch cat"
+ },
+ {
+   "FILE": "die_face_1_T.png",
+   "CLASS": "All Things",
+   "NAME": "Die face red 1"
+ },
+ {
+   "FILE": "die_face_2_T.png",
+   "CLASS": "All Things",
+   "NAME": "Die face red 2"
+ },
+ {
+   "FILE": "die_face_3_T.png",
+   "CLASS": "All Things",
+   "NAME": "Die face red 3"
+ },
+ {
+   "FILE": "die_face_4_T.png",
+   "CLASS": "All Things",
+   "NAME": "Die face red 4"
+ },
+ {
+   "FILE": "die_face_5_T.png",
+   "CLASS": "All Things",
+   "NAME": "Die face red 5"
+ },
+ {
+   "FILE": "die_face_6_T.png",
+   "CLASS": "All Things",
+   "NAME": "Die face red 6"
+ },
+ {
+   "FILE": "Insaniquarium Deluxe - Basket Ball 1.png",
+   "CLASS": "All Things",
+   "NAME": "Basketball"
+ },
+ {
+   "FILE": "Insaniquarium Deluxe - Beach Ball 1.png",
+   "CLASS": "All Things",
+   "NAME": "Beachball"
+ },
+ {
+   "FILE": "Insaniquarium Deluxe - Crab 1.gif",
+   "CLASS": "All Things Animals Fantasy Underwater",
+   "NAME": "Crab"
+ },
+ {
+   "FILE": "Insaniquarium Deluxe - Mermaid 1.gif",
+   "CLASS": "All Things Fantasy Underwater",
+   "NAME": "Mermaid"
+ },
+ {
+   "FILE": "Insaniquarium Deluxe - Soccer Ball 1.png",
+   "CLASS": "All Things",
+   "NAME": "Soccerball"
+ },
+ {
+   "FILE": "Insaniquarium Deluxe - Whiffle Ball 1.png",
+   "CLASS": "All Things",
+   "NAME": "Whiffleball"
+ },
+ {
+   "FILE": "Insaniquarium Deluxe - fish1.gif",
+   "CLASS": "All Things Animals Fantasy Underwater",
+   "NAME": "Fish 1"
+ },
+ {
+   "FILE": "Insaniquarium Deluxe - fish2.gif",
+   "CLASS": "All Things Animals Fantasy Underwater",
+   "NAME": "Fish 2"
+ },
+ {
+   "FILE": "Insaniquarium Deluxe - fish3.gif",
+   "CLASS": "All Things Animals Fantasy Underwater",
+   "NAME": "Fish 3"
+ },
+ {
+   "FILE": "Insaniquarium Deluxe - hermit-crab.gif",
+   "CLASS": "All Things Animals Fantasy Underwater",
+   "NAME": "Hermit crab"
+ },
+ {
+   "FILE": "Insaniquarium Deluxe - jellyfish1.gif",
+   "CLASS": "All Things Animals Fantasy Underwater",
+   "NAME": "Jellyfish"
+ },
+ {
+   "FILE": "Insaniquarium Deluxe - red-shark.gif",
+   "CLASS": "All Things Animals Fantasy Underwater",
+   "NAME": "Shark 2"
+ },
+ {
+   "FILE": "Insaniquarium Deluxe - sea-horse.gif",
+   "CLASS": "All Things Animals Fantasy Underwater",
+   "NAME": "Sea Horse"
+ },
+ {
+   "FILE": "Insaniquarium Deluxe - shark1.gif",
+   "CLASS": "All Things Animals Fantasy Underwater",
+   "NAME": "Shark 1"
+ },
+ {
+   "FILE": "anime-running.gif",
+   "CLASS": "All Fantasy People",
+   "NAME": "Girl running"
+ },
+ {
+   "FILE": "Insaniquarium Deluxe - turtle1.gif",
+   "CLASS": "All Things Animals Fantasy Underwater",
+   "NAME": "Turtle"
+ }
+]

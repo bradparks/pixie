@@ -1,208 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Backdrop Library</title>
-	
-	<style>
-	.backdropModalDialog {
-		position: fixed;
-		font-family: Arial, Helvetica, sans-serif;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
-		background: rgba(0,0,0,0.8);
-		z-index: 99999;
-		opacity:0;
-		-webkit-transition: opacity 400ms ease-in;
-		-moz-transition: opacity 400ms ease-in;
-		transition: opacity 400ms ease-in;
-		pointer-events: none;
-	}
-
-	.backdropModalDialog:target {opacity:1;pointer-events: auto;}
-
-	.backdropModalDialog > div {position: relative;margin: 10px;padding: 25px;border-radius: 10px;background: whitesmoke;}
-
-	.backdropClose {
-		background: #606061;
-		color: #FFFFFF;
-		line-height: 25px;
-		position: absolute;
-		right: -12px;
-		text-align: center;
-		top: -10px;
-		width: 24px;
-		text-decoration: none;
-		font-weight: bold;
-		-webkit-border-radius: 12px;
-		-moz-border-radius: 12px;
-		border-radius: 12px;
-		-moz-box-shadow: 1px 1px 3px #000;
-		-webkit-box-shadow: 1px 1px 3px #000;
-		box-shadow: 1px 1px 3px #000;
-	}
-
-	.backdropClose:hover { background: #00d9ff; }
-	div.backdropOkCancel {float:right;}
-
-	.backdropThumbnails img {height: 80px;border: 4px solid #fff;padding: 1px;margin: 0 0 0 0;}
-	.backdropThumbnails img:hover {border: 4px solid #00ccff;cursor: pointer;}
-	.backdropThumbnails img.backdropActive {border: 4px solid black;}
-
-	.backdropPreview img {border: 4px solid #444;padding: 1px;height:25vh;}
-	.backdropLibraryMenu li{list-style-type:none;color:deepskyblue;}
-	.backdropLibraryMenu li:hover {color:darkgray;}
-	.backdropLibraryMenu li.backdropSelectCategory {color:black;}
-	.backdropLibraryMenu li.backdropSelectTheme {color:black;}
-	.backdropLibraryMenu li.backdropSelectType {color:black;}
-	.backdropLibraryMenu p{color:orange;}
-	.backdropGallery {background: white; border-radius: 10px;margin: 50px 50px 10px 10px;padding:10px;}
-	.backdropLibraryMenu {vertical-align:top;}
-	.backdropGallery div {display: inline-block;-webkit-margin-start: 0px;-webkit-margin-end:0px;-webkit-margin-before:1em;-webkit-margin-after:0em;}
-	div.backdropLibraryGallery {height: 90vh; overflow-y: scroll;}
-	.backdropHide {background:red;display:none !important;}
-</style>
+	<meta charset=utf-8>
+	<meta name=viewport content="width=device-width, maximum-scale=1.0, minimum-scale=1.0, initial-scale=1.0, user-scalable=no">
+	<meta name=apple-mobile-web-app-capable content=yes>
+	<meta name=apple-mobile-web-app-status-bar-style content=black>
+	<title>Sound Library Modal Tester</title>
 </head>
-
 <body>
-
-<a href="#backdropOpenModal">Open Backdrop Selector Modal</a>
-
-<div id="backdropOpenModal" class="backdropModalDialog">
-	<div>
-		<a href="#backdropClose" title="Close" class="backdropClose">X</a>
-		<table>
-			<tbody>
-				<tr>
-					<td class="backdropLibraryMenu">
-						<div>
-							<h2>Backdrop&nbsp;Library</h2>
-							<p>Category</p>
-							<ul>
-								<li onclick='backdropSelectCategory(this);' class='backdropSelectCategory'>All</li>
-								<li onclick='backdropSelectCategory(this);'>Indoors</li>
-								<li onclick='backdropSelectCategory(this);'>Outdoors</li>
-								<li onclick='backdropSelectCategory(this);'>Other</li>
-							</ul>
-							<p>Theme</p>
-							<ul>
-								<li onclick='backdropSelectTheme(this);' class='backdropSelectTheme'>All</li>
-								<li onclick='backdropSelectTheme(this);'>Castle</li>
-								<li onclick='backdropSelectTheme(this);'>City</li>
-								<li onclick='backdropSelectTheme(this);'>Flying</li>
-								<li onclick='backdropSelectTheme(this);'>Holiday</li>
-								<li onclick='backdropSelectTheme(this);'>Music and Dance</li>
-								<li onclick='backdropSelectTheme(this);'>Nature</li>
-								<li onclick='backdropSelectTheme(this);'>Space</li>
-								<li onclick='backdropSelectTheme(this);'>Sports</li>
-								<li onclick='backdropSelectTheme(this);'>Underwater</li>
-							</ul>
-						</div>
-					</td>
-					<td style="width:90%;">
-					<div class="backdropLibraryGallery">
-						<div class="backdropGallery" align="center">
-							<div class="backdropThumbnails">
-								<div ><img onclick="backdropMakeActive(this);" onmouseover="backdropShowPreview(this);" id="img1" src="MGD_-0000000001.png" alt="Image Not Loaded" class='All backdropActive Outdoors City'/><p>School</p></div > 
-								<div ><img onclick="backdropMakeActive(this);" onmouseover="backdropShowPreview(this);" id="img2" src="MGD_-0000000002.png" alt="Image Not Loaded" class='All Indoors'/><p>Hospital</p></div >
-								<div ><img onclick="backdropMakeActive(this);" onmouseover="backdropShowPreview(this);" id="img3" src="MGD_-0000000003.png" alt="Image Not Loaded" class='All Outdoors Nature'/><p>Garden 3</p></div >
-								<div ><img onclick="backdropMakeActive(this);" onmouseover="backdropShowPreview(this);" id="img4" src="MGD_-0000000004.png" alt="Image Not Loaded" class='All Indoors'/><p>Office</p></div >
-								<div ><img onclick="backdropMakeActive(this);" onmouseover="backdropShowPreview(this);" id="img5" src="MGD_-0000000005.png" alt="Image Not Loaded" class='All Outdoors City'/><p>City 1</p></div >
-								<div ><img onclick="backdropMakeActive(this);" onmouseover="backdropShowPreview(this);" id="img6" src="MGD_-0000000006.png" alt="Image Not Loaded" class='All Outdoors City'/><p>City 2</p></div >
-								<div ><img onclick="backdropMakeActive(this);" onmouseover="backdropShowPreview(this);" id="img7" src="MGD_-0000000007.png" alt="Image Not Loaded" class='All Indoors'/><p>Bedroom 1</p></div >
-								<div ><img onclick="backdropMakeActive(this);" onmouseover="backdropShowPreview(this);" id="img8" src="MGD_-0000000008.png" alt="Image Not Loaded" class='All Indoors'/><p>Bedroom 2</p></div >
-								<div ><img onclick="backdropMakeActive(this);" onmouseover="backdropShowPreview(this);" id="img9" src="MGD_-0000000009.png" alt="Image Not Loaded" class='All Indoors'/><p>Bedroom 3</p></div >
-								<div ><img onclick="backdropMakeActive(this);" onmouseover="backdropShowPreview(this);" id="img10" src="MGD_-0000000010.png" alt="Image Not Loaded" class='All Indoors'/><p>Kitchen 1</p></div >
-								<div ><img onclick="backdropMakeActive(this);" onmouseover="backdropShowPreview(this);" id="img11" src="MGD_-0000000011.png" alt="Image Not Loaded" class='All Indoors'/><p>Kitchen 2</p></div >
-								<div ><img onclick="backdropMakeActive(this);" onmouseover="backdropShowPreview(this);" id="img12" src="MGD_-0000000012.png" alt="Image Not Loaded" class='All Indoors'/><p>Bathroom</p></div >
-								<div ><img onclick="backdropMakeActive(this);" onmouseover="backdropShowPreview(this);" id="img13" src="MGD_-0000000013.png" alt="Image Not Loaded" class='All Outdoors City'/><p>City 3</p></div >
-								<div ><img onclick="backdropMakeActive(this);" onmouseover="backdropShowPreview(this);" id="img14" src="MGD_-0000000014.png" alt="Image Not Loaded" class='All Outdoors City'/><p>City 4</p></div >
-								<div ><img onclick="backdropMakeActive(this);" onmouseover="backdropShowPreview(this);" id="img15" src="MGD_-0000000015.png" alt="Image Not Loaded" class='All Outdoors City'/><p>City 5</p></div >
-								<div ><img onclick="backdropMakeActive(this);" onmouseover="backdropShowPreview(this);" id="img16" src="MGD_-0000000016.png" alt="Image Not Loaded" class='All Outdoors City'/><p>City 6</p></div >
-								<div ><img onclick="backdropMakeActive(this);" onmouseover="backdropShowPreview(this);" id="img17" src="MGD_-0000000017.png" alt="Image Not Loaded" class='All Outdoors Castle'/><p>Castle 1</p></div >
-								<div ><img onclick="backdropMakeActive(this);" onmouseover="backdropShowPreview(this);" id="img18" src="MGD_-0000000018.png" alt="Image Not Loaded" class='All Outdoors Castle'/><p>Castle 2</p></div >
-								<div ><img onclick="backdropMakeActive(this);" onmouseover="backdropShowPreview(this);" id="img19" src="MGD_-0000000019.png" alt="Image Not Loaded" class='All Indoors'/><p>Classroom 1</p></div >
-								<div ><img onclick="backdropMakeActive(this);" onmouseover="backdropShowPreview(this);" id="img20" src="MGD_-0000000020.png" alt="Image Not Loaded" class='All Indoors'/><p>Classroom 2</p></div >
-								<div ><img onclick="backdropMakeActive(this);" onmouseover="backdropShowPreview(this);" id="img21" src="MGD_-0000000021.png" alt="Image Not Loaded" class='All Indoors'/><p>Hallway 1</p></div >
-								<div ><img onclick="backdropMakeActive(this);" onmouseover="backdropShowPreview(this);" id="img22" src="MGD_-0000000022.png" alt="Image Not Loaded" class='All Indoors'/><p>Hallway 2</p></div >
-								<div ><img onclick="backdropMakeActive(this);" onmouseover="backdropShowPreview(this);" id="img23" src="MGD_-0000000023.png" alt="Image Not Loaded" class='All Outdoors Nature'/><p>Garden 1</p></div >
-								<div ><img onclick="backdropMakeActive(this);" onmouseover="backdropShowPreview(this);" id="img24" src="MGD_-0000000024.png" alt="Image Not Loaded" class='All Outdoors Nature'/><p>Garden 2</p></div >
-							</div>
-							<br />
-							<div class="backdropPreview" align="center">
-								<img id="backdropPreview" src="MGD_-0000000001.png" alt="No Image Loaded"/>
-							</div>
-						</div></div>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		<div class="backdropOkCancel">
-			<button type="button" onclick='backdropSelectFinal();'>OK</button><button type="button" onclick="document.getElementsByClassName('backdropClose')[0].click();">Cancel</button>
-		</div>
-	</div>
-</div>
-<script>
-function backdropMakeActive(el) {
-	document.querySelectorAll('img.backdropActive')[0].classList.remove('backdropActive');el.classList.add('backdropActive');
-}
-function backdropShowPreview(el) {
-	backdropPreview.src=el.src
-}
-function backdropSelectCategory(el) {
-	document.querySelectorAll('li.backdropSelectCategory')[0].classList.remove('backdropSelectCategory');
-	el.classList.add('backdropSelectCategory');
-	backdropThumbnailUpdate();
-}
-function backdropSelectTheme(el) {
-	document.querySelectorAll('li.backdropSelectTheme')[0].classList.remove('backdropSelectTheme');
-	el.classList.add('backdropSelectTheme');
-	backdropThumbnailUpdate();
-}
-function backdropSelectType(el) {
-	document.querySelectorAll('li.backdropSelectType')[0].classList.remove('backdropSelectType');
-	el.classList.add('backdropSelectType');
-	backdropThumbnailUpdate();
-}
-function backdropThumbnailUpdate() {
-	//var type = document.getElementsByClassName('backdropSelectType')[0].innerHTML;
-	var category = document.getElementsByClassName('backdropSelectCategory')[0].innerHTML;
-	var theme = document.getElementsByClassName('backdropSelectTheme')[0].innerHTML;
-	try {
-		document.getElementsByClassName('backdropActive')[0].classList.remove('backdropActive');
-	} catch(err){console.log(err);}
-	var elems = document.querySelectorAll('.backdropThumbnails div img.All');
-	for (var i=0;i<elems.length;i++) {
-		elems[i].parentElement.classList.add('backdropHide');
-		if (elems[i].classList.contains(category)) {
-			//if (elems[i].classList.contains(type)) {
-				if (elems[i].classList.contains(theme)) {
-					elems[i].parentElement.classList.remove('backdropHide');
-				}
-			//}
+	<button onclick="openModal();">Open Modal</button>
+	<script>
+	function openModal() {
+		arrValues = showModalDialog("backdropLibrary.html","","center=yes;dialogWidth=1024;dialogHeight=768; resizable: Yes; status: Yes; scroll:yes");
+		if(arrValues)
+		{
+		  alert(arrValues[0]);
+		  alert(arrValues[1]);
 		}
 	}
-	try {
-		document.getElementsByClassName(category+/*" "+type+*/" "+theme)[0].classList.add('backdropActive');
-		backdropPreview.src=document.getElementsByClassName(category+/*" "+type+*/" "+theme)[0].src;
-		if (document.getElementsByClassName('backdropPreview')[0].classList.contains('backdropHide')) {
-			document.getElementsByClassName('backdropPreview')[0].classList.remove('backdropHide');
-		}
-	}catch(err){
-		console.log(err);
-		document.getElementsByClassName('backdropPreview')[0].classList.add('backdropHide');
-	}
-}
-function backdropSelectFinal() {
-	document.getElementsByClassName('backdropClose')[0].click();
-	try {
-		console.log(document.querySelectorAll('.backdropThumbnails div img.backdropActive')[0].src);
-		console.log(document.querySelectorAll('.backdropThumbnails div img.backdropActive')[0].nextSibling.innerHTML);
-	}catch(err){
-		console.log("No backdrop selection was made");
-	}
-}
-</script>
+	</script>
 </body>
 </html>
