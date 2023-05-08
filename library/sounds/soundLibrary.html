@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Sound Library</title>
+	
+	<style>
+	.soundModalDialog {
+		position: fixed;
+		font-family: Arial, Helvetica, sans-serif;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		background: rgba(0,0,0,0.8);
+		z-index: 99999;
+		/*opacity:0;*/
+		-webkit-transition: opacity 400ms ease-in;
+		-moz-transition: opacity 400ms ease-in;
+		transition: opacity 400ms ease-in;
+		/*pointer-events: none;*/
+	}
+
+	.soundModalDialog:target {opacity:1;pointer-events: auto;}
+
+	.soundModalDialog > div {position: relative;margin: 10px;padding: 25px;border-radius: 10px;background: whitesmoke;}
+
+	.soundClose {
+		background: #606061;
+		color: #FFFFFF;
+		line-height: 25px;
+		position: absolute;
+		right: -12px;
+		text-align: center;
+		top: -10px;
+		width: 24px;
+		text-decoration: none;
+		font-weight: bold;
+		-webkit-border-radius: 12px;
+		-moz-border-radius: 12px;
+		border-radius: 12px;
+		-moz-box-shadow: 1px 1px 3px #000;
+		-webkit-box-shadow: 1px 1px 3px #000;
+		box-shadow: 1px 1px 3px #000;
+	}
+
+	.soundClose:hover { background: #00d9ff; }
+	div.soundOkCancel {float:right;}
+
+	.soundThumbnails img {height: 80px;border: 4px solid #fff;padding: 1px;margin: 0 0 0 0;}
+	.soundThumbnails img:hover {border: 4px solid #00ccff;cursor: pointer;}
+	.soundThumbnails img.soundActive {border: 4px solid black;}
+
+	.soundPreview img {border: 4px solid #444;padding: 1px;height:25vh;}
+	.soundLibraryMenu li{list-style-type:none;color:deepskyblue;}
+	.soundLibraryMenu li:hover {color:darkgray;}
+	.soundLibraryMenu li.soundSelectCategory {color:black;}
+	.soundLibraryMenu li.soundSelectTheme {color:black;}
+	.soundLibraryMenu li.soundSelectType {color:black;}
+	.soundLibraryMenu p{color:orange;}
+	.soundGallery {background: white; border-radius: 10px;margin: 50px 50px 10px 10px;padding:10px;}
+	.soundLibraryMenu {vertical-align:top;}
+	.soundGallery div {display: inline-block;-webkit-margin-start: 0px;-webkit-margin-end:0px;-webkit-margin-before:1em;-webkit-margin-after:0em;}
+	div.soundLibraryGallery {height: 90vh; overflow-y: scroll;}
+	.soundHide {background:red;display:none !important;}
+</style>
+</head>
+
+<body>
+
+
+<div id="soundOpenModal" class="soundModalDialog">
+	<div>
+		<a onclick="window.close();" title="Close" class="soundClose">X</a>
+		<table>
+			<tbody>
+				<tr>
+					<td class="soundLibraryMenu">
+						<div>
+							<h2>Sound&nbsp;Library</h2>
+							<p>Category</p>
+							<ul>
+								<li onclick='soundSelectCategory(this);' class='soundSelectCategory'>All</li>
+								<li onclick='soundSelectCategory(this);'>Alert</li>
+								<li onclick='soundSelectCategory(this);'>Input</li>
+								<li onclick='soundSelectCategory(this);'>Music</li>
+								<li onclick='soundSelectCategory(this);'>SciFi</li>
+								<li onclick='soundSelectCategory(this);'>Voice</li>
+								<li onclick='soundSelectCategory(this);'>Woosh</li>
+							</ul>
+						</div>
+					</td>
+					<td style="width:90%;">
+					<div class="soundLibraryGallery">
+						<div class="soundGallery" align="center">
+							<div class="soundThumbnails">
+							</div>
+							<br />
+						</div>
+					</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<div class="soundOkCancel">
+			<button type="button" onclick='soundSelectFinal();'>OK</button><button type="button"  onclick="window.close();">Cancel</button>
+		</div>
+	</div>
+</div>
+<script>
+var audio;
+function soundMakeActive(el) {
+	document.querySelectorAll('img.soundActive')[0].classList.remove('soundActive');el.classList.add('soundActive');
+	if(audio){audio.pause();}
+	audio = new Audio(el.nextSibling.innerHTML+'.mp3');
+	audio.play();
+	console.log(el.nextSibling.innerHTML)
+}
+function soundSelectCategory(el) {
+	document.querySelectorAll('li.soundSelectCategory')[0].classList.remove('soundSelectCategory');
+	el.classList.add('soundSelectCategory');
+	soundThumbnailUpdate();
+}
+function soundThumbnailUpdate() {
+	//var type = document.getElementsByClassName('soundSelectType')[0].innerHTML;
+	var category = document.getElementsByClassName('soundSelectCategory')[0].innerHTML;
+	//var theme = document.getElementsByClassName('soundSelectTheme')[0].innerHTML;
+	try {
+		document.getElementsByClassName('soundActive')[0].classList.remove('soundActive');
+	} catch(err){console.log(err);}
+	var elems = document.querySelectorAll('.soundThumbnails div img.All');
+	for (var i=0;i<elems.length;i++) {
+		elems[i].parentElement.classList.add('soundHide');
+		if (elems[i].classList.contains(category)) {
+			//if (elems[i].classList.contains(type)) {
+				//if (elems[i].classList.contains(theme)) {
+					elems[i].parentElement.classList.remove('soundHide');
+				//}
+			//}
+		}
+	}
+	try {
+		document.getElementsByClassName(category/*+" "+type+" "+theme*/)[0].classList.add('soundActive');
+		//soundPreview.src=document.getElementsByClassName(category+/*" "+type+*/" "+theme)[0].src;
+		//if (document.getElementsByClassName('soundPreview')[0].classList.contains('soundHide')) {
+		//	document.getElementsByClassName('soundPreview')[0].classList.remove('soundHide');
+		//}
+	}catch(err){
+		console.log(err);
+		//document.getElementsByClassName('soundPreview')[0].classList.add('soundHide');
+	}
+}
+function soundSelectFinal() {
+	//document.getElementsByClassName('soundClose')[0].click();
+	var arrValues = new Array();
+	//arrValues[0] = "the first item in the array"
+	//arrValues[1] = "the first second in the array"
+	try {
+		arrValues[0] = document.querySelectorAll('.soundThumbnails div img.soundActive')[0].nextSibling.innerHTML+'.mp3';
+		arrValues[1] = document.querySelectorAll('.soundThumbnails div img.soundActive')[0].nextSibling.innerHTML;
+	}catch(err){
+		console.log("No backdrop selection was made");
+	}
+	window.returnValue = arrValues;
+	window.close();
+}
+function readTextFile(file, callback) {
+	var rawFile = new XMLHttpRequest();
+	rawFile.overrideMimeType("application/json");
+	rawFile.open("GET", file, true);
+	rawFile.onreadystatechange = function() {
+		if (rawFile.readyState === 4 /*&& rawFile.status == "200"*/) {
+			callback(rawFile.responseText);
+		}
+	}
+	rawFile.send(null);
+}
+readTextFile("sound.json", function(text){
+	var data = JSON.parse(text);
+	var div;
+	var nextsound;
+	for (var i=0;i<data.length;i++){
+		div = document.createElement("div");
+		nextsound = '<img onclick="soundMakeActive(this);" src="'+data[i].FILE+'" alt="Image Not Loaded" class="'+data[i].CLASS+'"/><p>'+data[i].NAME+'</p>';
+		div.innerHTML=nextsound;
+		document.getElementsByClassName('soundThumbnails')[0].appendChild(div);
+	}
+});
+</script>
+</body>
+</html>

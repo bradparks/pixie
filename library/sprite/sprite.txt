@@ -1,0 +1,52 @@
+FILE,CLASS,NAME
+AiharaRingo.png,All spriteActive Fantasy,Ringo Aihara 
+anime_sitting.png,All Fantasy,Anime sitting
+boybluehair.png,All Fantasy Walking,Boy blue hair
+boygreenhair.png,All Fantasy,Boy green hair
+cat_girl.png,All Fantasy,Cat girl
+chibi_anime_boy_school_uniform.png,All Fantasy,Chibi anime boy
+chibi_warlock.png,All Fantasy,Chibi warlock
+formal1.png,All People Dress-Up,Formal 1
+formal2.png,All People Dress-Up,Formal 2
+formal4.png,All People Dress-Up,Formal 4
+formal5.png,All People Dress-Up,Formal 5
+formal6.png,All People Dress-Up,Formal 6
+formal7.png,All People Dress-Up,Formal 7
+HouraisenRuna.png,All Fantasy,Runa Houraisen
+Kirishima.png,All Fantasy,Kirishima
+KitajimaKaede.png,All Fantasy,Kaede Kitajima
+OdaNanami.png,All Fantasy,Nanami Oda
+Pac-Man POP 1.png,All Fantasy Things,Pacman POP 1
+Pac-Man POP 1 flip.png,All Fantasy Things,Pacman POP 1 flip
+Pac-Man POP 2.png,All Fantasy Things,Pacman POP 2
+Pac-Man POP 3.png,All Fantasy Things,Pacman POP 3
+Pac-Man POP dog.png,All Fantasy Walking Animals,Pacman POP dog
+Pac-Man POP ghost.png,All Fantasy Things,Pacman POP ghost
+Pac-Man POP ghost flip.png,All Fantasy Things,Pacman POP ghost flip
+punk.png,All People,Punk
+SuminoeTakako.png,All Fantasy,Takako Suminoe
+Hanahira - Amane Yuuki.png,All Fantasy,Amane Yuuki
+Hanahira - Kaori Hanemura.png,All Fantasy,Kaori Hanemura
+cat.png,All Bitmap Fantasy Walking Animals,Scratch cat
+die_face_1_T.png,All Things,Die face red 1
+die_face_2_T.png,All Things,Die face red 2
+die_face_3_T.png,All Things,Die face red 3
+die_face_4_T.png,All Things,Die face red 4
+die_face_5_T.png,All Things,Die face red 5
+die_face_6_T.png,All Things,Die face red 6
+Insaniquarium Deluxe - Basket Ball 1.png,All Things,Basketball
+Insaniquarium Deluxe - Beach Ball 1.png,All Things,Beachball
+Insaniquarium Deluxe - Crab 1.gif,All Things Animals Fantasy Underwater,Crab
+Insaniquarium Deluxe - Mermaid 1.gif,All Things Fantasy Underwater,Mermaid
+Insaniquarium Deluxe - Soccer Ball 1.png,All Things,Soccerball
+Insaniquarium Deluxe - Whiffle Ball 1.png,All Things,Whiffleball
+Insaniquarium Deluxe - fish1.gif,All Things Animals Fantasy Underwater,Fish 1
+Insaniquarium Deluxe - fish2.gif,All Things Animals Fantasy Underwater,Fish 2
+Insaniquarium Deluxe - fish3.gif,All Things Animals Fantasy Underwater,Fish 3
+Insaniquarium Deluxe - hermit-crab.gif,All Things Animals Fantasy Underwater,Hermit crab
+Insaniquarium Deluxe - jellyfish1.gif,All Things Animals Fantasy Underwater,Jellyfish
+Insaniquarium Deluxe - red-shark.gif,All Things Animals Fantasy Underwater,Shark 2
+Insaniquarium Deluxe - sea-horse.gif,All Things Animals Fantasy Underwater,Sea Horse
+Insaniquarium Deluxe - shark1.gif,All Things Animals Fantasy Underwater,Shark 1
+Insaniquarium Deluxe - turtle1.gif,All Things Animals Fantasy Underwater,Turtle
+anime-running.gif, All Fantasy People,Girl running

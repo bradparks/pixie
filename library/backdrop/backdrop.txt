@@ -1,0 +1,31 @@
+FILE, CLASS, NAME
+MGD_-0000000001.png, All backdropActive Outdoors City, School 
+MGD_-0000000002.png, All Indoors, Hospital
+MGD_-0000000003.png, All Outdoors Nature, Garden 3
+MGD_-0000000004.png, All Indoors, Office
+MGD_-0000000005.png, All Outdoors City, City 1
+MGD_-0000000006.png, All Outdoors City, City 2
+MGD_-0000000007.png, All Indoors, Bedroom 1
+MGD_-0000000008.png, All Indoors, Bedroom 2
+MGD_-0000000009.png, All Indoors, Bedroom 3
+MGD_-0000000010.png, All Indoors, Kitchen 1
+MGD_-0000000011.png, All Indoors, Kitchen 2
+MGD_-0000000012.png, All Indoors, Bathroom
+MGD_-0000000013.png, All Outdoors City, City 3
+MGD_-0000000014.png, All Outdoors City, City 4
+MGD_-0000000015.png, All Outdoors City, City 5
+MGD_-0000000016.png, All Outdoors City, City 6
+MGD_-0000000017.png, All Outdoors Castle, Castle 1
+MGD_-0000000018.png, All Outdoors Castle, Castle 2
+MGD_-0000000019.png, All Indoors, Classroom 1
+MGD_-0000000020.png, All Indoors, Classroom 2
+MGD_-0000000021.png, All Indoors, Hallway 1
+MGD_-0000000022.png, All Indoors, Hallway 2
+MGD_-0000000023.png, All Outdoors Nature, Garden 1
+MGD_-0000000024.png, All Outdoors Nature, Garden 2
+Insaniquarium Deluxe - Aquarium 1.png, All Underwater Nature, Aquarium 1
+Insaniquarium Deluxe - Aquarium 2.png, All Underwater Nature, Aquarium 2
+Insaniquarium Deluxe - Aquarium 3.png, All Underwater Nature, Aquarium 3
+Insaniquarium Deluxe - Aquarium 4.png, All Underwater Nature, Aquarium 4
+Insaniquarium Deluxe - Aquarium 5.png, All Underwater Nature, Aquarium 5
+Insaniquarium Deluxe - Aquarium 6.png, All Underwater Nature, Aquarium 6

@@ -1,0 +1,152 @@
+[
+ {
+   "FILE": "MGD_-0000000001.png",
+   "CLASS": "All backdropActive Outdoors City",
+   "NAME": "School "
+ },
+ {
+   "FILE": "MGD_-0000000002.png",
+   "CLASS": "All Indoors",
+   "NAME": "Hospital"
+ },
+ {
+   "FILE": "MGD_-0000000003.png",
+   "CLASS": "All Outdoors Nature",
+   "NAME": "Garden 3"
+ },
+ {
+   "FILE": "MGD_-0000000004.png",
+   "CLASS": "All Indoors",
+   "NAME": "Office"
+ },
+ {
+   "FILE": "MGD_-0000000005.png",
+   "CLASS": "All Outdoors City",
+   "NAME": "City 1"
+ },
+ {
+   "FILE": "MGD_-0000000006.png",
+   "CLASS": "All Outdoors City",
+   "NAME": "City 2"
+ },
+ {
+   "FILE": "MGD_-0000000007.png",
+   "CLASS": "All Indoors",
+   "NAME": "Bedroom 1"
+ },
+ {
+   "FILE": "MGD_-0000000008.png",
+   "CLASS": "All Indoors",
+   "NAME": "Bedroom 2"
+ },
+ {
+   "FILE": "MGD_-0000000009.png",
+   "CLASS": "All Indoors",
+   "NAME": "Bedroom 3"
+ },
+ {
+   "FILE": "MGD_-0000000010.png",
+   "CLASS": "All Indoors",
+   "NAME": "Kitchen 1"
+ },
+ {
+   "FILE": "MGD_-0000000011.png",
+   "CLASS": "All Indoors",
+   "NAME": "Kitchen 2"
+ },
+ {
+   "FILE": "MGD_-0000000012.png",
+   "CLASS": "All Indoors",
+   "NAME": "Bathroom"
+ },
+ {
+   "FILE": "MGD_-0000000013.png",
+   "CLASS": "All Outdoors City",
+   "NAME": "City 3"
+ },
+ {
+   "FILE": "MGD_-0000000014.png",
+   "CLASS": "All Outdoors City",
+   "NAME": "City 4"
+ },
+ {
+   "FILE": "MGD_-0000000015.png",
+   "CLASS": "All Outdoors City",
+   "NAME": "City 5"
+ },
+ {
+   "FILE": "MGD_-0000000016.png",
+   "CLASS": "All Outdoors City",
+   "NAME": "City 6"
+ },
+ {
+   "FILE": "MGD_-0000000017.png",
+   "CLASS": "All Outdoors Castle",
+   "NAME": "Castle 1"
+ },
+ {
+   "FILE": "MGD_-0000000018.png",
+   "CLASS": "All Outdoors Castle",
+   "NAME": "Castle 2"
+ },
+ {
+   "FILE": "MGD_-0000000019.png",
+   "CLASS": "All Indoors",
+   "NAME": "Classroom 1"
+ },
+ {
+   "FILE": "MGD_-0000000020.png",
+   "CLASS": "All Indoors",
+   "NAME": "Classroom 2"
+ },
+ {
+   "FILE": "MGD_-0000000021.png",
+   "CLASS": "All Indoors",
+   "NAME": "Hallway 1"
+ },
+ {
+   "FILE": "MGD_-0000000022.png",
+   "CLASS": "All Indoors",
+   "NAME": "Hallway 2"
+ },
+ {
+   "FILE": "MGD_-0000000023.png",
+   "CLASS": "All Outdoors Nature",
+   "NAME": "Garden 1"
+ },
+ {
+   "FILE": "MGD_-0000000024.png",
+   "CLASS": "All Outdoors Nature",
+   "NAME": "Garden 2"
+ },
+ {
+   "FILE": "Insaniquarium Deluxe - Aquarium 1.png",
+   "CLASS": "All Underwater Nature",
+   "NAME": "Aquarium 1"
+ },
+ {
+   "FILE": "Insaniquarium Deluxe - Aquarium 2.png",
+   "CLASS": "All Underwater Nature",
+   "NAME": "Aquarium 2"
+ },
+ {
+   "FILE": "Insaniquarium Deluxe - Aquarium 3.png",
+   "CLASS": "All Underwater Nature",
+   "NAME": "Aquarium 3"
+ },
+ {
+   "FILE": "Insaniquarium Deluxe - Aquarium 4.png",
+   "CLASS": "All Underwater Nature",
+   "NAME": "Aquarium 4"
+ },
+ {
+   "FILE": "Insaniquarium Deluxe - Aquarium 5.png",
+   "CLASS": "All Underwater Nature",
+   "NAME": "Aquarium 5"
+ },
+ {
+   "FILE": "Insaniquarium Deluxe - Aquarium 6.png",
+   "CLASS": "All Underwater Nature",
+   "NAME": "Aquarium 6"
+ }
+]

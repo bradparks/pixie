@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset=utf-8>
+	<meta name=viewport content="width=device-width, maximum-scale=1.0, minimum-scale=1.0, initial-scale=1.0, user-scalable=no">
+	<meta name=apple-mobile-web-app-capable content=yes>
+	<meta name=apple-mobile-web-app-status-bar-style content=black>
+	<title>Sound Library Modal Tester</title>
+</head>
+<body>
+	<button onclick="openModal();">Open Modal</button>
+	<script>
+	function openModal() {
+		arrValues = showModalDialog("backdropLibrary.html","","center=yes;dialogWidth=1024;dialogHeight=768; resizable: Yes; status: Yes; scroll:yes");
+		if(arrValues)
+		{
+		  alert(arrValues[0]);
+		  alert(arrValues[1]);
+		}
+	}
+	</script>
+</body>
+</html>

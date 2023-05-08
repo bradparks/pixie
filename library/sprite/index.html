@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Sprite Library</title>
+	
+	<style>
+	.spriteModalDialog {
+		position: fixed;
+		font-family: Arial, Helvetica, sans-serif;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		background: rgba(0,0,0,0.8);
+		z-index: 99999;
+		opacity:0;
+		-webkit-transition: opacity 400ms ease-in;
+		-moz-transition: opacity 400ms ease-in;
+		transition: opacity 400ms ease-in;
+		pointer-events: none;
+	}
+
+	.spriteModalDialog:target {opacity:1;pointer-events: auto;}
+
+	.spriteModalDialog > div {position: relative;margin: 10px;padding: 25px;border-radius: 10px;background: whitesmoke;}
+
+	.spriteClose {
+		background: #606061;
+		color: #FFFFFF;
+		line-height: 25px;
+		position: absolute;
+		right: -12px;
+		text-align: center;
+		top: -10px;
+		width: 24px;
+		text-decoration: none;
+		font-weight: bold;
+		-webkit-border-radius: 12px;
+		-moz-border-radius: 12px;
+		border-radius: 12px;
+		-moz-box-shadow: 1px 1px 3px #000;
+		-webkit-box-shadow: 1px 1px 3px #000;
+		box-shadow: 1px 1px 3px #000;
+	}
+
+	.spriteClose:hover { background: #00d9ff; }
+	div.spriteOkCancel {float:right;}
+
+	.spriteThumbnails img {height: 80px;border: 4px solid #fff;padding: 1px;margin: 0 0 0 0;}
+	.spriteThumbnails img:hover {border: 4px solid #00ccff;cursor: pointer;}
+	.spriteThumbnails img.spriteActive {border: 4px solid black;}
+
+	.spritePreview img {border: 4px solid #444;padding: 1px;height:25vh;}
+	.spriteLibraryMenu li{list-style-type:none;color:deepskyblue;}
+	.spriteLibraryMenu li:hover {color:darkgray;}
+	.spriteLibraryMenu li.spriteSelectCategory {color:black;}
+	.spriteLibraryMenu li.spriteSelectTheme {color:black;}
+	.spriteLibraryMenu li.spriteSelectType {color:black;}
+	.spriteLibraryMenu p{color:orange;}
+	.spriteGallery {background: white; border-radius: 10px;margin: 50px 50px 10px 10px;padding:10px;}
+	.spriteLibraryMenu {vertical-align:top;}
+	.spriteGallery div {display: inline-block;-webkit-margin-start: 0px;-webkit-margin-end:0px;-webkit-margin-before:1em;-webkit-margin-after:0em;}
+	div.spriteLibraryGallery {height: 90vh; overflow-y: scroll;}
+	.spriteHide {background:red;display:none !important;}
+</style>
+</head>
+
+<body>
+
+<a href="#spriteOpenModal">Open Sprite Selector Modal</a>
+
+<div id="spriteOpenModal" class="spriteModalDialog">
+	<div>
+		<a href="#spriteClose" title="Close" class="spriteClose">X</a>
+		<table>
+			<tbody>
+				<tr>
+					<td class="spriteLibraryMenu">
+						<div>
+							<h2>Sprite&nbsp;Library</h2>
+							<p>Category</p>
+							<ul>
+								<li onclick='spriteSelectCategory(this);' class='spriteSelectCategory'>All</li>
+								<li onclick='spriteSelectCategory(this);'>Animals</li>
+								<li onclick='spriteSelectCategory(this);'>Fantasy</li>
+								<li onclick='spriteSelectCategory(this);'>Letters</li>
+								<li onclick='spriteSelectCategory(this);'>People</li>
+								<li onclick='spriteSelectCategory(this);'>Things</li>
+								<li onclick='spriteSelectCategory(this);'>Transportation</li>
+							</ul>
+							<p>Theme</p>
+							<ul>
+								<li onclick='spriteSelectTheme(this);' class='spriteSelectTheme'>All</li>
+								<li onclick='spriteSelectTheme(this);'>Castle</li>
+								<li onclick='spriteSelectTheme(this);'>City</li>
+								<li onclick='spriteSelectTheme(this);'>Dance</li>
+								<li onclick='spriteSelectTheme(this);'>Dress-Up</li>
+								<li onclick='spriteSelectTheme(this);'>Flying</li>
+								<li onclick='spriteSelectTheme(this);'>Holiday</li>
+								<li onclick='spriteSelectTheme(this);'>Music</li>
+								<li onclick='spriteSelectTheme(this);'>Space</li>
+								<li onclick='spriteSelectTheme(this);'>Sports</li>
+								<li onclick='spriteSelectTheme(this);'>Underwater</li>
+								<li onclick='spriteSelectTheme(this);'>Walking</li>
+							</ul>
+							<p>Type</p>
+							<ul>
+								<li onclick='spriteSelectType(this);' class='spriteSelectType'>All</li>
+								<li onclick='spriteSelectType(this);'>Bitmap</li>
+								<li onclick='spriteSelectType(this);'>Vector</li>
+							</ul>
+						</div>
+					</td>
+					<td style="width:90%;">
+					<div class="spriteLibraryGallery">
+						<div class="spriteGallery" align="center">
+							<div class="spriteThumbnails">
+								<div ><img onclick="spriteMakeActive(this);" onmouseover="spriteShowPreview(this);" src="AiharaRingo.png" alt="Image Not Loaded" class='All spriteActive Fantasy'/><p>Ringo Aihara</p></div > 
+								<div ><img onclick="spriteMakeActive(this);" onmouseover="spriteShowPreview(this);" src="anime_sitting.png" alt="Image Not Loaded" class='All Fantasy'/><p>Anime sitting</p></div >
+								<div ><img onclick="spriteMakeActive(this);" onmouseover="spriteShowPreview(this);" src="boybluehair.png" alt="Image Not Loaded" class='All Fantasy Walking'/><p>Boy blue hair</p></div >
+								<div ><img onclick="spriteMakeActive(this);" onmouseover="spriteShowPreview(this);" src="boygreenhair.png" alt="Image Not Loaded" class='All Fantasy'/><p>Boy green hair</p></div >
+								<div ><img onclick="spriteMakeActive(this);" onmouseover="spriteShowPreview(this);" src="cat_girl.png" alt="Image Not Loaded" class='All Fantasy'/><p>Cat girl</p></div >
+								<div ><img onclick="spriteMakeActive(this);" onmouseover="spriteShowPreview(this);" src="chibi_anime_boy_school_uniform.png" alt="Image Not Loaded" class='All Fantasy'/><p>Chibi anime boy</p></div >
+								<div ><img onclick="spriteMakeActive(this);" onmouseover="spriteShowPreview(this);" src="chibi_warlock.png" alt="Image Not Loaded" class='All Fantasy'/><p>Chibi warlock</p></div >
+								<div ><img onclick="spriteMakeActive(this);" onmouseover="spriteShowPreview(this);" src="formal1.png" alt="Image Not Loaded" class='All People Dress-Up'/><p>Formal 1</p></div >
+								<div ><img onclick="spriteMakeActive(this);" onmouseover="spriteShowPreview(this);" src="formal2.png" alt="Image Not Loaded" class='All People Dress-Up'/><p>Formal 2</p></div >
+								<div ><img onclick="spriteMakeActive(this);" onmouseover="spriteShowPreview(this);" src="formal4.png" alt="Image Not Loaded" class='All People Dress-Up'/><p>Formal 4</p></div >
+								<div ><img onclick="spriteMakeActive(this);" onmouseover="spriteShowPreview(this);" src="formal5.png" alt="Image Not Loaded" class='All People Dress-Up'/><p>Formal 5</p></div >
+								<div ><img onclick="spriteMakeActive(this);" onmouseover="spriteShowPreview(this);" src="HouraisenRuna.png" alt="Image Not Loaded" class='All Fantasy'/><p>Runa Houraisen</p></div >
+								<div ><img onclick="spriteMakeActive(this);" onmouseover="spriteShowPreview(this);" src="Kirishima.png" alt="Image Not Loaded" class='All Fantasy'/><p>Kirishima</p></div >
+								<div ><img onclick="spriteMakeActive(this);" onmouseover="spriteShowPreview(this);" src="KitajimaKaede.png" alt="Image Not Loaded" class='All Fantasy'/><p>Kaede Kitajima</p></div >
+								<div ><img onclick="spriteMakeActive(this);" onmouseover="spriteShowPreview(this);" src="OdaNanami.png" alt="Image Not Loaded" class='All Fantasy'/><p>Nanami Oda</p></div >
+								<div ><img onclick="spriteMakeActive(this);" onmouseover="spriteShowPreview(this);" src="Pac-Man POP 1.png" alt="Image Not Loaded" class='All Fantasy Things'/><p>Pacman POP 1</p></div >
+								<div ><img onclick="spriteMakeActive(this);" onmouseover="spriteShowPreview(this);" src="Pac-Man POP 2.png" alt="Image Not Loaded" class='All Fantasy Things'/><p>Pacman POP 2</p></div >
+								<div ><img onclick="spriteMakeActive(this);" onmouseover="spriteShowPreview(this);" src="Pac-Man POP 3.png" alt="Image Not Loaded" class='All Fantasy Things'/><p>Pacman POP 3</p></div >
+								<div ><img onclick="spriteMakeActive(this);" onmouseover="spriteShowPreview(this);" src="Pac-Man POP dog.png" alt="Image Not Loaded" class='All Fantasy Walking Animals'/><p>Pacman POP dog</p></div >
+								<div ><img onclick="spriteMakeActive(this);" onmouseover="spriteShowPreview(this);" src="Pac-Man POP ghost.png" alt="Image Not Loaded" class='All Fantasy Things'/><p>Pacman POP ghost</p></div >
+								<div ><img onclick="spriteMakeActive(this);" onmouseover="spriteShowPreview(this);" src="punk.png" alt="Image Not Loaded" class='All People'/><p>Punk</p></div >
+								<div ><img onclick="spriteMakeActive(this);" onmouseover="spriteShowPreview(this);" src="SuminoeTakako.png" alt="Image Not Loaded" class='All Fantasy'/><p>Takako Suminoe</p></div >
+								<div ><img onclick="spriteMakeActive(this);" onmouseover="spriteShowPreview(this);" src="Hanahira - Amane Yuuki.png" alt="Image Not Loaded" class='All Fantasy'/><p>Amane Yuuki</p></div >
+								<div ><img onclick="spriteMakeActive(this);" onmouseover="spriteShowPreview(this);" src="Hanahira - Kaori Hanemura.png" alt="Image Not Loaded" class='All Fantasy'/><p>Kaori Hanemura</p></div >
+								<div ><img onclick="spriteMakeActive(this);" onmouseover="spriteShowPreview(this);" src="cat.png" alt="Image Not Loaded" class='All Bitmap Fantasy Walking Animals'/><p>Scratch cat</p></div >
+							</div>
+							<br />
+							<div class="spritePreview" align="center">
+								<img id="spritePreview" src="AiharaRingo.png" alt="No Image Loaded"/>
+							</div>
+						</div></div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<div class="spriteOkCancel">
+			<button type="button" onclick='spriteSelectFinal();'>OK</button><button type="button" onclick="document.getElementsByClassName('spriteClose')[0].click();">Cancel</button>
+		</div>
+	</div>
+</div>
+<script>
+function spriteMakeActive(el) {
+	document.querySelectorAll('.spriteThumbnails div img.spriteActive')[0].classList.remove('spriteActive');el.classList.add('spriteActive');
+}
+function spriteShowPreview(el) {
+	spritePreview.src=el.src
+}
+function spriteSelectCategory(el) {
+	document.querySelectorAll('li.spriteSelectCategory')[0].classList.remove('spriteSelectCategory');
+	el.classList.add('spriteSelectCategory');
+	spriteThumbnailUpdate();
+}
+function spriteSelectTheme(el) {
+	document.querySelectorAll('li.spriteSelectTheme')[0].classList.remove('spriteSelectTheme');
+	el.classList.add('spriteSelectTheme');
+	spriteThumbnailUpdate();
+}
+function spriteSelectType(el) {
+	document.querySelectorAll('li.spriteSelectType')[0].classList.remove('spriteSelectType');
+	el.classList.add('spriteSelectType');
+	spriteThumbnailUpdate();
+}
+function spriteThumbnailUpdate() {
+	var type = document.getElementsByClassName('spriteSelectType')[0].innerHTML;
+	var category = document.getElementsByClassName('spriteSelectCategory')[0].innerHTML;
+	var theme = document.getElementsByClassName('spriteSelectTheme')[0].innerHTML;
+	try {
+		document.getElementsByClassName('spriteActive')[0].classList.remove('spriteActive');
+	} catch(err){console.log(err);}
+	var elems = document.querySelectorAll('.spriteThumbnails div img.All');
+	for (var i=0;i<elems.length;i++) {
+		elems[i].parentElement.classList.add('spriteHide');
+		if (elems[i].classList.contains(category)) {
+			if (elems[i].classList.contains(type)) {
+				if (elems[i].classList.contains(theme)) {
+					elems[i].parentElement.classList.remove('spriteHide');
+				}
+			}
+		}
+	}
+	try {
+		document.getElementsByClassName(category+" "+type+" "+theme)[0].classList.add('spriteActive');
+		spritePreview.src=document.getElementsByClassName(category+" "+type+" "+theme)[0].src;
+		if (document.getElementsByClassName('spritePreview')[0].classList.contains('spriteHide')) {
+			document.getElementsByClassName('spritePreview')[0].classList.remove('spriteHide');
+		}
+	}catch(err){
+		console.log(err);
+		document.getElementsByClassName('spritePreview')[0].classList.add('spriteHide');
+	}
+}
+function spriteSelectFinal() {
+	document.getElementsByClassName('spriteClose')[0].click();
+	try {
+		console.log(document.querySelectorAll('.spriteThumbnails div img.spriteActive')[0].src);
+		console.log(document.querySelectorAll('.spriteThumbnails div img.spriteActive')[0].nextSibling.innerHTML);
+	}catch(err){
+		console.log("No sprite selection was made");
+	}
+}
+</script>
+</body>
+</html>
